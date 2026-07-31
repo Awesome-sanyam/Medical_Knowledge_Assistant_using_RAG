@@ -1,241 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Control Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Model Control Dashboard — MedAssist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#fff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
-        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;}
-        body{background:var(--bg);color:var(--tx);margin:0;min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s;}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
-        .hdr{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;height:58px;display:flex;align-items:center;justify-content:space-between;}
-        .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--bd);padding:16px 12px;flex-shrink:0;}
-        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;text-decoration:none;transition:all .15s;}
-        .nav-item:hover{background:var(--bg3);color:var(--tx);}
-        .nav-item.active{background:var(--tx);color:var(--bg);}
-        .card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;}
-        .stat-card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:20px;}
-        .stat-val{font-size:28px;font-weight:800;letter-spacing:-.03em;}
-        .stat-lbl{font-size:12px;color:var(--tx3);margin-top:2px;}
-        .btn-p{background:var(--tx);color:var(--bg);border:none;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;}
-        .btn-p:hover{opacity:.8;}
-        .btn-g{background:transparent;color:var(--tx2);border:1px solid var(--bd);border-radius:9px;padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
-        .btn-g:hover{background:var(--bg3);color:var(--tx);}
-        .btn-danger{background:transparent;color:#dc2626;border:1px solid #fca5a5;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
-        .btn-danger:hover{background:#fee2e2;}
-        .dark .btn-danger{border-color:#7f1d1d;} .dark .btn-danger:hover{background:#7f1d1d;}
-        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:9px;padding:10px 13px;font-size:13px;outline:none;transition:border .2s;}
-        .inp:focus{border-color:var(--tx3);}
-        .badge-on{background:#d1fae5;color:#065f46;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
-        .badge-off{background:#fee2e2;color:#991b1b;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
-        .dark .badge-on{background:#064e3b;color:#6ee7b7;} .dark .badge-off{background:#7f1d1d;color:#fca5a5;}
-        .badge-warn{background:#fef3c7;color:#92400e;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
-        .dark .badge-warn{background:#78350f;color:#fde68a;}
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
-        .dark .toggle::after{transform:translateX(18px);}
-        .prog-bar{height:6px;border-radius:3px;background:var(--bg3);overflow:hidden;}
-        .prog-fill{height:100%;border-radius:3px;background:var(--tx);transition:width .5s ease;}
-        input[type=range]{accent-color:var(--tx);width:100%;}
-        #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);transform:translateX(120%);transition:transform .3s;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+        :root{--c-bg:#fafafa;--c-surface:#ffffff;--c-surface-2:#f5f5f5;--c-surface-3:#eeeeee;--c-outline:#e0e0e0;--c-outline-2:#bdbdbd;--c-on-bg:#212121;--c-on-surface:#212121;--c-on-surface-2:#616161;--c-on-surface-3:#9e9e9e;--c-primary:#212121;--c-on-primary:#ffffff;--c-error:#c62828;--c-error-bg:#ffebee;--c-success:#1b5e20;--c-success-bg:#e8f5e9;--c-warn:#e65100;--c-warn-bg:#fff3e0;--c-info:#0277bd;--c-info-bg:#e1f5fe;--radius-sm:8px;--radius-md:12px;--shadow-1:0 1px 3px rgba(0,0,0,.07);--sb-w:232px;--hdr-h:52px;--t:all .18s cubic-bezier(.4,0,.2,1);}
+        [data-dark]{--c-bg:#121212;--c-surface:#1e1e1e;--c-surface-2:#262626;--c-surface-3:#323232;--c-outline:#2e2e2e;--c-outline-2:#424242;--c-on-bg:#eeeeee;--c-on-surface:#eeeeee;--c-on-surface-2:#9e9e9e;--c-on-surface-3:#616161;--c-primary:#eeeeee;--c-on-primary:#121212;--c-error:#ef9a9a;--c-error-bg:#311b1b;--c-success:#a5d6a7;--c-success-bg:#1b2e1b;--c-warn:#ffcc80;--c-warn-bg:#2e1f00;--c-info:#81d4fa;--c-info-bg:#01253a;}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{font-family:'Inter',system-ui,sans-serif;font-size:14px;}
+        body{background:var(--c-bg);color:var(--c-on-bg);min-height:100svh;display:flex;flex-direction:column;transition:var(--t);}
+        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--c-outline-2);border-radius:4px;}
+        a{text-decoration:none;color:inherit;}
+        .hdr{height:var(--hdr-h);padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--c-on-bg);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
+        [data-dark] .hdr{background:var(--c-surface-2);border-bottom-color:var(--c-outline);}
+        .hdr-brand{display:flex;align-items:center;gap:10px;}
+        .hdr-mark{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+        [data-dark] .hdr-mark{background:var(--c-surface-3);}
+        .hdr-mark svg{color:rgba(255,255,255,.9);} [data-dark] .hdr-mark svg{color:var(--c-on-surface-2);}
+        .hdr-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.02em;}
+        [data-dark] .hdr-title{color:var(--c-on-surface-2);}
+        .hdr-tag{font-size:11px;color:rgba(255,255,255,.4);padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:99px;}
+        [data-dark] .hdr-tag{color:var(--c-on-surface-3);border-color:var(--c-outline);}
+        .hdr-right{display:flex;align-items:center;gap:8px;}
+        .hdr-user{font-size:12px;color:rgba(255,255,255,.5);}
+        [data-dark] .hdr-user{color:var(--c-on-surface-3);}
+        .hdr-btn{font-size:12px;color:rgba(255,255,255,.6);padding:5px 12px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);cursor:pointer;background:none;font-family:inherit;transition:var(--t);}
+        [data-dark] .hdr-btn{color:var(--c-on-surface-3);border-color:var(--c-outline);}
+        .hdr-btn:hover{background:rgba(255,255,255,.12);} [data-dark] .hdr-btn:hover{background:var(--c-surface-3);}
+        .theme-btn{background:none;border:none;cursor:pointer;font-size:17px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--t);}
+        .theme-btn:hover{background:rgba(255,255,255,.15);} [data-dark] .theme-btn:hover{background:var(--c-surface-3);}
+        .layout{display:flex;flex:1;min-height:calc(100svh - var(--hdr-h));}
+        .sb{width:var(--sb-w);background:var(--c-surface);border-right:1px solid var(--c-outline);padding:12px 10px;flex-shrink:0;}
+        .sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);padding:8px 8px 4px;}
+        .sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;color:var(--c-on-surface-2);transition:var(--t);margin-bottom:1px;}
+        .sb-item:hover{background:var(--c-surface-2);color:var(--c-on-surface);}
+        .sb-item.active{background:var(--c-on-bg);color:var(--c-on-primary);}
+        [data-dark] .sb-item.active{background:var(--c-surface-3);color:var(--c-on-surface);}
+        .sb-item svg{flex-shrink:0;opacity:.7;} .sb-item.active svg{opacity:1;}
+        .sb-sep{height:1px;background:var(--c-outline);margin:8px 4px;}
+        main{flex:1;padding:28px 32px;overflow-y:auto;}
+        .inner{max-width:960px;margin:0 auto;}
+        .page-head{margin-bottom:22px;}
+        .page-head h1{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;}
+        .page-head p{font-size:13px;color:var(--c-on-surface-2);}
+        /* Stats grid */
+        .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px;}
+        .stat{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-1);}
+        .stat-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);margin-bottom:10px;}
+        .stat-val{font-size:15px;font-weight:700;}
+        /* Two-col grid */
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+        @media(max-width:700px){.grid-2{grid-template-columns:1fr;}}
+        /* Cards */
+        .card{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);padding:22px 24px;box-shadow:var(--shadow-1);}
+        .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);margin-bottom:14px;}
+        /* Progress */
+        .prog-bar{height:5px;border-radius:3px;background:var(--c-surface-3);overflow:hidden;margin-top:8px;}
+        .prog-fill{height:100%;border-radius:3px;background:var(--c-on-bg);transition:width .5s ease;}
+        /* Form elements */
+        .field-label{display:block;font-size:11px;font-weight:600;color:var(--c-on-surface-2);margin-bottom:5px;}
+        .field-input{display:block;width:100%;padding:9px 12px;background:var(--c-surface-2);border:1px solid var(--c-outline);border-radius:var(--radius-sm);color:var(--c-on-surface);font-size:13px;font-family:inherit;outline:none;transition:var(--t);cursor:pointer;}
+        .field-input:focus{border-color:var(--c-outline-2);}
+        input[type=range]{width:100%;accent-color:var(--c-on-bg);cursor:pointer;margin-top:4px;}
+        .slider-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+        .slider-lbl{font-size:11px;font-weight:600;color:var(--c-on-surface-2);}
+        .slider-val{font-size:15px;font-weight:800;letter-spacing:-.02em;}
+        .slider-hints{display:flex;justify-content:space-between;font-size:10px;color:var(--c-on-surface-3);margin-top:2px;}
+        /* Buttons */
+        .btn-p{background:var(--c-primary);color:var(--c-on-primary);border:none;border-radius:var(--radius-sm);padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--t);}
+        .btn-p:hover{opacity:.85;}
+        .btn-g{background:transparent;color:var(--c-on-surface-2);border:1px solid var(--c-outline);border-radius:var(--radius-sm);padding:9px 18px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:var(--t);}
+        .btn-g:hover{background:var(--c-surface-2);}
+        .btn-danger{background:transparent;color:var(--c-error);border:1px solid rgba(198,40,40,.3);border-radius:var(--radius-sm);padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:var(--t);}
+        .btn-danger:hover{background:var(--c-error-bg);}
+        /* Badges */
+        .badge{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;}
+        .badge-ok{background:var(--c-success-bg);color:var(--c-success);}
+        .badge-off{background:var(--c-error-bg);color:var(--c-error);}
+        .badge-idle{background:var(--c-surface-3);color:var(--c-on-surface-3);}
+        /* Table row */
+        .trow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--c-outline);font-size:13px;}
+        .trow:last-child{border-bottom:none;}
+        /* Toast */
+        #toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--c-on-bg);color:var(--c-on-primary);border-radius:var(--radius-sm);padding:11px 16px;font-size:13px;transform:translateX(120%);transition:transform .3s;max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+        [data-dark] #toast{background:var(--c-surface-3);color:var(--c-on-surface);}
         #toast.show{transform:translateX(0);}
-        .section-title{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
-        .table-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd);font-size:13px;}
-        .table-row:last-child{border-bottom:none;}
+        .empty-note{font-size:13px;color:var(--c-on-surface-3);}
+        code{background:var(--c-surface-2);border:1px solid var(--c-outline);padding:2px 6px;border-radius:5px;font-size:12px;font-family:'SF Mono','Fira Code',monospace;}
     </style>
 </head>
 <body>
     <div id="toast"></div>
-
-    <!-- Header -->
     <header class="hdr">
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:30px;height:30px;background:var(--tx);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="14" height="14" fill="none" stroke="var(--bg)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-            </div>
-            <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;">Model Control</span>
-            <span style="font-size:11px;color:var(--tx3);padding:3px 8px;border:1px solid var(--bd);border-radius:6px;">Standalone Admin</span>
+        <div class="hdr-brand">
+            <div class="hdr-mark"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div>
+            <span class="hdr-title">Model Control</span>
+            <span class="hdr-tag">Admin</span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-size:12px;color:var(--tx3);">{{ request.user.username }}</span>
-            <a href="/chat/" style="font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">Chat ↗</a>
-            <a href="/model-control/logout/" style="font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">Sign Out</a>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
-                <div class="toggle" onclick="toggleTheme()"></div>
-            </div>
+        <div class="hdr-right">
+            <span class="hdr-user">{{ request.user.username }}</span>
+            <a href="/chat/" class="hdr-btn">Chat ↗</a>
+            <a href="/model-control/logout/" class="hdr-btn">Sign Out</a>
+            <button class="theme-btn" onclick="toggleDark()" id="tfab">🌙</button>
         </div>
     </header>
-
-    <div style="display:flex;flex:1;min-height:calc(100vh - 58px);">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <nav style="display:flex;flex-direction:column;gap:2px;">
-                <a href="/model-control/" class="nav-item active">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    Dashboard
-                </a>
-                <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
-                <a href="/app-admin/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                    Knowledge Base
-                </a>
-                <a href="/app-admin/audit/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Audit Logs
-                </a>
-                <a href="/chat/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Live Chat
-                </a>
-            </nav>
+    <div class="layout">
+        <aside class="sb">
+            <div class="sb-lbl">Model Control</div>
+            <a href="/model-control/" class="sb-item active"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Dashboard</a>
+            <div class="sb-sep"></div>
+            <div class="sb-lbl">Knowledge</div>
+            <a href="/app-admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Knowledge Base</a>
+            <a href="/app-admin/audit/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Audit Logs</a>
+            <a href="/chat/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>Live Chat</a>
         </aside>
-
-        <!-- Main -->
-        <main style="flex:1;padding:28px;overflow-y:auto;">
-            <div style="max-width:960px;margin:0 auto;">
-
-                <!-- Page title -->
-                <div style="margin-bottom:24px;">
-                    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin:0 0 4px;">Model Control Dashboard</h1>
-                    <p style="font-size:13px;color:var(--tx2);margin:0;">Monitor, load/unload, and configure the local Ollama LLM in real time.</p>
+        <main>
+            <div class="inner">
+                <div class="page-head">
+                    <h1>Model Control Dashboard</h1>
+                    <p>Monitor, load/unload, and configure the local Ollama LLM in real time.</p>
                 </div>
 
-                <!-- Status row -->
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
-                    <!-- Ollama status -->
-                    <div class="stat-card">
-                        <div class="section-title">Ollama Server</div>
-                        <div style="display:flex;align-items:center;gap:8px;">
-                            <span class="stat-val" id="ollama-status-dot">—</span>
-                        </div>
-                        <div class="stat-lbl" id="ollama-model-count">Checking…</div>
+                <!-- Stats -->
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-lbl">Ollama Server</div>
+                        <div class="stat-val" id="ollama-status">Checking…</div>
                     </div>
-                    <!-- RAM -->
-                    <div class="stat-card" id="ram-card">
-                        <div class="section-title">RAM Usage</div>
+                    <div class="stat">
+                        <div class="stat-lbl">RAM Usage</div>
                         <div class="stat-val" id="ram-val">—</div>
-                        <div class="prog-bar" style="margin-top:8px;"><div class="prog-fill" id="ram-bar" style="width:0%"></div></div>
-                        <div class="stat-lbl" id="ram-lbl">—</div>
+                        <div class="prog-bar"><div class="prog-fill" id="ram-bar" style="width:0%"></div></div>
                     </div>
-                    <!-- CPU -->
-                    <div class="stat-card">
-                        <div class="section-title">CPU Load</div>
+                    <div class="stat">
+                        <div class="stat-lbl">CPU Load</div>
                         <div class="stat-val" id="cpu-val">—</div>
-                        <div class="prog-bar" style="margin-top:8px;"><div class="prog-fill" id="cpu-bar" style="width:0%"></div></div>
-                        <div class="stat-lbl">Apple M4 · 8 cores</div>
+                        <div class="prog-bar"><div class="prog-fill" id="cpu-bar" style="width:0%"></div></div>
                     </div>
-                    <!-- Active model -->
-                    <div class="stat-card">
-                        <div class="section-title">Active Config</div>
-                        <div style="font-size:15px;font-weight:700;" id="active-model-name">{{ config.key }}</div>
-                        <div class="stat-lbl">temp={{ config.temperature }} · top_k={{ config.top_k_retrieval }}</div>
+                    <div class="stat">
+                        <div class="stat-lbl">Active Config</div>
+                        <div class="stat-val" style="font-size:13px;">{{ config.key }}</div>
+                        <div style="font-size:11px;color:var(--c-on-surface-3);margin-top:3px;">temp={{ config.temperature }} · top_k={{ config.top_k_retrieval }}</div>
                     </div>
                 </div>
 
-                <!-- Model controls + available models -->
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+                <div class="grid-2">
                     <!-- Load / Unload -->
                     <div class="card">
-                        <div class="section-title">Model Controls</div>
+                        <div class="card-title">Model Controls</div>
                         <div style="margin-bottom:12px;">
-                            <label style="font-size:12px;font-weight:500;color:var(--tx2);display:block;margin-bottom:6px;">Target Model</label>
-                            <select id="model-select" class="inp" style="cursor:pointer;">
+                            <label class="field-label">Target Model</label>
+                            <select id="model-select" class="field-input">
                                 {% if ollama_status.models %}
                                     {% for m in ollama_status.models %}
                                     <option value="{{ m }}" {% if 'med-llama' in m %}selected{% endif %}>{{ m }}</option>
                                     {% endfor %}
                                 {% else %}
-                                    <option value="med-llama">med-llama</option>
+                                    <option value="med-llama">med-llama (default)</option>
                                 {% endif %}
                             </select>
                         </div>
                         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <button class="btn-p" onclick="loadModel()">⚡ Warm / Load Model</button>
-                            <button class="btn-danger" onclick="unloadModel()">🧹 Unload from RAM</button>
+                            <button class="btn-p" onclick="loadModel()">⚡ Warm / Load</button>
+                            <button class="btn-danger" onclick="unloadModel()">Unload from RAM</button>
                         </div>
-                        <p style="font-size:11px;color:var(--tx3);margin:10px 0 0;">"Warm" sends a ping to load the model into VRAM/RAM. "Unload" frees memory immediately.</p>
+                        <p style="font-size:11px;color:var(--c-on-surface-3);margin-top:10px;">"Warm" pings Ollama to load the model into RAM. "Unload" frees memory immediately.</p>
                     </div>
 
                     <!-- Available models -->
                     <div class="card">
-                        <div class="section-title">Available Models ({{ ollama_status.models|length }})</div>
+                        <div class="card-title">Available Models ({{ ollama_status.models|length }})</div>
                         {% if ollama_status.online %}
-                        <div>
                             {% for m in ollama_status.models %}
-                            <div class="table-row">
-                                <span style="flex:1;font-weight:500;">{{ m }}</span>
-                                {% if 'med-llama' in m %}
-                                <span class="badge-on">Active</span>
-                                {% else %}
-                                <span style="font-size:11px;color:var(--tx3);">Available</span>
-                                {% endif %}
+                            <div class="trow">
+                                <span style="flex:1;font-weight:500;font-size:13px;">{{ m }}</span>
+                                {% if 'med-llama' in m %}<span class="badge badge-ok">Active</span>
+                                {% else %}<span class="badge badge-idle">Available</span>{% endif %}
                             </div>
                             {% empty %}
-                            <p style="font-size:13px;color:var(--tx3);">No models found.</p>
+                            <p class="empty-note">No models found. Pull a model first.</p>
                             {% endfor %}
-                        </div>
                         {% else %}
-                        <div style="text-align:center;padding:20px 0;">
-                            <div style="font-size:24px;margin-bottom:8px;">⚠️</div>
-                            <p style="font-size:13px;color:var(--tx2);">Ollama server is offline.<br>Run <code style="background:var(--bg3);padding:2px 6px;border-radius:5px;font-size:12px;">ollama serve</code> to start.</p>
+                        <div style="text-align:center;padding:24px 0;">
+                            <div style="font-size:24px;margin-bottom:10px;">⚠️</div>
+                            <p style="font-size:13px;color:var(--c-on-surface-2);">Ollama server is offline.<br>Run <code>ollama serve</code> in a terminal.</p>
                         </div>
                         {% endif %}
                     </div>
                 </div>
 
-                <!-- LLM Parameter Configurator -->
-                <div class="card" style="margin-bottom:24px;">
-                    <div class="section-title">LLM Parameter Configurator</div>
-                    <p style="font-size:12px;color:var(--tx3);margin:0 0 20px;">Changes apply instantly to all subsequent queries. The LLM cache will be cleared on save.</p>
-
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:20px;">
+                <!-- Parameter Configurator -->
+                <div class="card" style="margin-bottom:16px;">
+                    <div class="card-title">LLM Parameter Configurator</div>
+                    <p style="font-size:12px;color:var(--c-on-surface-3);margin:0 0 18px;">Changes apply instantly to all subsequent queries.</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:18px;">
                         <div>
-                            <label style="font-size:12px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;">Temperature: <span id="temp-show">{{ config.temperature }}</span></label>
-                            <input type="range" id="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}"
-                                oninput="document.getElementById('temp-show').textContent=parseFloat(this.value).toFixed(2)">
-                            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px;"><span>Precise</span><span>Creative</span></div>
+                            <div class="slider-row"><span class="slider-lbl">Temperature</span><span class="slider-val" id="temp-show">{{ config.temperature }}</span></div>
+                            <input type="range" id="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}" oninput="document.getElementById('temp-show').textContent=parseFloat(this.value).toFixed(2)">
+                            <div class="slider-hints"><span>Precise</span><span>Creative</span></div>
                         </div>
                         <div>
-                            <label style="font-size:12px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;">Top-K Chunks: <span id="topk-show">{{ config.top_k_retrieval }}</span></label>
-                            <input type="range" id="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}"
-                                oninput="document.getElementById('topk-show').textContent=this.value">
-                            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px;"><span>Fast (1)</span><span>Rich (10)</span></div>
+                            <div class="slider-row"><span class="slider-lbl">Top-K Chunks</span><span class="slider-val" id="topk-show">{{ config.top_k_retrieval }}</span></div>
+                            <input type="range" id="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}" oninput="document.getElementById('topk-show').textContent=this.value">
+                            <div class="slider-hints"><span>Fast (1)</span><span>Rich (10)</span></div>
                         </div>
                         <div>
-                            <label style="font-size:12px;font-weight:600;color:var(--tx2);display:block;margin-bottom:4px;">Confidence Threshold: <span id="thresh-show">{{ config.similarity_threshold }}</span></label>
-                            <input type="range" id="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}"
-                                oninput="document.getElementById('thresh-show').textContent=parseFloat(this.value).toFixed(2)">
-                            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px;"><span>Lenient</span><span>Strict</span></div>
+                            <div class="slider-row"><span class="slider-lbl">Threshold</span><span class="slider-val" id="thresh-show">{{ config.similarity_threshold }}</span></div>
+                            <input type="range" id="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}" oninput="document.getElementById('thresh-show').textContent=parseFloat(this.value).toFixed(2)">
+                            <div class="slider-hints"><span>Lenient</span><span>Strict</span></div>
                         </div>
                     </div>
-
-                    <div style="margin-bottom:20px;">
-                        <label style="font-size:12px;font-weight:600;color:var(--tx2);display:block;margin-bottom:6px;">System Prompt</label>
-                        <textarea id="system_prompt" rows="4" class="inp" style="resize:vertical;">{{ config.system_prompt }}</textarea>
+                    <div style="margin-bottom:16px;">
+                        <label class="field-label">System Prompt</label>
+                        <textarea id="system_prompt" rows="4" class="field-input" style="resize:vertical;cursor:default;">{{ config.system_prompt }}</textarea>
                     </div>
-
-                    <button class="btn-p" onclick="saveConfig()">Save Configuration & Clear LLM Cache</button>
+                    <button class="btn-p" onclick="saveConfig()">Save &amp; Apply Configuration</button>
                 </div>
 
-                <!-- Session history -->
+                <!-- Session History -->
                 <div class="card">
-                    <div class="section-title">Model Session History</div>
+                    <div class="card-title">Model Session History</div>
                     {% for session in recent_sessions %}
-                    <div class="table-row">
-                        <span style="font-size:11px;color:var(--tx3);flex-shrink:0;width:130px;">{{ session.timestamp|date:"M d, H:i:s" }}</span>
-                        <span style="font-weight:500;flex:1;">{{ session.model_name }}</span>
-                        <span style="font-size:11px;color:var(--tx3);">{{ session.action }}</span>
-                        {% if session.status == 'loaded' %}<span class="badge-on">Loaded</span>
-                        {% elif session.status == 'unloaded' %}<span style="background:var(--bg3);color:var(--tx3);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;">Unloaded</span>
-                        {% else %}<span class="badge-off">Error</span>{% endif %}
+                    <div class="trow">
+                        <span style="font-size:11px;color:var(--c-on-surface-3);flex-shrink:0;width:130px;">{{ session.timestamp|date:"M d, H:i:s" }}</span>
+                        <span style="font-weight:600;flex:1;">{{ session.model_name }}</span>
+                        <span style="font-size:11px;color:var(--c-on-surface-3);">{{ session.action }}</span>
+                        {% if session.status == 'loaded' %}<span class="badge badge-ok">Loaded</span>
+                        {% elif session.status == 'unloaded' %}<span class="badge badge-idle">Unloaded</span>
+                        {% else %}<span class="badge badge-off">Error</span>{% endif %}
                     </div>
                     {% empty %}
-                    <p style="font-size:13px;color:var(--tx3);">No sessions recorded yet.</p>
+                    <p class="empty-note">No sessions recorded yet.</p>
                     {% endfor %}
                 </div>
             </div>
@@ -243,99 +241,48 @@
     </div>
 
     <script>
-    // Theme
-    const html = document.documentElement;
-    const lbl = document.getElementById('theme-lbl');
-    html.className = localStorage.getItem('theme') || 'light';
-    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
-    function toggleTheme() {
-        const n = html.className === 'dark' ? 'light' : 'dark';
-        html.className = n; localStorage.setItem('theme', n);
-        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    /* Theme */
+    const root=document.documentElement,tfab=document.getElementById('tfab');
+    if(localStorage.getItem('ma-dark')==='1'){root.setAttribute('data-dark','');tfab.textContent='☀️';}
+    function toggleDark(){if(root.hasAttribute('data-dark')){root.removeAttribute('data-dark');localStorage.setItem('ma-dark','0');tfab.textContent='🌙';}else{root.setAttribute('data-dark','');localStorage.setItem('ma-dark','1');tfab.textContent='☀️';}}
+    /* Toast */
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
+    function csrf(){const m=document.cookie.match(/csrftoken=([^;]+)/);return m?decodeURIComponent(m[1]):'';}
+    /* Status polling */
+    async function pollStatus(){
+        try{const r=await fetch('/model-control/api/status/');const d=await r.json();
+        const st=document.getElementById('ollama-status');
+        if(d.online){st.innerHTML='<span class="badge badge-ok">● Online</span>';document.querySelector('#model-select').parentElement.closest('.card').querySelector('p').textContent=`${d.models?.length||0} model(s) available`;}
+        else{st.innerHTML='<span class="badge badge-off">● Offline</span>';}
+        if(d.system&&d.system.ram_used_gb!==undefined){
+            document.getElementById('ram-val').textContent=`${d.system.ram_used_gb} / ${d.system.ram_total_gb} GB`;
+            document.getElementById('ram-bar').style.width=d.system.ram_percent+'%';
+            document.getElementById('cpu-val').textContent=d.system.cpu_percent+'%';
+            document.getElementById('cpu-bar').style.width=d.system.cpu_percent+'%';
+        }}catch(e){}
     }
-
-    // Toast
-    function toast(msg, type='info') {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.borderColor = type === 'error' ? '#f87171' : type === 'success' ? '#34d399' : 'var(--bd)';
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3500);
+    pollStatus(); setInterval(pollStatus,5000);
+    /* Load model */
+    async function loadModel(){
+        const model=document.getElementById('model-select').value;
+        toast(`⚡ Loading "${model}"…`);
+        const r=await fetch('/model-control/api/load/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({model_name:model})});
+        const d=await r.json();
+        toast(d.status==='ok'?`✓ ${d.message}`:`✗ ${d.message}`);
+        setTimeout(pollStatus,1000);
     }
-    function getCsrf() {
-        const m = document.cookie.match(/csrftoken=([^;]+)/);
-        return m ? decodeURIComponent(m[1]) : '';
+    async function unloadModel(){
+        const model=document.getElementById('model-select').value;
+        if(!confirm(`Unload "${model}" from RAM?`)) return;
+        const r=await fetch('/model-control/api/unload/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({model_name:model})});
+        const d=await r.json();
+        toast(d.status==='ok'?`✓ ${d.message}`:`✗ ${d.message}`);
+        setTimeout(pollStatus,1000);
     }
-
-    // Live status polling
-    async function pollStatus() {
-        try {
-            const r = await fetch('/model-control/api/status/');
-            const d = await r.json();
-            const statusDot = document.getElementById('ollama-status-dot');
-            const modelCount = document.getElementById('ollama-model-count');
-            if (d.online) {
-                statusDot.innerHTML = '<span class="badge-on">● Online</span>';
-                modelCount.textContent = `${d.models?.length || 0} model(s) available`;
-            } else {
-                statusDot.innerHTML = '<span class="badge-off">● Offline</span>';
-                modelCount.textContent = 'Ollama server not reachable';
-            }
-            if (d.system && d.system.ram_used_gb !== undefined) {
-                const pct = d.system.ram_percent;
-                document.getElementById('ram-val').textContent = `${d.system.ram_used_gb} / ${d.system.ram_total_gb} GB`;
-                document.getElementById('ram-bar').style.width = pct + '%';
-                document.getElementById('ram-lbl').textContent = `${pct}% used`;
-                document.getElementById('cpu-val').textContent = d.system.cpu_percent + '%';
-                document.getElementById('cpu-bar').style.width = d.system.cpu_percent + '%';
-            }
-        } catch (_) {}
-    }
-    pollStatus();
-    setInterval(pollStatus, 5000);
-
-    // Load model
-    async function loadModel() {
-        const model = document.getElementById('model-select').value;
-        toast(`⚡ Warming "${model}"…`, 'info');
-        const r = await fetch('/model-control/api/load/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCsrf() },
-            body: new URLSearchParams({ model_name: model })
-        });
-        const d = await r.json();
-        toast(d.status === 'ok' ? `✅ ${d.message}` : `❌ ${d.message}`, d.status === 'ok' ? 'success' : 'error');
-        setTimeout(pollStatus, 1000);
-    }
-
-    // Unload model
-    async function unloadModel() {
-        const model = document.getElementById('model-select').value;
-        if (!confirm(`Unload "${model}" from RAM?`)) return;
-        const r = await fetch('/model-control/api/unload/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCsrf() },
-            body: new URLSearchParams({ model_name: model })
-        });
-        const d = await r.json();
-        toast(d.status === 'ok' ? `🧹 ${d.message}` : `❌ ${d.message}`, d.status === 'ok' ? 'success' : 'error');
-        setTimeout(pollStatus, 1000);
-    }
-
-    // Save config
-    async function saveConfig() {
-        const r = await fetch('/model-control/api/config/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': getCsrf() },
-            body: new URLSearchParams({
-                temperature: document.getElementById('temperature').value,
-                top_k_retrieval: document.getElementById('top_k_retrieval').value,
-                similarity_threshold: document.getElementById('similarity_threshold').value,
-                system_prompt: document.getElementById('system_prompt').value,
-            })
-        });
-        const d = await r.json();
-        toast(d.status === 'ok' ? `✅ ${d.message}` : `❌ ${d.message}`, d.status === 'ok' ? 'success' : 'error');
+    async function saveConfig(){
+        const r=await fetch('/model-control/api/config/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({temperature:document.getElementById('temperature').value,top_k_retrieval:document.getElementById('top_k_retrieval').value,similarity_threshold:document.getElementById('similarity_threshold').value,system_prompt:document.getElementById('system_prompt').value})});
+        const d=await r.json();
+        toast(d.status==='ok'?`✓ ${d.message}`:`✗ ${d.message}`);
     }
     </script>
 </body>

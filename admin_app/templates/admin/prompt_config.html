@@ -1,161 +1,165 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Configurator — MedAssist Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>LLM Config — MedAssist Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
-        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;}
-        body{background:var(--bg);color:var(--tx);margin:0;min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s;}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
-        .hdr{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
-        .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--bd);padding:16px 12px;flex-shrink:0;}
-        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;text-decoration:none;transition:all .15s;}
-        .nav-item:hover{background:var(--bg3);color:var(--tx);}
-        .nav-item.active{background:var(--tx);color:var(--bg);}
-        .card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;}
-        .btn-p{background:var(--tx);color:var(--bg);border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%;}
-        .btn-p:hover{opacity:.85;}
-        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:12px 14px;font-size:13px;outline:none;transition:border .2s;resize:vertical;}
-        .inp:focus{border-color:var(--tx3);}
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
-        .dark .toggle::after{transform:translateX(18px);}
-        .section-title{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
-        input[type=range]{accent-color:var(--tx);width:100%;}
-        #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);transform:translateX(120%);transition:transform .3s;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+        :root{--c-bg:#fafafa;--c-surface:#ffffff;--c-surface-2:#f5f5f5;--c-surface-3:#eeeeee;--c-outline:#e0e0e0;--c-outline-2:#bdbdbd;--c-on-bg:#212121;--c-on-surface:#212121;--c-on-surface-2:#616161;--c-on-surface-3:#9e9e9e;--c-primary:#212121;--c-on-primary:#ffffff;--c-error:#c62828;--c-error-bg:#ffebee;--c-success:#1b5e20;--c-success-bg:#e8f5e9;--radius-sm:8px;--radius-md:12px;--shadow-1:0 1px 3px rgba(0,0,0,.07);--sb-w:232px;--hdr-h:52px;--t:all .18s cubic-bezier(.4,0,.2,1);}
+        [data-dark]{--c-bg:#121212;--c-surface:#1e1e1e;--c-surface-2:#262626;--c-surface-3:#323232;--c-outline:#2e2e2e;--c-outline-2:#424242;--c-on-bg:#eeeeee;--c-on-surface:#eeeeee;--c-on-surface-2:#9e9e9e;--c-on-surface-3:#616161;--c-primary:#eeeeee;--c-on-primary:#121212;--c-error:#ef9a9a;--c-error-bg:#311b1b;--c-success:#a5d6a7;--c-success-bg:#1b2e1b;}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{font-family:'Inter',system-ui,sans-serif;font-size:14px;}
+        body{background:var(--c-bg);color:var(--c-on-bg);min-height:100svh;display:flex;flex-direction:column;transition:var(--t);}
+        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--c-outline-2);border-radius:4px;}
+        a{text-decoration:none;color:inherit;}
+        .hdr{height:var(--hdr-h);padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--c-on-bg);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
+        [data-dark] .hdr{background:var(--c-surface-2);border-bottom-color:var(--c-outline);}
+        .hdr-brand{display:flex;align-items:center;gap:10px;}
+        .hdr-mark{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
+        [data-dark] .hdr-mark{background:var(--c-surface-3);}
+        .hdr-mark svg{color:rgba(255,255,255,.9);}
+        [data-dark] .hdr-mark svg{color:var(--c-on-surface-2);}
+        .hdr-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.02em;}
+        [data-dark] .hdr-title{color:var(--c-on-surface-2);}
+        .hdr-tag{font-size:11px;color:rgba(255,255,255,.4);padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:99px;}
+        [data-dark] .hdr-tag{color:var(--c-on-surface-3);border-color:var(--c-outline);}
+        .hdr-right{display:flex;align-items:center;gap:8px;}
+        .hdr-btn{font-size:12px;color:rgba(255,255,255,.6);padding:5px 12px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);cursor:pointer;background:none;font-family:inherit;transition:var(--t);}
+        [data-dark] .hdr-btn{color:var(--c-on-surface-3);border-color:var(--c-outline);}
+        .hdr-btn:hover{background:rgba(255,255,255,.12);}
+        [data-dark] .hdr-btn:hover{background:var(--c-surface-3);}
+        .theme-btn{background:none;border:none;cursor:pointer;font-size:17px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--t);}
+        .theme-btn:hover{background:rgba(255,255,255,.15);}
+        [data-dark] .theme-btn:hover{background:var(--c-surface-3);}
+        .layout{display:flex;flex:1;min-height:calc(100svh - var(--hdr-h));}
+        .sb{width:var(--sb-w);background:var(--c-surface);border-right:1px solid var(--c-outline);padding:12px 10px;flex-shrink:0;}
+        .sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);padding:8px 8px 4px;}
+        .sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;color:var(--c-on-surface-2);transition:var(--t);margin-bottom:1px;}
+        .sb-item:hover{background:var(--c-surface-2);color:var(--c-on-surface);}
+        .sb-item.active{background:var(--c-on-bg);color:var(--c-on-primary);}
+        [data-dark] .sb-item.active{background:var(--c-surface-3);color:var(--c-on-surface);}
+        .sb-item svg{flex-shrink:0;opacity:.7;}
+        .sb-item.active svg{opacity:1;}
+        .sb-sep{height:1px;background:var(--c-outline);margin:8px 4px;}
+        main{flex:1;padding:28px 32px;overflow-y:auto;}
+        .inner{max-width:640px;margin:0 auto;}
+        .page-head{margin-bottom:24px;}
+        .page-head h1{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;}
+        .page-head p{font-size:13px;color:var(--c-on-surface-2);}
+        .card{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);padding:22px 24px;margin-bottom:14px;box-shadow:var(--shadow-1);}
+        .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);margin-bottom:6px;}
+        .card-sub{font-size:12px;color:var(--c-on-surface-3);margin-bottom:14px;}
+        .field-label{display:block;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-on-surface-2);margin-bottom:6px;}
+        .field-input{display:block;width:100%;padding:11px 14px;background:var(--c-surface-2);border:1px solid var(--c-outline);border-radius:var(--radius-sm);color:var(--c-on-surface);font-size:13px;font-family:inherit;outline:none;transition:var(--t);resize:vertical;}
+        .field-input:focus{border-color:var(--c-outline-2);box-shadow:0 0 0 3px rgba(0,0,0,.06);}
+        [data-dark] .field-input:focus{box-shadow:0 0 0 3px rgba(255,255,255,.06);}
+        .field-input::placeholder{color:var(--c-on-surface-3);}
+        /* Range slider */
+        .slider-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+        .slider-val{font-size:20px;font-weight:800;letter-spacing:-.03em;}
+        input[type=range]{width:100%;accent-color:var(--c-on-bg);cursor:pointer;}
+        .slider-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--c-on-surface-3);margin-top:3px;}
+        /* Buttons */
+        .btn-filled{background:var(--c-primary);color:var(--c-on-primary);border:none;border-radius:var(--radius-sm);padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--t);width:100%;}
+        .btn-filled:hover{opacity:.85;}
+        /* Toast */
+        #toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--c-on-bg);color:var(--c-on-primary);border-radius:var(--radius-sm);padding:11px 16px;font-size:13px;transform:translateX(120%);transition:transform .3s;max-width:280px;box-shadow:0 4px 16px rgba(0,0,0,.15);}
+        [data-dark] #toast{background:var(--c-surface-3);color:var(--c-on-surface);}
         #toast.show{transform:translateX(0);}
     </style>
 </head>
 <body>
     <div id="toast"></div>
-
-    <!-- Header -->
     <header class="hdr">
-        <div style="display:flex;align-items:center;gap:10px;">
-            <div style="width:30px;height:30px;background:var(--tx);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-                <svg width="14" height="14" fill="none" stroke="var(--bg)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-            </div>
-            <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;">MedAssist Admin</span>
-            <span style="font-size:11px;color:var(--tx3);padding:3px 8px;border:1px solid var(--bd);border-radius:6px;">LLM Config</span>
+        <div class="hdr-brand">
+            <div class="hdr-mark"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div>
+            <span class="hdr-title">MedAssist</span>
+            <span class="hdr-tag">Admin</span>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <a href="/chat/" style="font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">Chat ↗</a>
-            <div style="display:flex;align-items:center;gap:6px;">
-                <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
-                <div class="toggle" onclick="toggleTheme()"></div>
-            </div>
+        <div class="hdr-right">
+            <a href="/chat/" class="hdr-btn">Open Chat ↗</a>
+            <button class="theme-btn" onclick="toggleDark()" id="tfab">🌙</button>
         </div>
     </header>
-
-    <div style="display:flex;flex:1;min-height:calc(100vh - 56px);">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <nav style="display:flex;flex-direction:column;gap:2px;">
-                <a href="/app-admin/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                    Knowledge Base
-                </a>
-                <a href="/app-admin/config/" class="nav-item active">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                    LLM Config
-                </a>
-                <a href="/app-admin/audit/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Audit Logs
-                </a>
-                <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
-                <a href="/model-control/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    Model Control
-                </a>
-                <a href="/chat/" class="nav-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Live Chat
-                </a>
-            </nav>
+    <div class="layout">
+        <aside class="sb">
+            <div class="sb-lbl">Knowledge</div>
+            <a href="/app-admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Knowledge Base</a>
+            <a href="/app-admin/config/" class="sb-item active"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round"/></svg>LLM Config</a>
+            <a href="/app-admin/audit/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Audit Inspector</a>
+            <div class="sb-sep"></div>
+            <div class="sb-lbl">System</div>
+            <a href="/model-control/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Model Control</a>
+            <a href="/admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Django Admin</a>
         </aside>
-
-        <!-- Main -->
-        <main style="flex:1;padding:28px;overflow-y:auto;">
-            <div style="max-width:640px;margin:0 auto;">
-                <div style="margin-bottom:24px;">
-                    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin:0 0 4px;">LLM & RAG Configurator</h1>
-                    <p style="font-size:13px;color:var(--tx2);margin:0;">Changes are applied instantly without restarting the server.</p>
+        <main>
+            <div class="inner">
+                <div class="page-head">
+                    <h1>LLM &amp; RAG Config</h1>
+                    <p>Changes apply to all subsequent queries without restarting the server.</p>
                 </div>
-
-                <form method="post" id="config-form" style="display:flex;flex-direction:column;gap:16px;">
+                <form method="post" id="cfg-form" style="display:flex;flex-direction:column;gap:14px;">
                     {% csrf_token %}
-
-                    <!-- System Prompt -->
                     <div class="card">
-                        <div class="section-title">System Prompt</div>
-                        <p style="font-size:11px;color:var(--tx3);margin:0 0 10px;">The core instruction sent to the LLM before every query.</p>
-                        <textarea name="system_prompt" rows="5" class="inp">{{ config.system_prompt }}</textarea>
+                        <div class="card-title">System Prompt</div>
+                        <div class="card-sub">Core instruction sent to the model before every query.</div>
+                        <textarea name="system_prompt" rows="5" class="field-input">{{ config.system_prompt }}</textarea>
                     </div>
-
-                    <!-- Temperature -->
                     <div class="card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div class="slider-row">
                             <div>
-                                <div class="section-title" style="margin-bottom:2px;">Temperature</div>
-                                <p style="font-size:11px;color:var(--tx3);margin:0;">Lower = more deterministic. Clinical use: 0.1–0.3.</p>
+                                <div class="card-title" style="margin-bottom:2px;">Temperature</div>
+                                <div class="card-sub" style="margin:0;">Lower = more deterministic. Clinical recommended: 0.1–0.3</div>
                             </div>
-                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="temp-val">{{ config.temperature }}</span>
+                            <span class="slider-val" id="temp-val">{{ config.temperature }}</span>
                         </div>
-                        <input type="range" name="temperature" min="0.0" max="1.0" step="0.05" value="{{ config.temperature }}"
-                            oninput="document.getElementById('temp-val').textContent = parseFloat(this.value).toFixed(2)">
-                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Deterministic</span><span>Creative</span></div>
+                        <input type="range" name="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}"
+                            oninput="document.getElementById('temp-val').textContent=parseFloat(this.value).toFixed(2)">
+                        <div class="slider-labels"><span>Deterministic (0)</span><span>Creative (1)</span></div>
                     </div>
-
-                    <!-- Top-K -->
                     <div class="card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div class="slider-row">
                             <div>
-                                <div class="section-title" style="margin-bottom:2px;">Top-K Context Chunks</div>
-                                <p style="font-size:11px;color:var(--tx3);margin:0;">Number of chunks retrieved from ChromaDB per query.</p>
+                                <div class="card-title" style="margin-bottom:2px;">Top-K Context Chunks</div>
+                                <div class="card-sub" style="margin:0;">Chunks retrieved from ChromaDB per query</div>
                             </div>
-                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="topk-val">{{ config.top_k_retrieval }}</span>
+                            <span class="slider-val" id="topk-val">{{ config.top_k_retrieval }}</span>
                         </div>
                         <input type="range" name="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}"
-                            oninput="document.getElementById('topk-val').textContent = this.value">
-                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Fast (1)</span><span>Comprehensive (10)</span></div>
+                            oninput="document.getElementById('topk-val').textContent=this.value">
+                        <div class="slider-labels"><span>Fast (1)</span><span>Comprehensive (10)</span></div>
                     </div>
-
-                    <!-- Similarity Threshold -->
                     <div class="card">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div class="slider-row">
                             <div>
-                                <div class="section-title" style="margin-bottom:2px;">Similarity Threshold</div>
-                                <p style="font-size:11px;color:var(--tx3);margin:0;">Chunks below this score are flagged as low-confidence.</p>
+                                <div class="card-title" style="margin-bottom:2px;">Similarity Threshold</div>
+                                <div class="card-sub" style="margin:0;">Chunks below this score are flagged as low-confidence</div>
                             </div>
-                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="thresh-val">{{ config.similarity_threshold }}</span>
+                            <span class="slider-val" id="thresh-val">{{ config.similarity_threshold }}</span>
                         </div>
-                        <input type="range" name="similarity_threshold" min="0.0" max="1.0" step="0.05" value="{{ config.similarity_threshold }}"
-                            oninput="document.getElementById('thresh-val').textContent = parseFloat(this.value).toFixed(2)">
-                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Lenient (accept all)</span><span>Strict</span></div>
+                        <input type="range" name="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}"
+                            oninput="document.getElementById('thresh-val').textContent=parseFloat(this.value).toFixed(2)">
+                        <div class="slider-labels"><span>Lenient (0)</span><span>Strict (1)</span></div>
                     </div>
-
-                    <button type="submit" class="btn-p">Save Configuration</button>
+                    <button type="submit" class="btn-filled">Save Configuration</button>
                 </form>
             </div>
         </main>
     </div>
-
     <script>
-    const html = document.documentElement;
-    const lbl = document.getElementById('theme-lbl');
-    html.className = localStorage.getItem('theme') || 'light';
-    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
-    function toggleTheme() {
-        const n = html.className === 'dark' ? 'light' : 'dark';
-        html.className = n; localStorage.setItem('theme', n);
-        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
-    }
+    const root=document.documentElement,tfab=document.getElementById('tfab');
+    if(localStorage.getItem('ma-dark')==='1'){root.setAttribute('data-dark','');tfab.textContent='☀️';}
+    function toggleDark(){if(root.hasAttribute('data-dark')){root.removeAttribute('data-dark');localStorage.setItem('ma-dark','0');tfab.textContent='🌙';}else{root.setAttribute('data-dark','');localStorage.setItem('ma-dark','1');tfab.textContent='☀️';}}
+    function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+    document.getElementById('cfg-form').addEventListener('submit',async e=>{
+        e.preventDefault();
+        const fd=new FormData(e.target), params=new URLSearchParams(fd);
+        const r=await fetch('/app-admin/config/',{method:'POST',headers:{'X-CSRFToken':params.get('csrfmiddlewaretoken'),'Content-Type':'application/x-www-form-urlencoded'},body:params});
+        if(r.ok||r.redirected) toast('✓ Configuration saved');
+        else toast('✗ Save failed');
+    });
     </script>
 </body>
 </html>

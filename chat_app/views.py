@@ -166,7 +166,8 @@ def _event_generator(user_input: str, conversation: Conversation, user_msg: Mess
         top_k, temperature, threshold = 3, 0.2, 0.65
         system_prompt = (
             "You are a clinical-grade medical AI assistant. "
-            "Answer using only the provided context."
+            "Use the provided context to ground your answer if available. "
+            "If no context is provided, rely on your extensive medical training to provide an accurate, empathetic, and safe response."
         )
 
     # --- Hybrid Retrieval ---

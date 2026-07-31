@@ -64,16 +64,10 @@ def pre_guardrail(query: str) -> tuple[bool, str]:
 def low_context_fallback(low_confidence: bool, chunks: list) -> tuple[bool, str]:
     """
     Determine if we have enough context to answer safely.
-
-    Returns:
-        (should_fallback: bool, fallback_message: str)
+    For a Gemini/Claude-tier experience, we don't hard block. We let the fine-tuned
+    medical model use its parametric knowledge if the RAG context is empty.
+    The UI will still indicate if retrieved chunks are low confidence.
     """
-    if not chunks:
-        return True, LOW_CONTEXT_WARNING
-
-    if low_confidence and all(c.get("low_confidence", False) for c in chunks):
-        return True, LOW_CONTEXT_WARNING
-
     return False, ""
 
 

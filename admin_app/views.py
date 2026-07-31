@@ -1,8 +1,10 @@
 import json
 import logging
+import os
 import threading
 
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -15,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 try:
     from rag_engine.indexer import index_document
-
     INDEXER_AVAILABLE = True
 except ImportError:
     INDEXER_AVAILABLE = False
@@ -26,46 +27,59 @@ except ImportError:
 # ---------------------------------------------------------------------------
 
 
-@staff_member_required
+@login_required
 def admin_dashboard(request):
     if request.method == "POST":
         uploaded_file = request.FILES.get("document")
-        if uploaded_file:
-            doc = Document.objects.create(title=uploaded_file.name, file=uploaded_file)
-
-            if INDEXER_AVAILABLE:
-
-                def run_indexer(doc_id):
-                    from .models import Document
-
-                    doc = Document.objects.get(id=doc_id)
-                    doc.status = "indexing"
-                    doc.save(update_fields=["status"])
-                    try:
-                        chunk_count = index_document(doc.file.path, doc_title=doc.title)
-                        doc.status = "completed"
-                        doc.chunk_count = chunk_count
-                        doc.save(update_fields=["status", "chunk_count"])
-                        logger.info("Indexed '%s' → %d chunks", doc.title, chunk_count)
-                    except Exception as e:
-                        doc.status = "failed"
-                        doc.error_message = str(e)
-                        doc.save(update_fields=["status", "error_message"])
-                        logger.error("Indexing failed for '%s': %s", doc.title, e)
-
-                threading.Thread(target=run_indexer, args=(doc.id,), daemon=True).start()
-            else:
-                doc.status = "failed"
-                doc.error_message = "Indexer not available."
-                doc.save()
-
+        if not uploaded_file:
+            messages.error(request, "No file selected. Please choose a PDF or TXT file.")
             return redirect("admin_dashboard")
+
+        # Validate file type
+        fname = uploaded_file.name.lower()
+        if not (fname.endswith(".pdf") or fname.endswith(".txt")):
+            messages.error(request, "Invalid file type. Only PDF and TXT files are accepted.")
+            return redirect("admin_dashboard")
+
+        # Ensure media directory exists
+        from django.conf import settings
+        upload_dir = os.path.join(settings.MEDIA_ROOT, "medical_docs")
+        os.makedirs(upload_dir, exist_ok=True)
+
+        doc = Document.objects.create(title=uploaded_file.name, file=uploaded_file)
+        messages.success(request, f"'{uploaded_file.name}' uploaded successfully. Indexing started...")
+
+        if INDEXER_AVAILABLE:
+            def run_indexer(doc_id):
+                from .models import Document
+                doc = Document.objects.get(id=doc_id)
+                doc.status = "indexing"
+                doc.save(update_fields=["status"])
+                try:
+                    chunk_count = index_document(doc.file.path, doc_title=doc.title)
+                    doc.status = "completed"
+                    doc.chunk_count = chunk_count
+                    doc.save(update_fields=["status", "chunk_count"])
+                    logger.info("Indexed '%s' → %d chunks", doc.title, chunk_count)
+                except Exception as e:
+                    doc.status = "failed"
+                    doc.error_message = str(e)
+                    doc.save(update_fields=["status", "error_message"])
+                    logger.error("Indexing failed for '%s': %s", doc.title, e)
+
+            threading.Thread(target=run_indexer, args=(doc.id,), daemon=True).start()
+        else:
+            doc.status = "failed"
+            doc.error_message = "Indexer not available."
+            doc.save()
+
+        return redirect("admin_dashboard")
 
     documents = Document.objects.all().order_by("-uploaded_at")
     return render(request, "admin/dashboard.html", {"documents": documents})
 
 
-@staff_member_required
+@login_required
 @require_POST
 def delete_document(request, doc_id):
     """Remove a document record (does not purge from ChromaDB — see note)."""
@@ -75,7 +89,7 @@ def delete_document(request, doc_id):
     return redirect("admin_dashboard")
 
 
-@staff_member_required
+@login_required
 def document_status(request, doc_id):
     """AJAX polling endpoint for live status updates."""
     doc = get_object_or_404(Document, id=doc_id)
@@ -93,7 +107,7 @@ def document_status(request, doc_id):
 # ---------------------------------------------------------------------------
 
 
-@staff_member_required
+@login_required
 def prompt_config(request):
     config = SystemConfig.get_active()
 
@@ -115,7 +129,7 @@ def prompt_config(request):
 # ---------------------------------------------------------------------------
 
 
-@staff_member_required
+@login_required
 def audit_logs(request):
     # Filter: flagged = messages with negative feedback OR low-confidence context
     filter_type = request.GET.get("filter", "all")

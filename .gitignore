@@ -50,3 +50,6 @@ evaluation/eval_results.json
 
 # Byte-compiled / optimized / DLL files
 *.so
+media/medical_docs/*.pdf
+media/medical_docs/*.txt
+!media/medical_docs/.gitkeep

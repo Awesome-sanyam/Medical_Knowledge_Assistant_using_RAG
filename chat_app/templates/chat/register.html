@@ -1,170 +1,179 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account — MedAssist AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
-        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{background:var(--bg);color:var(--tx);transition:background .3s,color .3s;min-height:100vh;overflow:hidden;}
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
-        .dark .toggle::after{transform:translateX(18px);}
-        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;transition:border .2s,box-shadow .2s;}
-        .inp:focus{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.05);}
-        .dark .inp:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
-        .inp::placeholder{color:var(--tx3);}
-        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-.01em;}
-        .btn:hover{opacity:.88;}
-        .btn:active{transform:scale(0.98);}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        .fade-up{animation:fadeUp .6s ease-out both;}
-        .fade-up-2{animation:fadeUp .6s ease-out .15s both;}
-        .fade-up-3{animation:fadeUp .6s ease-out .3s both;}
-        .grid-bg{
-            background-image:linear-gradient(var(--bd) 1px, transparent 1px),linear-gradient(90deg, var(--bd) 1px, transparent 1px);
-            background-size:60px 60px;opacity:0.3;
+        :root {
+            --bg: #ffffff; --surface: #f7f7f8; --surface2: #ededee;
+            --border: #e2e2e5; --border2: #d0d0d4;
+            --text: #0f0f10; --text2: #5c5c6e; --text3: #9898a8;
+            --accent: #6c47ff; --accent-light: #ede9ff; --accent-dark: #5535e0;
+            --green: #16a34a; --green-bg: #dcfce7;
+            --red: #dc2626; --red-bg: #fee2e2;
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
         }
-        .pattern-bg{
-            background-image:radial-gradient(circle at 20% 50%, rgba(0,0,0,0.03) 0%, transparent 50%),radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%);
+        [data-theme="dark"] {
+            --bg: #0c0c0e; --surface: #161618; --surface2: #212126;
+            --border: #2a2a30; --border2: #36363e;
+            --text: #f2f2f5; --text2: #9898b0; --text3: #58586e;
+            --accent: #7c5cff; --accent-light: #2a2050; --accent-dark: #9b7dff;
+            --green: #4ade80; --green-bg: #052e16;
+            --red: #f87171; --red-bg: #450a0a;
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.2);
         }
-        .dark .pattern-bg{
-            background-image:radial-gradient(circle at 20% 50%, rgba(255,255,255,0.02) 0%, transparent 50%),radial-gradient(circle at 80% 20%, rgba(255,255,255,0.015) 0%, transparent 50%);
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-family: 'Inter', system-ui, sans-serif; }
+        body {
+            background: var(--bg); color: var(--text);
+            min-height: 100svh; display: flex; align-items: center; justify-content: center;
+            transition: background .2s, color .2s; padding: 24px;
         }
+        .theme-btn {
+            position: fixed; top: 20px; right: 20px; width: 36px; height: 36px; border-radius: 50%;
+            background: var(--surface); border: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all .2s; color: var(--text2); font-size: 16px; z-index: 99;
+        }
+        .auth-wrap {
+            width: 100%; max-width: 860px; display: grid; grid-template-columns: 1fr 1fr;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-lg); min-height: 600px;
+        }
+        .auth-left {
+            background: linear-gradient(145deg, #0f0f10 0%, #1a1428 50%, #0f0f10 100%);
+            padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;
+        }
+        .auth-left::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(108,71,255,.25) 0%, transparent 60%);
+        }
+        .auth-left-inner { position: relative; z-index: 1; }
+        .auth-logo {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: linear-gradient(135deg, #6c47ff, #9b7dff);
+            display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+            box-shadow: 0 8px 24px rgba(108,71,255,.4);
+        }
+        .auth-logo svg { color: white; }
+        .auth-left h1 { font-size: 24px; font-weight: 800; letter-spacing: -.04em; color: #fff; margin-bottom: 12px; }
+        .check-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+        .check-icon {
+            width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+            background: rgba(108,71,255,.3); border: 1px solid rgba(108,71,255,.5);
+            display: flex; align-items: center; justify-content: center; margin-top: 1px;
+            font-size: 11px; color: #9b7dff;
+        }
+        .check-text { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.5; }
+        .auth-right { padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .auth-right h2 { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+        .auth-right .subtitle { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+        .field input {
+            width: 100%; background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); border-radius: 10px; padding: 11px 14px; font-size: 14px;
+            font-family: inherit; outline: none; transition: border-color .2s, box-shadow .2s;
+        }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,71,255,.12); }
+        .field input::placeholder { color: var(--text3); }
+        .pw-match { font-size: 11px; margin-top: 5px; display: none; }
+        .pw-match.ok { color: var(--green); } .pw-match.err { color: var(--red); }
+        .btn-primary {
+            width: 100%; padding: 12px; border-radius: 10px;
+            background: linear-gradient(135deg, #6c47ff, #5535e0);
+            color: white; font-size: 14px; font-weight: 600;
+            border: none; cursor: pointer; font-family: inherit;
+            transition: all .2s; box-shadow: 0 4px 12px rgba(108,71,255,.3); margin-top: 8px;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,71,255,.4); }
+        .auth-footer { margin-top: 20px; text-align: center; font-size: 13px; color: var(--text3); }
+        .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+        .error-box {
+            background: var(--red-bg); border: 1px solid rgba(220,38,38,.3);
+            border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--red); margin-bottom: 18px;
+        }
+        @media (max-width: 640px) { .auth-wrap { grid-template-columns: 1fr; } .auth-left { display: none; } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-right { animation: fadeUp .4s ease-out; }
     </style>
 </head>
 <body>
-    <!-- Theme toggle -->
-    <div style="position:fixed;top:20px;right:24px;z-index:100;display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
-        <div class="toggle" onclick="toggleTheme()"></div>
-    </div>
-
-    <div style="display:flex;height:100vh;">
-        <!-- Left branding panel -->
-        <div class="pattern-bg" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;border-right:1px solid var(--bd);">
-            <div class="grid-bg" style="position:absolute;inset:0;"></div>
-            <div style="position:relative;z-index:1;text-align:center;padding:40px;" class="fade-up">
-                <div style="width:72px;height:72px;background:var(--tx);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
-                    <svg width="32" height="32" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                        <circle cx="12" cy="12" r="10" stroke-linecap="round"/>
-                    </svg>
+    <button class="theme-btn" onclick="toggleTheme()"><span id="theme-icon">🌙</span></button>
+    <div class="auth-wrap">
+        <div class="auth-left">
+            <div class="auth-left-inner">
+                <div class="auth-logo">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/><circle cx="12" cy="12" r="9" stroke-linecap="round"/></svg>
                 </div>
-                <h1 style="font-size:32px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px;">MedAssist AI</h1>
-                <p style="font-size:14px;color:var(--tx2);max-width:320px;line-height:1.6;">
-                    Join thousands of medical professionals using AI-powered clinical knowledge assistance.
-                </p>
-                <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;text-align:left;max-width:280px;margin-left:auto;margin-right:auto;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
-                        <span style="font-size:13px;color:var(--tx2);">Evidence-based medical answers</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
-                        <span style="font-size:13px;color:var(--tx2);">Source citations with confidence scores</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
-                        <span style="font-size:13px;color:var(--tx2);">100% local — your data never leaves your machine</span>
-                    </div>
+                <h1>Join MedAssist AI</h1>
+                <div style="margin-top: 20px;">
+                    <div class="check-item"><div class="check-icon">✓</div><div class="check-text">Evidence-based answers from peer-reviewed medical literature</div></div>
+                    <div class="check-item"><div class="check-icon">✓</div><div class="check-text">Confidence scores and source citations on every response</div></div>
+                    <div class="check-item"><div class="check-icon">✓</div><div class="check-text">100% local inference — your queries never leave your machine</div></div>
+                    <div class="check-item"><div class="check-icon">✓</div><div class="check-text">Clinical guardrails for patient safety</div></div>
                 </div>
             </div>
         </div>
+        <div class="auth-right">
+            <h2>Create your account</h2>
+            <p class="subtitle">Start your clinical AI consultations today.</p>
 
-        <!-- Right register form -->
-        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px;overflow-y:auto;">
-            <div style="width:100%;max-width:380px;">
-                <div class="fade-up-2">
-                    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Create your account</h2>
-                    <p style="font-size:14px;color:var(--tx2);margin-bottom:28px;">Start your clinical AI consultations today.</p>
-                </div>
-
-                {% if errors %}
-                <div class="fade-up-2" style="background:var(--bg3);border:1px solid #f87171;border-radius:12px;padding:12px 16px;font-size:13px;color:#ef4444;margin-bottom:20px;">
-                    {% for e in errors %}
-                    <div style="display:flex;align-items:center;gap:6px;{% if not forloop.last %}margin-bottom:4px;{% endif %}">
-                        <span>•</span> {{ e }}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-
-                <form method="post" class="fade-up-3" id="reg-form">
-                    {% csrf_token %}
-                    <div style="margin-bottom:14px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Full Name</label>
-                        <input class="inp" name="full_name" type="text" placeholder="Dr. Jane Smith" value="{{ full_name|default:'' }}" autocomplete="name">
-                    </div>
-                    <div style="margin-bottom:14px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Email</label>
-                        <input class="inp" name="email" type="email" placeholder="jane@hospital.org" value="{{ email|default:'' }}" autocomplete="email">
-                    </div>
-                    <div style="margin-bottom:14px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Username</label>
-                        <input class="inp" name="username" type="text" placeholder="Choose a username" value="{{ username|default:'' }}" autocomplete="username" required>
-                    </div>
-                    <div style="margin-bottom:14px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Password</label>
-                        <input class="inp" name="password" type="password" placeholder="Minimum 8 characters" autocomplete="new-password" required id="pw1">
-                    </div>
-                    <div style="margin-bottom:24px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Confirm Password</label>
-                        <input class="inp" name="confirm_password" type="password" placeholder="Re-enter password" autocomplete="new-password" required id="pw2">
-                        <p id="pw-match" style="font-size:11px;margin-top:5px;display:none;"></p>
-                    </div>
-                    <button class="btn" type="submit">Create Account →</button>
-                </form>
-
-                <div style="margin-top:24px;text-align:center;" class="fade-up-3">
-                    <p style="font-size:13px;color:var(--tx3);">
-                        Already have an account?
-                        <a href="{% url 'user_login' %}" style="color:var(--tx);font-weight:600;text-decoration:none;border-bottom:1px solid var(--bd);padding-bottom:1px;">Sign in</a>
-                    </p>
-                </div>
-
-                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);text-align:center;" class="fade-up-3">
-                    <p style="font-size:11px;color:var(--tx3);line-height:1.5;">
-                        🔒 Admin access? Contact your system administrator.
-                    </p>
-                </div>
+            {% if errors %}
+            <div class="error-box">
+                {% for e in errors %}<div>• {{ e }}</div>{% endfor %}
             </div>
+            {% endif %}
+
+            <form method="post" id="reg-form">
+                {% csrf_token %}
+                <div class="field">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" placeholder="Dr. Jane Smith" value="{{ full_name|default:'' }}">
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="jane@hospital.org" value="{{ email|default:'' }}">
+                </div>
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Choose a username" value="{{ username|default:'' }}" required>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" id="pw1" placeholder="Minimum 8 characters" required>
+                </div>
+                <div class="field">
+                    <label>Confirm Password</label>
+                    <input type="password" name="confirm_password" id="pw2" placeholder="Re-enter password" required>
+                    <div class="pw-match" id="pw-msg"></div>
+                </div>
+                <button class="btn-primary" type="submit">Create Account →</button>
+            </form>
+            <p class="auth-footer">Already have an account? <a href="{% url 'user_login' %}">Sign in</a></p>
         </div>
     </div>
-
     <script>
-    const html = document.documentElement;
-    const lbl = document.getElementById('theme-lbl');
-    html.className = localStorage.getItem('theme') || 'light';
-    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    const root = document.documentElement;
+    const icon = document.getElementById('theme-icon');
+    const stored = localStorage.getItem('ma-theme') || 'light';
+    root.setAttribute('data-theme', stored);
+    icon.textContent = stored === 'dark' ? '☀️' : '🌙';
     function toggleTheme() {
-        const n = html.className === 'dark' ? 'light' : 'dark';
-        html.className = n; localStorage.setItem('theme', n);
-        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('ma-theme', next);
+        icon.textContent = next === 'dark' ? '☀️' : '🌙';
     }
-
-    // Client-side password match check
-    const pw1 = document.getElementById('pw1');
-    const pw2 = document.getElementById('pw2');
-    const pwMsg = document.getElementById('pw-match');
+    const pw1 = document.getElementById('pw1'), pw2 = document.getElementById('pw2'), msg = document.getElementById('pw-msg');
     pw2.addEventListener('input', () => {
-        if (pw2.value.length > 0) {
-            pwMsg.style.display = 'block';
-            if (pw1.value === pw2.value) {
-                pwMsg.textContent = '✓ Passwords match';
-                pwMsg.style.color = '#10b981';
-            } else {
-                pwMsg.textContent = '✗ Passwords do not match';
-                pwMsg.style.color = '#ef4444';
-            }
-        } else {
-            pwMsg.style.display = 'none';
-        }
+        if (!pw2.value) { msg.style.display = 'none'; return; }
+        msg.style.display = 'block';
+        if (pw1.value === pw2.value) { msg.className = 'pw-match ok'; msg.textContent = '✓ Passwords match'; }
+        else { msg.className = 'pw-match err'; msg.textContent = '✗ Passwords do not match'; }
     });
     </script>
 </body>

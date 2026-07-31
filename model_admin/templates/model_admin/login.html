@@ -1,96 +1,138 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Control Admin — Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Model Control — Secure Admin Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
-        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{background:var(--bg);color:var(--tx);display:flex;align-items:center;justify-content:center;min-height:100vh;transition:background .25s,color .25s;position:relative;overflow:hidden;}
-        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;transition:border .2s,box-shadow .2s;}
-        .inp:focus{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.05);}
-        .dark .inp:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
-        .inp::placeholder{color:var(--tx3);}
-        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;}
-        .btn:hover{opacity:.88;}
-        .btn:active{transform:scale(0.98);}
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
-        .dark .toggle::after{transform:translateX(18px);}
-        label{display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:7px;}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-        .card-anim{animation:fadeUp .5s ease-out both;}
-
-        /* Background grid pattern */
-        .bg-grid{position:fixed;inset:0;z-index:0;
-            background-image:linear-gradient(var(--bd) 1px, transparent 1px),linear-gradient(90deg, var(--bd) 1px, transparent 1px);
-            background-size:60px 60px;opacity:0.25;
+        :root {
+            --bg: #f4f4f6; --surface: #ffffff; --border: #e2e2e5;
+            --text: #0f0f10; --text2: #5c5c6e; --text3: #9898a8;
+            --accent: #6c47ff; --red: #dc2626; --red-bg: #fee2e2;
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.1);
         }
+        [data-theme="dark"] {
+            --bg: #0c0c0e; --surface: #161618; --border: #2a2a30;
+            --text: #f2f2f5; --text2: #9898b0; --text3: #52526a;
+            --accent: #7c5cff; --red: #f87171; --red-bg: #450a0a;
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.5);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+            min-height: 100svh; display: flex; align-items: center; justify-content: center;
+            transition: background .2s, color .2s; padding: 24px;
+        }
+        .theme-btn {
+            position: fixed; top: 20px; right: 20px; width: 36px; height: 36px;
+            border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 99; font-size: 16px;
+        }
+        .card {
+            width: 100%; max-width: 380px; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 20px; padding: 40px 36px;
+            box-shadow: var(--shadow-lg);
+            animation: fadeUp .4s ease-out;
+        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .logo-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+        .logo-icon {
+            width: 44px; height: 44px; border-radius: 13px; flex-shrink: 0;
+            background: linear-gradient(135deg, #0f0f10, #2a2a35);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,.2);
+        }
+        .logo-icon svg { color: white; }
+        .logo-title { font-size: 18px; font-weight: 800; letter-spacing: -.03em; }
+        .logo-sub { font-size: 11px; color: var(--text3); margin-top: 1px; }
+        .error-box {
+            background: var(--red-bg); border: 1px solid rgba(220,38,38,.25);
+            border-radius: 10px; padding: 10px 14px; font-size: 13px;
+            color: var(--red); margin-bottom: 18px; display: flex; align-items: center; gap: 7px;
+        }
+        .field { margin-bottom: 16px; }
+        .field label { display: block; font-size: 11px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 7px; }
+        .field input {
+            width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+            border-radius: 10px; padding: 11px 14px; font-size: 14px; font-family: inherit;
+            outline: none; transition: border-color .2s, box-shadow .2s;
+        }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,71,255,.12); }
+        .field input::placeholder { color: var(--text3); }
+        .btn {
+            width: 100%; padding: 12px; border-radius: 10px; margin-top: 8px;
+            background: linear-gradient(135deg, #0f0f10 0%, #2a2a35 100%);
+            color: white; font-size: 14px; font-weight: 600; border: none;
+            cursor: pointer; font-family: inherit; transition: all .2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+        }
+        [data-theme="dark"] .btn { background: linear-gradient(135deg, #6c47ff, #5535e0); box-shadow: 0 4px 12px rgba(108,71,255,.3); }
+        .btn:hover { opacity: .88; transform: translateY(-1px); }
+        .footer { margin-top: 28px; text-align: center; }
+        .security-note {
+            background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+            padding: 10px 14px; font-size: 11px; color: var(--text3); line-height: 1.5;
+        }
+        .back-link {
+            display: inline-block; margin-top: 16px; font-size: 12px;
+            color: var(--text3); text-decoration: none; transition: color .15s;
+        }
+        .back-link:hover { color: var(--accent); }
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-
-    <div style="position:fixed;top:20px;right:24px;z-index:100;display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
-        <div class="toggle" onclick="toggleTheme()"></div>
-    </div>
-
-    <div class="card-anim" style="position:relative;z-index:1;background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:40px;width:100%;max-width:400px;box-shadow:0 12px 48px rgba(0,0,0,0.08);">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
-            <div style="width:44px;height:44px;background:var(--tx);border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-                <svg width="20" height="20" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="2">
+    <button class="theme-btn" onclick="toggleTheme()"><span id="ti">🌙</span></button>
+    <div class="card">
+        <div class="logo-wrap">
+            <div class="logo-icon">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                 </svg>
             </div>
             <div>
-                <div style="font-size:20px;font-weight:900;letter-spacing:-.03em;">Model Control</div>
-                <div style="font-size:12px;color:var(--tx3);">Administrator Access Only</div>
+                <div class="logo-title">Model Control</div>
+                <div class="logo-sub">Administrator Access · MedAssist AI</div>
             </div>
         </div>
 
         {% if error %}
-        <div style="background:var(--bg3);border:1px solid #f87171;border-radius:12px;padding:12px 16px;font-size:13px;color:#ef4444;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+        <div class="error-box">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>
             {{ error }}
         </div>
         {% endif %}
 
         <form method="post">
             {% csrf_token %}
-            <div style="margin-bottom:18px;">
-                <label for="username">Username</label>
-                <input class="inp" id="username" name="username" type="text" placeholder="Admin username" autocomplete="username">
+            <div class="field">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Admin username" autocomplete="username">
             </div>
-            <div style="margin-bottom:28px;">
-                <label for="password">Password</label>
-                <input class="inp" id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password">
+            <div class="field">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••••••" autocomplete="current-password">
             </div>
             <button class="btn" type="submit">Sign In to Model Control →</button>
         </form>
 
-        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--bd);text-align:center;">
-            <p style="font-size:11px;color:var(--tx3);line-height:1.5;">
-                🔒 Admin accounts are created by the Django administrator.<br>
-                Access is restricted to authorized personnel only.
-            </p>
-            <a href="/chat/" style="font-size:12px;color:var(--tx2);text-decoration:none;display:inline-block;margin-top:12px;padding:6px 12px;border:1px solid var(--bd);border-radius:8px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">← Back to Chat Interface</a>
+        <div class="footer">
+            <div class="security-note">
+                🔒 Accounts are created exclusively by the Django Administrator.<br>
+                Unauthorized access attempts are logged.
+            </div>
+            <a href="/chat/" class="back-link">← Back to Chat Interface</a>
         </div>
     </div>
-
     <script>
-    const html = document.documentElement;
-    const lbl = document.getElementById('theme-lbl');
-    html.className = localStorage.getItem('theme') || 'light';
-    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    const root = document.documentElement, ti = document.getElementById('ti');
+    const s = localStorage.getItem('ma-theme') || 'light';
+    root.setAttribute('data-theme', s); ti.textContent = s === 'dark' ? '☀️' : '🌙';
     function toggleTheme() {
-        const n = html.className === 'dark' ? 'light' : 'dark';
-        html.className = n; localStorage.setItem('theme', n);
-        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+        const n = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', n); localStorage.setItem('ma-theme', n);
+        ti.textContent = n === 'dark' ? '☀️' : '🌙';
     }
     </script>
 </body>

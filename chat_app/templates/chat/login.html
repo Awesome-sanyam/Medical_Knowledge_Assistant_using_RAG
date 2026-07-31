@@ -1,138 +1,220 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In — MedAssist AI</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap" rel="stylesheet">
     <style>
-        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
-        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
-        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
-        body{background:var(--bg);color:var(--tx);transition:background .3s,color .3s;min-height:100vh;overflow:hidden;}
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
-        .dark .toggle::after{transform:translateX(18px);}
-        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;transition:border .2s,box-shadow .2s;}
-        .inp:focus{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.05);}
-        .dark .inp:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
-        .inp::placeholder{color:var(--tx3);}
-        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-.01em;}
-        .btn:hover{opacity:.88;}
-        .btn:active{transform:scale(0.98);}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
-        .fade-up{animation:fadeUp .6s ease-out both;}
-        .fade-up-2{animation:fadeUp .6s ease-out .15s both;}
-        .fade-up-3{animation:fadeUp .6s ease-out .3s both;}
+        :root {
+            --bg: #ffffff; --surface: #f7f7f8; --surface2: #ededee;
+            --border: #e2e2e5; --border2: #d0d0d4;
+            --text: #0f0f10; --text2: #5c5c6e; --text3: #9898a8;
+            --accent: #6c47ff; --accent-light: #ede9ff; --accent-dark: #5535e0;
+            --green: #16a34a; --green-bg: #dcfce7;
+            --red: #dc2626; --red-bg: #fee2e2;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.08), 0 2px 8px rgba(0,0,0,.04);
+        }
+        [data-theme="dark"] {
+            --bg: #0c0c0e; --surface: #161618; --surface2: #212126;
+            --border: #2a2a30; --border2: #36363e;
+            --text: #f2f2f5; --text2: #9898b0; --text3: #58586e;
+            --accent: #7c5cff; --accent-light: #2a2050; --accent-dark: #9b7dff;
+            --green: #4ade80; --green-bg: #052e16;
+            --red: #f87171; --red-bg: #450a0a;
+            --shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.2);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-family: 'Inter', system-ui, sans-serif; font-size: 15px; }
+        body {
+            background: var(--bg); color: var(--text);
+            min-height: 100svh; display: flex; align-items: center; justify-content: center;
+            transition: background .2s, color .2s; padding: 24px;
+        }
 
-        /* Left panel pattern */
-        .pattern-bg{
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(0,0,0,0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(0,0,0,0.03) 0%, transparent 50%);
+        /* ---- Theme toggle ---- */
+        .theme-btn {
+            position: fixed; top: 20px; right: 20px;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--surface); border: 1px solid var(--border);
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all .2s; color: var(--text2); font-size: 16px; z-index: 99;
         }
-        .dark .pattern-bg{
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.02) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.015) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(255,255,255,0.02) 0%, transparent 50%);
+        .theme-btn:hover { background: var(--surface2); color: var(--text); }
+
+        /* ---- Auth card ---- */
+        .auth-wrap {
+            width: 100%; max-width: 860px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-lg);
+            min-height: 540px;
         }
-        .grid-bg{
-            background-image:linear-gradient(var(--bd) 1px, transparent 1px),linear-gradient(90deg, var(--bd) 1px, transparent 1px);
-            background-size:60px 60px;
-            opacity:0.3;
+
+        /* ---- Left branding panel ---- */
+        .auth-left {
+            background: linear-gradient(145deg, #0f0f10 0%, #1a1428 50%, #0f0f10 100%);
+            padding: 48px 40px; display: flex; flex-direction: column; justify-content: center;
+            position: relative; overflow: hidden;
         }
+        .auth-left::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(108,71,255,.25) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 20%, rgba(108,71,255,.1) 0%, transparent 50%);
+        }
+        .auth-left-inner { position: relative; z-index: 1; }
+        .auth-logo {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: linear-gradient(135deg, #6c47ff, #9b7dff);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 28px; box-shadow: 0 8px 24px rgba(108,71,255,.4);
+        }
+        .auth-logo svg { color: white; }
+        .auth-left h1 {
+            font-size: 26px; font-weight: 800; letter-spacing: -.04em;
+            color: #fff; margin-bottom: 12px; line-height: 1.2;
+        }
+        .auth-left p { font-size: 14px; color: rgba(255,255,255,.55); line-height: 1.65; margin-bottom: 32px; }
+        .feature-pill {
+            display: inline-flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+            border-radius: 99px; padding: 6px 14px; font-size: 12px; color: rgba(255,255,255,.7);
+            margin-bottom: 8px;
+        }
+        .feature-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #4ade80; }
+        .features { display: flex; flex-direction: column; gap: 8px; }
+
+        /* ---- Right form panel ---- */
+        .auth-right { padding: 48px 40px; display: flex; flex-direction: column; justify-content: center; }
+        .auth-right h2 { font-size: 22px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+        .auth-right .subtitle { font-size: 14px; color: var(--text2); margin-bottom: 32px; }
+
+        .field { margin-bottom: 18px; }
+        .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 7px; }
+        .field input {
+            width: 100%; background: var(--bg); border: 1px solid var(--border);
+            color: var(--text); border-radius: 10px; padding: 11px 14px;
+            font-size: 14px; font-family: inherit; outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,71,255,.12); }
+        .field input::placeholder { color: var(--text3); }
+
+        .btn-primary {
+            width: 100%; padding: 12px; border-radius: 10px;
+            background: linear-gradient(135deg, #6c47ff, #5535e0);
+            color: white; font-size: 14px; font-weight: 600;
+            border: none; cursor: pointer; font-family: inherit;
+            transition: all .2s; box-shadow: 0 4px 12px rgba(108,71,255,.3);
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,71,255,.4); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .auth-footer { margin-top: 24px; text-align: center; font-size: 13px; color: var(--text3); }
+        .auth-footer a { color: var(--accent); text-decoration: none; font-weight: 500; }
+        .auth-footer a:hover { text-decoration: underline; }
+
+        .divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+        .admin-link-box {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 16px; text-align: center; font-size: 12px; color: var(--text3);
+        }
+        .admin-link-box a { color: var(--text2); text-decoration: none; font-weight: 500; }
+        .admin-link-box a:hover { color: var(--accent); }
+
+        .error-box {
+            background: var(--red-bg); border: 1px solid rgba(220,38,38,.3);
+            border-radius: 10px; padding: 12px 16px; font-size: 13px; color: var(--red);
+            margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+        }
+
+        @media (max-width: 640px) {
+            .auth-wrap { grid-template-columns: 1fr; }
+            .auth-left { display: none; }
+        }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .auth-right { animation: fadeUp .4s ease-out; }
     </style>
 </head>
 <body>
-    <!-- Theme toggle -->
-    <div style="position:fixed;top:20px;right:24px;z-index:100;display:flex;align-items:center;gap:8px;">
-        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
-        <div class="toggle" onclick="toggleTheme()"></div>
-    </div>
+    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">
+        <span id="theme-icon">🌙</span>
+    </button>
 
-    <div style="display:flex;height:100vh;">
-        <!-- Left branding panel -->
-        <div class="pattern-bg" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;border-right:1px solid var(--bd);">
-            <div class="grid-bg" style="position:absolute;inset:0;"></div>
-            <div style="position:relative;z-index:1;text-align:center;padding:40px;" class="fade-up">
-                <!-- Logo -->
-                <div style="width:72px;height:72px;background:var(--tx);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
-                    <svg width="32" height="32" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="1.5">
+    <div class="auth-wrap">
+        <!-- Left branding -->
+        <div class="auth-left">
+            <div class="auth-left-inner">
+                <div class="auth-logo">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                        <circle cx="12" cy="12" r="10" stroke-linecap="round"/>
+                        <circle cx="12" cy="12" r="9" stroke-linecap="round"/>
                     </svg>
                 </div>
-                <h1 style="font-size:32px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px;">MedAssist AI</h1>
-                <p style="font-size:14px;color:var(--tx2);max-width:320px;line-height:1.6;">
-                    Clinical-grade medical AI assistant powered by fine-tuned Llama 3.1 with RAG-augmented knowledge retrieval.
-                </p>
-                <div style="display:flex;gap:8px;margin-top:24px;justify-content:center;">
-                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">🏥 Clinical-Grade</span>
-                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">🔒 Privacy-First</span>
-                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">⚡ Local AI</span>
+                <h1>Your Clinical AI Partner</h1>
+                <p>Evidence-grounded medical intelligence powered by fine-tuned Llama 3.1 with hybrid RAG retrieval.</p>
+                <div class="features">
+                    <div class="feature-pill"><span class="dot"></span>100% Local — Data never leaves your machine</div>
+                    <div class="feature-pill"><span class="dot"></span>Fine-tuned on Clinical Literature</div>
+                    <div class="feature-pill"><span class="dot"></span>Source-cited, Disclaimer-protected</div>
                 </div>
             </div>
         </div>
 
-        <!-- Right login form -->
-        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px;">
-            <div style="width:100%;max-width:380px;">
-                <div class="fade-up-2">
-                    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Welcome back</h2>
-                    <p style="font-size:14px;color:var(--tx2);margin-bottom:32px;">Sign in to continue your medical consultations.</p>
-                </div>
+        <!-- Right form -->
+        <div class="auth-right">
+            <h2>Welcome back</h2>
+            <p class="subtitle">Sign in to access your medical consultations.</p>
 
-                {% if error %}
-                <div class="fade-up-2" style="background:var(--bg3);border:1px solid #f87171;border-radius:12px;padding:12px 16px;font-size:13px;color:#ef4444;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
-                    {{ error }}
-                </div>
-                {% endif %}
+            {% if error %}
+            <div class="error-box">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                {{ error }}
+            </div>
+            {% endif %}
 
-                <form method="post" class="fade-up-3">
-                    {% csrf_token %}
-                    <div style="margin-bottom:18px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:7px;">Username</label>
-                        <input class="inp" name="username" type="text" placeholder="Enter your username" autocomplete="username" required>
-                    </div>
-                    <div style="margin-bottom:28px;">
-                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:7px;">Password</label>
-                        <input class="inp" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
-                    </div>
-                    <button class="btn" type="submit">Sign In →</button>
-                </form>
-
-                <div style="margin-top:28px;text-align:center;" class="fade-up-3">
-                    <p style="font-size:13px;color:var(--tx3);">
-                        Don't have an account?
-                        <a href="{% url 'user_register' %}" style="color:var(--tx);font-weight:600;text-decoration:none;border-bottom:1px solid var(--bd);padding-bottom:1px;">Create one</a>
-                    </p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Enter your username" autocomplete="username" required>
                 </div>
-
-                <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bd);text-align:center;" class="fade-up-3">
-                    <p style="font-size:11px;color:var(--tx3);line-height:1.5;">
-                        🔒 Admin access is granted by the system administrator.<br>
-                        <a href="/model-control/login/" style="color:var(--tx3);text-decoration:underline;">Model Admin Login →</a>
-                    </p>
+                <div class="field" style="margin-bottom: 24px;">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
                 </div>
+                <button class="btn-primary" type="submit">Sign In →</button>
+            </form>
+
+            <p class="auth-footer" style="margin-top: 20px;">
+                New here? <a href="{% url 'user_register' %}">Create an account</a>
+            </p>
+
+            <hr class="divider">
+
+            <div class="admin-link-box">
+                🔒 Model Control Admin? <a href="/model-control/login/">Admin Login →</a>
             </div>
         </div>
     </div>
 
     <script>
-    const html = document.documentElement;
-    const lbl = document.getElementById('theme-lbl');
-    html.className = localStorage.getItem('theme') || 'light';
-    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    const root = document.documentElement;
+    const icon = document.getElementById('theme-icon');
+    const stored = localStorage.getItem('ma-theme') || 'light';
+    root.setAttribute('data-theme', stored);
+    icon.textContent = stored === 'dark' ? '☀️' : '🌙';
+
     function toggleTheme() {
-        const n = html.className === 'dark' ? 'light' : 'dark';
-        html.className = n; localStorage.setItem('theme', n);
-        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+        const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        localStorage.setItem('ma-theme', next);
+        icon.textContent = next === 'dark' ? '☀️' : '🌙';
     }
     </script>
 </body>

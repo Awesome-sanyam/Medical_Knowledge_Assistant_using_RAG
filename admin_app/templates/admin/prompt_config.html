@@ -1,102 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Configurator | MedAssist Admin</title>
+    <title>LLM Configurator — MedAssist Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>* { font-family: 'Inter', sans-serif; }
-    input[type=range] { accent-color: #6366f1; }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
+        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;}
+        body{background:var(--bg);color:var(--tx);margin:0;min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s;}
+        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
+        .hdr{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+        .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--bd);padding:16px 12px;flex-shrink:0;}
+        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;text-decoration:none;transition:all .15s;}
+        .nav-item:hover{background:var(--bg3);color:var(--tx);}
+        .nav-item.active{background:var(--tx);color:var(--bg);}
+        .card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;}
+        .btn-p{background:var(--tx);color:var(--bg);border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%;}
+        .btn-p:hover{opacity:.85;}
+        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:12px 14px;font-size:13px;outline:none;transition:border .2s;resize:vertical;}
+        .inp:focus{border-color:var(--tx3);}
+        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;}
+        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .dark .toggle::after{transform:translateX(18px);}
+        .section-title{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+        input[type=range]{accent-color:var(--tx);width:100%;}
+        #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);transform:translateX(120%);transition:transform .3s;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.12);}
+        #toast.show{transform:translateX(0);}
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-    <div class="flex min-h-screen">
-        <!-- Sidebar (same as dashboard) -->
-        <aside class="w-60 bg-slate-900 text-slate-300 flex flex-col py-6 px-4 fixed h-full z-10">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-                </div>
-                <span class="font-semibold text-white text-sm">MedAssist Admin</span>
+<body>
+    <div id="toast"></div>
+
+    <!-- Header -->
+    <header class="hdr">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:30px;height:30px;background:var(--tx);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" fill="none" stroke="var(--bg)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
             </div>
-            <nav class="space-y-1">
-                <a href="/app-admin/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;">MedAssist Admin</span>
+            <span style="font-size:11px;color:var(--tx3);padding:3px 8px;border:1px solid var(--bd);border-radius:6px;">LLM Config</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="/chat/" style="font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">Chat ↗</a>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
+                <div class="toggle" onclick="toggleTheme()"></div>
+            </div>
+        </div>
+    </header>
+
+    <div style="display:flex;flex:1;min-height:calc(100vh - 56px);">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav style="display:flex;flex-direction:column;gap:2px;">
+                <a href="/app-admin/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     Knowledge Base
                 </a>
-                <a href="/app-admin/config/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <a href="/app-admin/config/" class="nav-item active">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     LLM Config
                 </a>
-                <a href="/app-admin/audit/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <a href="/app-admin/audit/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     Audit Logs
                 </a>
-                <div class="border-t border-slate-700 my-3"></div>
-                <a href="/chat/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Chat Interface
+                <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
+                <a href="/model-control/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Model Control
+                </a>
+                <a href="/chat/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    Live Chat
                 </a>
             </nav>
         </aside>
 
-        <main class="ml-60 flex-1 p-8">
-            <div class="max-w-2xl">
-                <h2 class="text-2xl font-bold text-slate-900 mb-1">LLM & RAG Configurator</h2>
-                <p class="text-slate-500 text-sm mb-8">Changes are applied instantly without restarting the server.</p>
+        <!-- Main -->
+        <main style="flex:1;padding:28px;overflow-y:auto;">
+            <div style="max-width:640px;margin:0 auto;">
+                <div style="margin-bottom:24px;">
+                    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin:0 0 4px;">LLM & RAG Configurator</h1>
+                    <p style="font-size:13px;color:var(--tx2);margin:0;">Changes are applied instantly without restarting the server.</p>
+                </div>
 
-                {% if request.method == "GET" and request.GET.saved %}
-                <div class="bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 mb-6 text-sm font-medium">✅ Configuration saved successfully.</div>
-                {% endif %}
-
-                <form method="post" class="space-y-6">
+                <form method="post" id="config-form" style="display:flex;flex-direction:column;gap:16px;">
                     {% csrf_token %}
 
                     <!-- System Prompt -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">System Prompt</label>
-                        <p class="text-xs text-slate-400 mb-3">The core instruction sent to the LLM before every query.</p>
-                        <textarea name="system_prompt" rows="5"
-                            class="w-full border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 resize-y outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400">{{ config.system_prompt }}</textarea>
+                    <div class="card">
+                        <div class="section-title">System Prompt</div>
+                        <p style="font-size:11px;color:var(--tx3);margin:0 0 10px;">The core instruction sent to the LLM before every query.</p>
+                        <textarea name="system_prompt" rows="5" class="inp">{{ config.system_prompt }}</textarea>
                     </div>
 
                     <!-- Temperature -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Temperature: <span id="temp-val">{{ config.temperature }}</span></label>
-                        <p class="text-xs text-slate-400 mb-3">Lower = more deterministic. Higher = more creative. Clinical use: 0.1–0.3.</p>
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <div>
+                                <div class="section-title" style="margin-bottom:2px;">Temperature</div>
+                                <p style="font-size:11px;color:var(--tx3);margin:0;">Lower = more deterministic. Clinical use: 0.1–0.3.</p>
+                            </div>
+                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="temp-val">{{ config.temperature }}</span>
+                        </div>
                         <input type="range" name="temperature" min="0.0" max="1.0" step="0.05" value="{{ config.temperature }}"
-                            oninput="document.getElementById('temp-val').textContent = parseFloat(this.value).toFixed(2)"
-                            class="w-full">
-                        <div class="flex justify-between text-xs text-slate-400 mt-1"><span>0.0 Deterministic</span><span>1.0 Creative</span></div>
+                            oninput="document.getElementById('temp-val').textContent = parseFloat(this.value).toFixed(2)">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Deterministic</span><span>Creative</span></div>
                     </div>
 
                     <!-- Top-K -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Top-K Context Chunks: <span id="topk-val">{{ config.top_k_retrieval }}</span></label>
-                        <p class="text-xs text-slate-400 mb-3">Number of chunks retrieved from ChromaDB per query.</p>
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <div>
+                                <div class="section-title" style="margin-bottom:2px;">Top-K Context Chunks</div>
+                                <p style="font-size:11px;color:var(--tx3);margin:0;">Number of chunks retrieved from ChromaDB per query.</p>
+                            </div>
+                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="topk-val">{{ config.top_k_retrieval }}</span>
+                        </div>
                         <input type="range" name="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}"
-                            oninput="document.getElementById('topk-val').textContent = this.value"
-                            class="w-full">
-                        <div class="flex justify-between text-xs text-slate-400 mt-1"><span>1 (fast)</span><span>10 (comprehensive)</span></div>
+                            oninput="document.getElementById('topk-val').textContent = this.value">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Fast (1)</span><span>Comprehensive (10)</span></div>
                     </div>
 
                     <!-- Similarity Threshold -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">Similarity Threshold: <span id="thresh-val">{{ config.similarity_threshold }}</span></label>
-                        <p class="text-xs text-slate-400 mb-3">Chunks with score below this are flagged as low-confidence.</p>
+                    <div class="card">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                            <div>
+                                <div class="section-title" style="margin-bottom:2px;">Similarity Threshold</div>
+                                <p style="font-size:11px;color:var(--tx3);margin:0;">Chunks below this score are flagged as low-confidence.</p>
+                            </div>
+                            <span style="font-size:20px;font-weight:800;letter-spacing:-.03em;" id="thresh-val">{{ config.similarity_threshold }}</span>
+                        </div>
                         <input type="range" name="similarity_threshold" min="0.0" max="1.0" step="0.05" value="{{ config.similarity_threshold }}"
-                            oninput="document.getElementById('thresh-val').textContent = parseFloat(this.value).toFixed(2)"
-                            class="w-full">
-                        <div class="flex justify-between text-xs text-slate-400 mt-1"><span>0.0 (accept all)</span><span>1.0 (strict)</span></div>
+                            oninput="document.getElementById('thresh-val').textContent = parseFloat(this.value).toFixed(2)">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:4px;"><span>Lenient (accept all)</span><span>Strict</span></div>
                     </div>
 
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold text-sm transition-colors shadow-md">
-                        Save Configuration
-                    </button>
+                    <button type="submit" class="btn-p">Save Configuration</button>
                 </form>
             </div>
         </main>
     </div>
+
+    <script>
+    const html = document.documentElement;
+    const lbl = document.getElementById('theme-lbl');
+    html.className = localStorage.getItem('theme') || 'light';
+    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    function toggleTheme() {
+        const n = html.className === 'dark' ? 'light' : 'dark';
+        html.className = n; localStorage.setItem('theme', n);
+        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    }
+    </script>
 </body>
 </html>

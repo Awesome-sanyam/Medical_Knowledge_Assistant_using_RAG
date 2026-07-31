@@ -134,6 +134,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 SESSION_ENGINE = "django.contrib.sessions.backends.db"
 SESSION_COOKIE_AGE = 86400 * 7  # 7 days
 
+# Authentication redirects
+LOGIN_URL = "/chat/login/"
+LOGIN_REDIRECT_URL = "/chat/"
+LOGOUT_REDIRECT_URL = "/chat/login/"
+
 # Logging
 LOGGING = {
     "version": 1,

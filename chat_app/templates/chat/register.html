@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — MedAssist AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
+        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{background:var(--bg);color:var(--tx);transition:background .3s,color .3s;min-height:100vh;overflow:hidden;}
+        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
+        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .dark .toggle::after{transform:translateX(18px);}
+        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;transition:border .2s,box-shadow .2s;}
+        .inp:focus{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.05);}
+        .dark .inp:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
+        .inp::placeholder{color:var(--tx3);}
+        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-.01em;}
+        .btn:hover{opacity:.88;}
+        .btn:active{transform:scale(0.98);}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        .fade-up{animation:fadeUp .6s ease-out both;}
+        .fade-up-2{animation:fadeUp .6s ease-out .15s both;}
+        .fade-up-3{animation:fadeUp .6s ease-out .3s both;}
+        .grid-bg{
+            background-image:linear-gradient(var(--bd) 1px, transparent 1px),linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+            background-size:60px 60px;opacity:0.3;
+        }
+        .pattern-bg{
+            background-image:radial-gradient(circle at 20% 50%, rgba(0,0,0,0.03) 0%, transparent 50%),radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%);
+        }
+        .dark .pattern-bg{
+            background-image:radial-gradient(circle at 20% 50%, rgba(255,255,255,0.02) 0%, transparent 50%),radial-gradient(circle at 80% 20%, rgba(255,255,255,0.015) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme toggle -->
+    <div style="position:fixed;top:20px;right:24px;z-index:100;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
+        <div class="toggle" onclick="toggleTheme()"></div>
+    </div>
+
+    <div style="display:flex;height:100vh;">
+        <!-- Left branding panel -->
+        <div class="pattern-bg" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;border-right:1px solid var(--bd);">
+            <div class="grid-bg" style="position:absolute;inset:0;"></div>
+            <div style="position:relative;z-index:1;text-align:center;padding:40px;" class="fade-up">
+                <div style="width:72px;height:72px;background:var(--tx);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+                    <svg width="32" height="32" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        <circle cx="12" cy="12" r="10" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h1 style="font-size:32px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px;">MedAssist AI</h1>
+                <p style="font-size:14px;color:var(--tx2);max-width:320px;line-height:1.6;">
+                    Join thousands of medical professionals using AI-powered clinical knowledge assistance.
+                </p>
+                <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;text-align:left;max-width:280px;margin-left:auto;margin-right:auto;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
+                        <span style="font-size:13px;color:var(--tx2);">Evidence-based medical answers</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
+                        <span style="font-size:13px;color:var(--tx2);">Source citations with confidence scores</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:28px;height:28px;background:var(--bg3);border:1px solid var(--bd);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;">✓</div>
+                        <span style="font-size:13px;color:var(--tx2);">100% local — your data never leaves your machine</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right register form -->
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px;overflow-y:auto;">
+            <div style="width:100%;max-width:380px;">
+                <div class="fade-up-2">
+                    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Create your account</h2>
+                    <p style="font-size:14px;color:var(--tx2);margin-bottom:28px;">Start your clinical AI consultations today.</p>
+                </div>
+
+                {% if errors %}
+                <div class="fade-up-2" style="background:var(--bg3);border:1px solid #f87171;border-radius:12px;padding:12px 16px;font-size:13px;color:#ef4444;margin-bottom:20px;">
+                    {% for e in errors %}
+                    <div style="display:flex;align-items:center;gap:6px;{% if not forloop.last %}margin-bottom:4px;{% endif %}">
+                        <span>•</span> {{ e }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" class="fade-up-3" id="reg-form">
+                    {% csrf_token %}
+                    <div style="margin-bottom:14px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Full Name</label>
+                        <input class="inp" name="full_name" type="text" placeholder="Dr. Jane Smith" value="{{ full_name|default:'' }}" autocomplete="name">
+                    </div>
+                    <div style="margin-bottom:14px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Email</label>
+                        <input class="inp" name="email" type="email" placeholder="jane@hospital.org" value="{{ email|default:'' }}" autocomplete="email">
+                    </div>
+                    <div style="margin-bottom:14px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Username</label>
+                        <input class="inp" name="username" type="text" placeholder="Choose a username" value="{{ username|default:'' }}" autocomplete="username" required>
+                    </div>
+                    <div style="margin-bottom:14px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Password</label>
+                        <input class="inp" name="password" type="password" placeholder="Minimum 8 characters" autocomplete="new-password" required id="pw1">
+                    </div>
+                    <div style="margin-bottom:24px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:6px;">Confirm Password</label>
+                        <input class="inp" name="confirm_password" type="password" placeholder="Re-enter password" autocomplete="new-password" required id="pw2">
+                        <p id="pw-match" style="font-size:11px;margin-top:5px;display:none;"></p>
+                    </div>
+                    <button class="btn" type="submit">Create Account →</button>
+                </form>
+
+                <div style="margin-top:24px;text-align:center;" class="fade-up-3">
+                    <p style="font-size:13px;color:var(--tx3);">
+                        Already have an account?
+                        <a href="{% url 'user_login' %}" style="color:var(--tx);font-weight:600;text-decoration:none;border-bottom:1px solid var(--bd);padding-bottom:1px;">Sign in</a>
+                    </p>
+                </div>
+
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);text-align:center;" class="fade-up-3">
+                    <p style="font-size:11px;color:var(--tx3);line-height:1.5;">
+                        🔒 Admin access? Contact your system administrator.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const html = document.documentElement;
+    const lbl = document.getElementById('theme-lbl');
+    html.className = localStorage.getItem('theme') || 'light';
+    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    function toggleTheme() {
+        const n = html.className === 'dark' ? 'light' : 'dark';
+        html.className = n; localStorage.setItem('theme', n);
+        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    }
+
+    // Client-side password match check
+    const pw1 = document.getElementById('pw1');
+    const pw2 = document.getElementById('pw2');
+    const pwMsg = document.getElementById('pw-match');
+    pw2.addEventListener('input', () => {
+        if (pw2.value.length > 0) {
+            pwMsg.style.display = 'block';
+            if (pw1.value === pw2.value) {
+                pwMsg.textContent = '✓ Passwords match';
+                pwMsg.style.color = '#10b981';
+            } else {
+                pwMsg.textContent = '✗ Passwords do not match';
+                pwMsg.style.color = '#ef4444';
+            }
+        } else {
+            pwMsg.style.display = 'none';
+        }
+    });
+    </script>
+</body>
+</html>

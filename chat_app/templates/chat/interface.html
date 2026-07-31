@@ -6,59 +6,88 @@
     <title>MedAssist AI — Clinical Knowledge Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
         .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
         *{font-family:'Inter',sans-serif;box-sizing:border-box;}
         body{background:var(--bg);color:var(--tx);transition:background .25s,color .25s;margin:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
         ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
-        
+
         /* Header */
-        .hdr{background:var(--bg);border-bottom:1px solid var(--bd);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50;}
+        .hdr{background:var(--bg);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50;position:relative;}
         .logo{display:flex;align-items:center;gap:10px;}
-        .logo-icon{width:32px;height:32px;background:var(--tx);border-radius:8px;display:flex;align-items:center;justify-content:center;}
+        .logo-icon{width:32px;height:32px;background:var(--tx);border-radius:9px;display:flex;align-items:center;justify-content:center;}
         .logo-icon svg{color:var(--bg);}
-        
+
         /* Dark mode toggle */
-        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
-        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .toggle{width:38px;height:20px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
+        .toggle::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
         .dark .toggle::after{transform:translateX(18px);}
 
         /* Disclaimer */
-        .disclaimer{background:var(--bg2);border-bottom:1px solid var(--bd);padding:7px 24px;font-size:12px;color:var(--tx2);text-align:center;flex-shrink:0;}
+        .disclaimer{background:var(--bg2);border-bottom:1px solid var(--bd);padding:6px 20px;font-size:11px;color:var(--tx3);text-align:center;flex-shrink:0;}
 
         /* Sidebar */
-        .sidebar{width:260px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;padding:16px 12px;flex-shrink:0;overflow-y:auto;}
-        .new-chat-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:10px;background:var(--tx);color:var(--bg);border:none;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:16px;transition:opacity .2s;}
+        .sidebar{width:260px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:width .3s;}
+        .sidebar-inner{display:flex;flex-direction:column;height:100%;padding:14px 10px;}
+        .new-chat-btn{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border-radius:10px;background:var(--tx);color:var(--bg);border:none;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:14px;transition:opacity .2s;}
         .new-chat-btn:hover{opacity:.85;}
-        .conv-item{padding:9px 12px;border-radius:8px;font-size:13px;color:var(--tx2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;border:1px solid transparent;}
+        .conv-item{padding:8px 12px;border-radius:8px;font-size:13px;color:var(--tx2);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all .15s;border:1px solid transparent;display:flex;align-items:center;gap:8px;}
         .conv-item:hover{background:var(--bg3);color:var(--tx);}
         .conv-item.active{background:var(--bg3);color:var(--tx);border-color:var(--bd);}
-        .sidebar-section{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;padding:4px 12px;margin-top:12px;margin-bottom:4px;}
+        .conv-item .conv-icon{width:18px;height:18px;color:var(--tx3);flex-shrink:0;}
+        .sidebar-label{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.08em;padding:4px 12px;margin-top:10px;margin-bottom:4px;}
+        .conv-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;}
 
         /* Main chat area */
         .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-        .chat-scroll{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:20px;}
-        
+        .chat-scroll{flex:1;overflow-y:auto;padding:0;display:flex;flex-direction:column;}
+        .chat-inner{max-width:760px;width:100%;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:0;}
+
         /* Messages */
-        .msg-row{display:flex;gap:12px;align-items:flex-start;animation:slideUp .3s ease-out;}
+        .msg-row{display:flex;gap:12px;align-items:flex-start;padding:16px 0;animation:slideUp .35s cubic-bezier(.16,1,.3,1);}
         .msg-row.user{flex-direction:row-reverse;}
-        .avatar{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+        .avatar{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px;}
         .avatar.ai{background:var(--tx);color:var(--bg);}
         .avatar.user{background:var(--bg3);color:var(--tx);border:1px solid var(--bd);}
-        .bubble{max-width:680px;padding:14px 18px;border-radius:16px;font-size:14px;line-height:1.65;}
-        .bubble.ai{background:var(--bg2);border:1px solid var(--bd);}
-        .bubble.user{background:var(--tx);color:var(--bg);}
-        pre{white-space:pre-wrap;word-break:break-word;margin:0;}
+        .bubble{max-width:660px;font-size:14px;line-height:1.7;}
+        .bubble.ai{color:var(--tx);}
+        .bubble.user{background:var(--tx);color:var(--bg);padding:12px 16px;border-radius:16px;border-bottom-right-radius:4px;}
+        .bubble.ai .md-content h1,.bubble.ai .md-content h2,.bubble.ai .md-content h3{font-weight:700;margin:12px 0 4px;letter-spacing:-.02em;}
+        .bubble.ai .md-content h1{font-size:18px;}
+        .bubble.ai .md-content h2{font-size:16px;}
+        .bubble.ai .md-content h3{font-size:15px;}
+        .bubble.ai .md-content p{margin:6px 0;}
+        .bubble.ai .md-content ul,.bubble.ai .md-content ol{margin:6px 0;padding-left:20px;}
+        .bubble.ai .md-content li{margin:3px 0;}
+        .bubble.ai .md-content strong{font-weight:700;}
+        .bubble.ai .md-content code{background:var(--bg3);padding:1px 5px;border-radius:4px;font-size:13px;}
+        .bubble.ai .md-content pre{background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:14px;overflow-x:auto;margin:8px 0;}
+        .bubble.ai .md-content pre code{background:transparent;padding:0;}
+        .bubble.ai .md-content hr{border:none;border-top:1px solid var(--bd);margin:12px 0;}
+        .bubble.ai .md-content blockquote{border-left:3px solid var(--bd);padding-left:12px;color:var(--tx2);margin:8px 0;}
 
         /* Source drawer */
-        .src-toggle{font-size:12px;color:var(--tx3);display:flex;align-items:center;gap:4px;cursor:pointer;background:none;border:none;padding:4px 0;margin-top:6px;transition:color .15s;}
+        .src-toggle{font-size:12px;color:var(--tx3);display:inline-flex;align-items:center;gap:4px;cursor:pointer;background:none;border:none;padding:4px 0;margin-top:8px;transition:color .15s;}
         .src-toggle:hover{color:var(--tx2);}
         .src-drawer{max-height:0;overflow:hidden;transition:max-height .35s ease;}
         .src-drawer.open{max-height:500px;}
         .src-chip{background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:10px 12px;margin-top:6px;}
         .src-chip .score-ok{color:#10b981;} .src-chip .score-low{color:#f59e0b;}
+
+        /* Action buttons on AI messages */
+        .msg-actions{display:flex;gap:4px;margin-top:8px;opacity:0;transition:opacity .2s;}
+        .msg-row:hover .msg-actions{opacity:1;}
+        .msg-action-btn{background:none;border:1px solid transparent;border-radius:7px;padding:4px 8px;font-size:11px;color:var(--tx3);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px;}
+        .msg-action-btn:hover{background:var(--bg3);border-color:var(--bd);color:var(--tx2);}
+        .msg-action-btn.active-good{background:#d1fae5;color:#065f46;border-color:#a7f3d0;}
+        .msg-action-btn.active-bad{background:#fee2e2;color:#991b1b;border-color:#fecaca;}
+        .dark .msg-action-btn.active-good{background:#064e3b;color:#6ee7b7;border-color:#065f46;}
+        .dark .msg-action-btn.active-bad{background:#7f1d1d;color:#fca5a5;border-color:#991b1b;}
 
         /* Typing dots */
         .dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);animation:pulseDot 1.4s infinite;}
@@ -66,22 +95,44 @@
         @keyframes pulseDot{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1.1);opacity:1}}
         @keyframes slideUp{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
 
+        /* Welcome screen */
+        .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;animation:slideUp .5s ease-out;}
+        .suggestion-card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:14px 18px;cursor:pointer;transition:all .2s;font-size:13px;color:var(--tx2);line-height:1.5;text-align:left;}
+        .suggestion-card:hover{background:var(--bg3);border-color:var(--tx3);color:var(--tx);transform:translateY(-1px);}
+
         /* Input area */
-        .input-area{background:var(--bg);border-top:1px solid var(--bd);padding:16px 24px;flex-shrink:0;}
-        .input-box{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:12px 16px;display:flex;gap:12px;align-items:flex-end;transition:border-color .2s;}
-        .input-box:focus-within{border-color:var(--tx3);}
+        .input-area{background:var(--bg);border-top:1px solid var(--bd);padding:14px 20px;flex-shrink:0;}
+        .input-wrap{max-width:760px;margin:0 auto;}
+        .input-box{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:12px 16px;display:flex;gap:10px;align-items:flex-end;transition:border-color .2s,box-shadow .2s;}
+        .input-box:focus-within{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.04);}
+        .dark .input-box:focus-within{box-shadow:0 0 0 3px rgba(255,255,255,0.04);}
         textarea{background:transparent;border:none;outline:none;resize:none;flex:1;font-size:14px;color:var(--tx);max-height:140px;overflow-y:auto;line-height:1.55;}
         textarea::placeholder{color:var(--tx3);}
-        .send-btn{background:var(--tx);color:var(--bg);border:none;border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s;}
-        .send-btn:hover{opacity:.8;} .send-btn:disabled{opacity:.3;cursor:not-allowed;}
+        .send-btn{background:var(--tx);color:var(--bg);border:none;border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s,transform .1s;}
+        .send-btn:hover{opacity:.8;} .send-btn:disabled{opacity:.25;cursor:not-allowed;}
+        .send-btn:active{transform:scale(0.95);}
 
         /* Toast */
-        #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);transform:translateX(120%);transition:transform .3s;max-width:300px;box-shadow:0 8px 24px rgba(0,0,0,.12);}
+        #toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--tx);transform:translateX(120%);transition:transform .3s;max-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.1);}
         #toast.show{transform:translateX(0);}
-        
+
         /* Nav links */
         .nav-pill{font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border-radius:7px;transition:all .15s;border:1px solid transparent;}
-        .nav-pill:hover{background:var(--bg3);color:var(--tx);}
+        .nav-pill:hover{background:var(--bg3);color:var(--tx);border-color:var(--bd);}
+
+        /* User menu */
+        .user-badge{display:flex;align-items:center;gap:8px;padding:5px 10px;border-radius:8px;font-size:12px;color:var(--tx2);cursor:default;}
+        .user-avatar{width:24px;height:24px;background:var(--tx);color:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;}
+
+        /* Responsive */
+        @media(max-width:768px){
+            .sidebar{width:0;position:absolute;z-index:40;height:calc(100vh - 56px);top:56px;}
+            .sidebar.open{width:260px;}
+        }
+
+        /* Timestamp */
+        .msg-time{font-size:10px;color:var(--tx3);opacity:0;transition:opacity .2s;margin-top:4px;}
+        .msg-row:hover .msg-time{opacity:1;}
     </style>
 </head>
 <body>
@@ -90,19 +141,29 @@
     <!-- Header -->
     <header class="hdr">
         <div class="logo">
+            <button onclick="document.querySelector('.sidebar').classList.toggle('open')" style="background:none;border:none;cursor:pointer;display:none;padding:4px;" class="sidebar-toggle-btn">
+                <svg width="18" height="18" fill="none" stroke="var(--tx)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
             <div class="logo-icon">
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
             </div>
             <div>
-                <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;">MedAssist AI</span>
-                <span style="font-size:11px;color:var(--tx3);display:block;margin-top:-2px;">Clinical Knowledge Assistant</span>
+                <span style="font-size:14px;font-weight:800;letter-spacing:-.02em;">MedAssist AI</span>
+                <span style="font-size:10px;color:var(--tx3);display:block;margin-top:-2px;">Clinical Knowledge Assistant</span>
             </div>
         </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-            <a href="/model-control/" class="nav-pill">⚙ Model</a>
+        <div style="display:flex;align-items:center;gap:10px;">
             <a href="/app-admin/" class="nav-pill">📁 Admin</a>
-            <div style="display:flex;align-items:center;gap:8px;">
-                <span style="font-size:11px;color:var(--tx3);" id="theme-label">Light</span>
+            <a href="/model-control/" class="nav-pill">⚙ Model</a>
+            <div style="width:1px;height:20px;background:var(--bd);"></div>
+            <div class="user-badge">
+                <div class="user-avatar">{{ request.user.username.0|upper }}</div>
+                <span>{{ request.user.username }}</span>
+            </div>
+            <a href="{% url 'user_logout' %}" class="nav-pill" style="color:var(--tx3);">Sign out</a>
+            <div style="width:1px;height:20px;background:var(--bd);"></div>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:10px;color:var(--tx3);" id="theme-label">Light</span>
                 <div class="toggle" onclick="toggleTheme()" title="Toggle dark/light mode"></div>
             </div>
         </div>
@@ -117,18 +178,25 @@
     <div style="display:flex;flex:1;overflow:hidden;">
         <!-- Sidebar -->
         <div class="sidebar">
-            <button class="new-chat-btn" onclick="startNewChat()">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                New Consultation
-            </button>
-            <div class="sidebar-section">Recent</div>
-            <div id="conv-list">
-                <div class="conv-item active">📋 Current Consultation</div>
-            </div>
-            <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--bd);margin-top:24px;">
-                <div style="font-size:11px;color:var(--tx3);text-align:center;">
-                    med-llama · Llama 3.1 8B<br>
-                    <span style="color:#10b981;font-weight:600;">● Local Inference</span>
+            <div class="sidebar-inner">
+                <button class="new-chat-btn" onclick="startNewChat()">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    New Consultation
+                </button>
+                <div class="sidebar-label">Conversations</div>
+                <div class="conv-list" id="conv-list">
+                    {% for conv in conversations %}
+                    <div class="conv-item {% if conv.id == active_conversation.id %}active{% endif %}" onclick="switchConversation('{{ conv.id }}')" title="{{ conv.title }}">
+                        <svg class="conv-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                        {{ conv.title|truncatechars:30 }}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div style="padding-top:12px;border-top:1px solid var(--bd);margin-top:12px;">
+                    <div style="font-size:10px;color:var(--tx3);text-align:center;line-height:1.5;">
+                        med-llama · Llama 3.1 8B<br>
+                        <span style="color:#10b981;font-weight:700;">● Local Inference</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,40 +204,47 @@
         <!-- Chat Main -->
         <div class="main">
             <div class="chat-scroll" id="chat-scroll">
-                <!-- Welcome message -->
-                <div class="msg-row">
-                    <div class="avatar ai">M</div>
-                    <div>
-                        <div class="bubble ai">
-                            <p style="margin:0;font-weight:600;font-size:15px;margin-bottom:8px;">Hello! I'm MedAssist AI 👋</p>
-                            <p style="margin:0;color:var(--tx2);font-size:13px;line-height:1.6;">I'm a clinical-grade medical AI assistant powered by a fine-tuned Llama 3.1 model with RAG. I can help you understand medical conditions, symptoms, treatments, and clinical guidelines based on indexed medical literature.</p>
-                            <p style="margin:8px 0 0;color:var(--tx3);font-size:12px;">Ask me a medical question to get started →</p>
+                <div class="chat-inner" id="chat-inner">
+                    <!-- Welcome screen (shown when no messages) -->
+                    <div class="welcome" id="welcome-screen">
+                        <div style="width:56px;height:56px;background:var(--tx);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+                            <svg width="24" height="24" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/><circle cx="12" cy="12" r="10" stroke-linecap="round"/></svg>
+                        </div>
+                        <h2 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px;">How can I help you today?</h2>
+                        <p style="font-size:14px;color:var(--tx2);margin-bottom:28px;max-width:400px;text-align:center;line-height:1.6;">Ask me about medical conditions, symptoms, treatments, or clinical guidelines. All answers are sourced from indexed medical literature.</p>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:480px;">
+                            <div class="suggestion-card" onclick="useSuggestion(this)">🧠 What are common migraine triggers and their management?</div>
+                            <div class="suggestion-card" onclick="useSuggestion(this)">💉 Explain Type 2 Diabetes management guidelines</div>
+                            <div class="suggestion-card" onclick="useSuggestion(this)">🩸 Symptoms and diagnosis of iron deficiency anemia</div>
+                            <div class="suggestion-card" onclick="useSuggestion(this)">❤️ Differential diagnosis for acute chest pain</div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Typing indicator (hidden) -->
-                <div class="msg-row" id="typing" style="display:none;">
-                    <div class="avatar ai">M</div>
-                    <div class="bubble ai" style="display:flex;gap:6px;align-items:center;">
-                        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                    <!-- Typing indicator (hidden) -->
+                    <div class="msg-row" id="typing" style="display:none;">
+                        <div class="avatar ai">M</div>
+                        <div class="bubble ai" style="display:flex;gap:6px;align-items:center;padding:12px 16px;background:var(--bg2);border:1px solid var(--bd);border-radius:14px;">
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Input -->
             <div class="input-area">
-                <form id="chat-form" onsubmit="return false;">
-                    {% csrf_token %}
-                    <input type="hidden" id="conv-id" value="{{ conversation_id }}">
-                    <div class="input-box">
-                        <textarea id="msg-input" rows="1" placeholder="Ask a medical question… (Shift+Enter for new line)"></textarea>
-                        <button class="send-btn" id="send-btn" onclick="sendMessage()">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
-                        </button>
-                    </div>
-                    <p style="font-size:11px;color:var(--tx3);margin:8px 0 0;text-align:center;">Enter to send · Shift+Enter for new line · Responses sourced from indexed medical literature</p>
-                </form>
+                <div class="input-wrap">
+                    <form id="chat-form" onsubmit="return false;">
+                        {% csrf_token %}
+                        <input type="hidden" id="conv-id" value="{{ conversation_id }}">
+                        <div class="input-box">
+                            <textarea id="msg-input" rows="1" placeholder="Ask a medical question…"></textarea>
+                            <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Send (Enter)">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                            </button>
+                        </div>
+                        <p style="font-size:10px;color:var(--tx3);margin:6px 0 0;text-align:center;">Enter to send · Shift+Enter for new line · Responses sourced from indexed medical literature</p>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -203,6 +278,18 @@
         return m ? decodeURIComponent(m[1]) : '';
     }
 
+    // ---- Configure marked for markdown ----
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({ breaks: true, gfm: true });
+    }
+
+    function renderMarkdown(text) {
+        if (typeof marked !== 'undefined') {
+            try { return marked.parse(text); } catch(_) {}
+        }
+        return text.replace(/\n/g, '<br>');
+    }
+
     // ---- Auto-resize textarea ----
     const inp = document.getElementById('msg-input');
     inp.addEventListener('input', () => {
@@ -213,10 +300,26 @@
         if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     });
 
+    // ---- Suggestion cards ----
+    function useSuggestion(card) {
+        inp.value = card.textContent.replace(/^[^\s]+\s/, ''); // Remove emoji prefix
+        sendMessage();
+    }
+
     // ---- New chat ----
-    function startNewChat() {
-        fetch('/chat/', { method: 'GET' })
-            .then(() => window.location.reload());
+    async function startNewChat() {
+        try {
+            const r = await fetch('/chat/new/');
+            const d = await r.json();
+            window.location.href = '/chat/?c=' + d.id;
+        } catch(e) {
+            toast('Failed to create new chat', 'error');
+        }
+    }
+
+    // ---- Switch conversation ----
+    function switchConversation(id) {
+        window.location.href = '/chat/?c=' + id;
     }
 
     // ---- Escape HTML ----
@@ -226,44 +329,79 @@
         return d.innerHTML;
     }
 
-    // ---- Append user message ----
-    function appendUser(text) {
-        const row = document.createElement('div');
-        row.className = 'msg-row user';
-        row.innerHTML = `
-            <div class="avatar user">U</div>
-            <div class="bubble user"><pre>${esc(text)}</pre></div>
-        `;
-        document.getElementById('chat-scroll').insertBefore(row, document.getElementById('typing'));
+    // ---- Hide welcome, show chat ----
+    function hideWelcome() {
+        const w = document.getElementById('welcome-screen');
+        if (w) w.style.display = 'none';
     }
 
-    // ---- Create AI bubble (returns {wrapper, pre, srcContainer, srcDrawer}) ----
-    function createAiBubble() {
+    // ---- Append user message ----
+    function appendUser(text) {
+        hideWelcome();
         const row = document.createElement('div');
-        row.className = 'msg-row';
+        row.className = 'msg-row user';
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
         row.innerHTML = `
-            <div class="avatar ai">M</div>
-            <div style="max-width:680px;width:100%;">
-                <div class="bubble ai"><pre id="ai-stream" style="margin:0;color:var(--tx);font-size:14px;line-height:1.65;"></pre></div>
-                <div id="src-section" style="display:none;margin-top:6px;">
-                    <button class="src-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(90deg)':''">
-                        <svg class="chevron" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition:transform .25s;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        View Sources & Evidence
-                    </button>
-                    <div class="src-drawer" id="src-drawer"></div>
-                </div>
-                <div style="display:flex;gap:8px;margin-top:8px;">
-                    <button onclick="feedback(this, true)" style="background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 10px;font-size:12px;color:var(--tx3);cursor:pointer;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">👍 Helpful</button>
-                    <button onclick="feedback(this, false)" style="background:none;border:1px solid var(--bd);border-radius:7px;padding:4px 10px;font-size:12px;color:var(--tx3);cursor:pointer;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background='none'">👎 Not helpful</button>
-                </div>
+            <div class="avatar user">${esc('{{ request.user.username.0|upper }}')}</div>
+            <div>
+                <div class="bubble user"><div style="white-space:pre-wrap;word-break:break-word;">${esc(text)}</div></div>
+                <div class="msg-time" style="text-align:right;">${time}</div>
             </div>
         `;
-        document.getElementById('chat-scroll').insertBefore(row, document.getElementById('typing'));
+        document.getElementById('chat-inner').insertBefore(row, document.getElementById('typing'));
+    }
+
+    // ---- Create AI bubble ----
+    let msgCounter = 0;
+    function createAiBubble() {
+        hideWelcome();
+        msgCounter++;
+        const id = 'ai-msg-' + msgCounter;
+        const row = document.createElement('div');
+        row.className = 'msg-row';
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+        row.innerHTML = `
+            <div class="avatar ai">M</div>
+            <div style="max-width:660px;width:100%;">
+                <div class="bubble ai">
+                    <div class="md-content" id="${id}"></div>
+                </div>
+                <div id="src-section-${msgCounter}" style="display:none;margin-top:6px;">
+                    <button class="src-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(90deg)':''">
+                        <svg class="chevron" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition:transform .25s;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        Sources & Evidence
+                    </button>
+                    <div class="src-drawer" id="src-drawer-${msgCounter}"></div>
+                </div>
+                <div class="msg-actions">
+                    <button class="msg-action-btn" onclick="copyMsg('${id}')" title="Copy">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        Copy
+                    </button>
+                    <button class="msg-action-btn" onclick="feedback(this, true)" title="Helpful">👍</button>
+                    <button class="msg-action-btn" onclick="feedback(this, false)" title="Not helpful">👎</button>
+                </div>
+                <div class="msg-time">${time}</div>
+            </div>
+        `;
+        document.getElementById('chat-inner').insertBefore(row, document.getElementById('typing'));
         return {
-            pre: row.querySelector('#ai-stream'),
-            srcSection: row.querySelector('#src-section'),
-            srcDrawer: row.querySelector('#src-drawer'),
+            content: row.querySelector('#' + id),
+            srcSection: row.querySelector('#src-section-' + msgCounter),
+            srcDrawer: row.querySelector('#src-drawer-' + msgCounter),
         };
+    }
+
+    // ---- Copy message ----
+    function copyMsg(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            navigator.clipboard.writeText(el.textContent).then(() => {
+                toast('📋 Copied to clipboard', 'success');
+            });
+        }
     }
 
     // ---- Render sources ----
@@ -286,9 +424,14 @@
         });
     }
 
+    // ---- Feedback ----
     function feedback(btn, isPositive) {
-        btn.style.background = isPositive ? '#d1fae5' : '#fee2e2';
-        btn.style.color = isPositive ? '#065f46' : '#991b1b';
+        // Reset siblings
+        const parent = btn.parentElement;
+        parent.querySelectorAll('.msg-action-btn').forEach(b => {
+            b.classList.remove('active-good', 'active-bad');
+        });
+        btn.classList.add(isPositive ? 'active-good' : 'active-bad');
         toast(isPositive ? '👍 Marked as helpful' : '👎 Marked as not helpful', isPositive ? 'success' : 'error');
     }
 
@@ -309,7 +452,7 @@
         document.getElementById('typing').style.display = 'flex';
         scrollBottom();
 
-        const { pre, srcSection, srcDrawer } = createAiBubble();
+        const { content, srcSection, srcDrawer } = createAiBubble();
         let fullText = '';
         let sourcesData = null;
         let buffer = '';
@@ -346,7 +489,7 @@
                         } else {
                             const token = data.replace(/⏎/g, '\n');
                             fullText += token;
-                            pre.textContent = fullText;
+                            content.innerHTML = renderMarkdown(fullText);
                             scrollBottom();
                             currentEvent = null;
                         }
@@ -358,19 +501,104 @@
 
         } catch (err) {
             document.getElementById('typing').style.display = 'none';
-            pre.textContent = '⚠️ Connection error: Is Ollama running on localhost:11434?';
+            content.innerHTML = '<p style="color:#ef4444;">⚠️ Connection error: Is Ollama running on localhost:11434?</p>';
             toast('Failed to connect to AI model', 'error');
         }
 
         isStreaming = false;
         document.getElementById('send-btn').disabled = false;
         scrollBottom();
+
+        // Refresh sidebar to show updated title
+        refreshSidebar();
     }
 
     function scrollBottom() {
         const s = document.getElementById('chat-scroll');
         s.scrollTop = s.scrollHeight;
     }
+
+    // ---- Refresh sidebar ----
+    async function refreshSidebar() {
+        try {
+            const r = await fetch('/chat/conversations/');
+            const d = await r.json();
+            const list = document.getElementById('conv-list');
+            const activeId = document.getElementById('conv-id').value;
+            list.innerHTML = '';
+            d.conversations.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'conv-item' + (c.id === activeId ? ' active' : '');
+                div.onclick = () => switchConversation(c.id);
+                div.title = c.title;
+                div.innerHTML = `
+                    <svg class="conv-icon" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    ${esc(c.title).substring(0, 30)}
+                `;
+                list.appendChild(div);
+            });
+        } catch(_) {}
+    }
+
+    // ---- Responsive sidebar toggle ----
+    if (window.innerWidth <= 768) {
+        document.querySelector('.sidebar-toggle-btn').style.display = 'block';
+    }
+
+    // ---- Load existing messages for this conversation ----
+    async function loadHistory() {
+        const convId = document.getElementById('conv-id').value;
+        try {
+            const r = await fetch('/chat/messages/' + convId + '/');
+            const d = await r.json();
+            if (d.messages && d.messages.length > 0) {
+                hideWelcome();
+                d.messages.forEach(m => {
+                    if (m.role === 'user') {
+                        const row = document.createElement('div');
+                        row.className = 'msg-row user';
+                        row.innerHTML = `
+                            <div class="avatar user">${esc('{{ request.user.username.0|upper }}')}</div>
+                            <div>
+                                <div class="bubble user"><div style="white-space:pre-wrap;word-break:break-word;">${esc(m.content)}</div></div>
+                                <div class="msg-time" style="text-align:right;">${m.created_at}</div>
+                            </div>
+                        `;
+                        document.getElementById('chat-inner').insertBefore(row, document.getElementById('typing'));
+                    } else {
+                        const row = document.createElement('div');
+                        row.className = 'msg-row';
+                        row.innerHTML = `
+                            <div class="avatar ai">M</div>
+                            <div style="max-width:660px;width:100%;">
+                                <div class="bubble ai"><div class="md-content">${renderMarkdown(m.content)}</div></div>
+                                ${m.retrieved_context && m.retrieved_context.length > 0 ? `
+                                <div style="margin-top:6px;">
+                                    <button class="src-toggle" onclick="this.nextElementSibling.classList.toggle('open');this.querySelector('.chevron').style.transform=this.nextElementSibling.classList.contains('open')?'rotate(90deg)':''">
+                                        <svg class="chevron" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="transition:transform .25s;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                        Sources & Evidence
+                                    </button>
+                                    <div class="src-drawer">${m.retrieved_context.map(c => `
+                                        <div class="src-chip">
+                                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                                                <span style="font-size:12px;font-weight:600;color:var(--tx2);">📄 ${esc(c.source || 'Unknown')}</span>
+                                                <span class="${c.low_confidence ? 'score-low' : 'score-ok'}" style="font-size:11px;font-weight:600;">${c.low_confidence ? '⚠ Low' : '✓ High'} · ${c.score}</span>
+                                            </div>
+                                            <p style="margin:0;font-size:12px;color:var(--tx2);line-height:1.5;">${esc((c.content||'').substring(0,220))}…</p>
+                                        </div>
+                                    `).join('')}</div>
+                                </div>` : ''}
+                                <div class="msg-time">${m.created_at}</div>
+                            </div>
+                        `;
+                        document.getElementById('chat-inner').insertBefore(row, document.getElementById('typing'));
+                    }
+                });
+                scrollBottom();
+            }
+        } catch(_) {}
+    }
+    loadHistory();
     </script>
 </body>
 </html>

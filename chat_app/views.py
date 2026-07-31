@@ -2,6 +2,7 @@ import json
 import logging
 import time
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST
@@ -33,31 +34,63 @@ except ImportError as exc:
 # ---------------------------------------------------------------------------
 
 
+@login_required
 def chat_interface(request):
     """Render the main chat SPA."""
-    if not request.session.session_key:
-        request.session.create()
-
-    # Reuse the active conversation for this session, or create one
-    session_key = "active_conversation_id"
-    conv_id = request.session.get(session_key)
+    conv_id = request.GET.get("c")
     conversation = None
+
     if conv_id:
         try:
-            conversation = Conversation.objects.get(id=conv_id)
+            conversation = Conversation.objects.get(id=conv_id, user=request.user)
         except Conversation.DoesNotExist:
             conversation = None
+
     if conversation is None:
-        conversation = Conversation.objects.create()
-        request.session[session_key] = str(conversation.id)
+        # Get or create the most recent conversation for this user
+        conversation = Conversation.objects.filter(user=request.user).first()
+        if conversation is None:
+            conversation = Conversation.objects.create(user=request.user)
+
+    conversations = Conversation.objects.filter(user=request.user)[:20]
 
     return render(
         request,
         "chat/interface.html",
-        {"conversation_id": str(conversation.id)},
+        {
+            "conversation_id": str(conversation.id),
+            "conversations": conversations,
+            "active_conversation": conversation,
+        },
     )
 
 
+@login_required
+def new_conversation(request):
+    """Create a new conversation and return its ID."""
+    conversation = Conversation.objects.create(user=request.user)
+    return JsonResponse({
+        "id": str(conversation.id),
+        "title": conversation.title,
+    })
+
+
+@login_required
+def conversation_list(request):
+    """Return JSON list of user's conversations for sidebar."""
+    conversations = Conversation.objects.filter(user=request.user)[:30]
+    data = [
+        {
+            "id": str(c.id),
+            "title": c.title,
+            "updated_at": c.updated_at.strftime("%b %d"),
+        }
+        for c in conversations
+    ]
+    return JsonResponse({"conversations": data})
+
+
+@login_required
 @require_POST
 def stream_chat(request):
     """
@@ -75,9 +108,14 @@ def stream_chat(request):
         )
 
     try:
-        conversation = Conversation.objects.get(id=conversation_id)
+        conversation = Conversation.objects.get(id=conversation_id, user=request.user)
     except (Conversation.DoesNotExist, Exception):
-        conversation = Conversation.objects.create()
+        conversation = Conversation.objects.create(user=request.user)
+
+    # Auto-title from first message
+    if conversation.title == "New Consultation":
+        conversation.title = user_input[:60] + ("…" if len(user_input) > 60 else "")
+        conversation.save(update_fields=["title"])
 
     # Persist user message immediately
     user_msg = Message.objects.create(
@@ -196,13 +234,14 @@ def _save_assistant_message(
     context_chunks: list,
     latency: float,
 ):
-    Message.objects.create(
+    msg = Message.objects.create(
         conversation=conversation,
         role="assistant",
         content=content,
         retrieved_context=context_chunks,
         latency_seconds=round(latency, 3),
     )
+    return msg
 
 
 # ---------------------------------------------------------------------------
@@ -210,6 +249,7 @@ def _save_assistant_message(
 # ---------------------------------------------------------------------------
 
 
+@login_required
 @require_POST
 def submit_feedback(request):
     """Thumbs up/down feedback on a message."""
@@ -227,3 +267,30 @@ def submit_feedback(request):
         return JsonResponse({"status": "ok"})
     except Exception as e:
         return JsonResponse({"status": "error", "detail": str(e)}, status=400)
+
+
+# ---------------------------------------------------------------------------
+# Conversation messages API (for loading chat history)
+# ---------------------------------------------------------------------------
+
+
+@login_required
+def conversation_messages(request, conv_id):
+    """Return messages for a specific conversation."""
+    try:
+        conversation = Conversation.objects.get(id=conv_id, user=request.user)
+    except Conversation.DoesNotExist:
+        return JsonResponse({"messages": []})
+
+    msgs = Message.objects.filter(conversation=conversation).order_by("created_at")
+    data = [
+        {
+            "id": m.id,
+            "role": m.role,
+            "content": m.content,
+            "retrieved_context": m.retrieved_context,
+            "created_at": m.created_at.strftime("%H:%M"),
+        }
+        for m in msgs
+    ]
+    return JsonResponse({"messages": data})

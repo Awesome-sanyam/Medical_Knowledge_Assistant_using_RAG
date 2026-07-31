@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — MedAssist AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
+        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;margin:0;padding:0;}
+        body{background:var(--bg);color:var(--tx);transition:background .3s,color .3s;min-height:100vh;overflow:hidden;}
+        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;flex-shrink:0;}
+        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .dark .toggle::after{transform:translateX(18px);}
+        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;transition:border .2s,box-shadow .2s;}
+        .inp:focus{border-color:var(--tx3);box-shadow:0 0 0 3px rgba(0,0,0,0.05);}
+        .dark .inp:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.05);}
+        .inp::placeholder{color:var(--tx3);}
+        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;letter-spacing:-.01em;}
+        .btn:hover{opacity:.88;}
+        .btn:active{transform:scale(0.98);}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+        .fade-up{animation:fadeUp .6s ease-out both;}
+        .fade-up-2{animation:fadeUp .6s ease-out .15s both;}
+        .fade-up-3{animation:fadeUp .6s ease-out .3s both;}
+
+        /* Left panel pattern */
+        .pattern-bg{
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0,0,0,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,0,0,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(0,0,0,0.03) 0%, transparent 50%);
+        }
+        .dark .pattern-bg{
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.02) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.015) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(255,255,255,0.02) 0%, transparent 50%);
+        }
+        .grid-bg{
+            background-image:linear-gradient(var(--bd) 1px, transparent 1px),linear-gradient(90deg, var(--bd) 1px, transparent 1px);
+            background-size:60px 60px;
+            opacity:0.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme toggle -->
+    <div style="position:fixed;top:20px;right:24px;z-index:100;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
+        <div class="toggle" onclick="toggleTheme()"></div>
+    </div>
+
+    <div style="display:flex;height:100vh;">
+        <!-- Left branding panel -->
+        <div class="pattern-bg" style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;overflow:hidden;border-right:1px solid var(--bd);">
+            <div class="grid-bg" style="position:absolute;inset:0;"></div>
+            <div style="position:relative;z-index:1;text-align:center;padding:40px;" class="fade-up">
+                <!-- Logo -->
+                <div style="width:72px;height:72px;background:var(--tx);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 28px;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+                    <svg width="32" height="32" fill="none" stroke="var(--bg)" viewBox="0 0 24 24" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                        <circle cx="12" cy="12" r="10" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h1 style="font-size:32px;font-weight:900;letter-spacing:-.04em;margin-bottom:8px;">MedAssist AI</h1>
+                <p style="font-size:14px;color:var(--tx2);max-width:320px;line-height:1.6;">
+                    Clinical-grade medical AI assistant powered by fine-tuned Llama 3.1 with RAG-augmented knowledge retrieval.
+                </p>
+                <div style="display:flex;gap:8px;margin-top:24px;justify-content:center;">
+                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">🏥 Clinical-Grade</span>
+                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">🔒 Privacy-First</span>
+                    <span style="background:var(--bg3);border:1px solid var(--bd);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:600;color:var(--tx2);">⚡ Local AI</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right login form -->
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:40px;">
+            <div style="width:100%;max-width:380px;">
+                <div class="fade-up-2">
+                    <h2 style="font-size:24px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Welcome back</h2>
+                    <p style="font-size:14px;color:var(--tx2);margin-bottom:32px;">Sign in to continue your medical consultations.</p>
+                </div>
+
+                {% if error %}
+                <div class="fade-up-2" style="background:var(--bg3);border:1px solid #f87171;border-radius:12px;padding:12px 16px;font-size:13px;color:#ef4444;margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form method="post" class="fade-up-3">
+                    {% csrf_token %}
+                    <div style="margin-bottom:18px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:7px;">Username</label>
+                        <input class="inp" name="username" type="text" placeholder="Enter your username" autocomplete="username" required>
+                    </div>
+                    <div style="margin-bottom:28px;">
+                        <label style="display:block;font-size:13px;font-weight:600;color:var(--tx2);margin-bottom:7px;">Password</label>
+                        <input class="inp" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                    </div>
+                    <button class="btn" type="submit">Sign In →</button>
+                </form>
+
+                <div style="margin-top:28px;text-align:center;" class="fade-up-3">
+                    <p style="font-size:13px;color:var(--tx3);">
+                        Don't have an account?
+                        <a href="{% url 'user_register' %}" style="color:var(--tx);font-weight:600;text-decoration:none;border-bottom:1px solid var(--bd);padding-bottom:1px;">Create one</a>
+                    </p>
+                </div>
+
+                <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--bd);text-align:center;" class="fade-up-3">
+                    <p style="font-size:11px;color:var(--tx3);line-height:1.5;">
+                        🔒 Admin access is granted by the system administrator.<br>
+                        <a href="/model-control/login/" style="color:var(--tx3);text-decoration:underline;">Model Admin Login →</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const html = document.documentElement;
+    const lbl = document.getElementById('theme-lbl');
+    html.className = localStorage.getItem('theme') || 'light';
+    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    function toggleTheme() {
+        const n = html.className === 'dark' ? 'light' : 'dark';
+        html.className = n; localStorage.setItem('theme', n);
+        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    }
+    </script>
+</body>
+</html>

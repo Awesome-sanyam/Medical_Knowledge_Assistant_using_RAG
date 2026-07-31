@@ -1,118 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Knowledge Base Manager | MedAssist Admin</title>
+    <title>Knowledge Base Manager — MedAssist Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>* { font-family: 'Inter', sans-serif; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
+        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;}
+        body{background:var(--bg);color:var(--tx);margin:0;min-height:100vh;display:flex;flex-direction:column;transition:background .25s,color .25s;}
+        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px;}
+        .hdr{background:var(--bg2);border-bottom:1px solid var(--bd);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;}
+        .sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--bd);padding:16px 12px;flex-shrink:0;}
+        .nav-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;text-decoration:none;transition:all .15s;}
+        .nav-item:hover{background:var(--bg3);color:var(--tx);}
+        .nav-item.active{background:var(--tx);color:var(--bg);}
+        .card{background:var(--bg2);border:1px solid var(--bd);border-radius:16px;padding:24px;}
+        .btn-p{background:var(--tx);color:var(--bg);border:none;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity .2s;}
+        .btn-p:hover{opacity:.85;}
+        .badge-ok{background:#d1fae5;color:#065f46;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
+        .badge-err{background:#fee2e2;color:#991b1b;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
+        .badge-idx{background:#dbeafe;color:#1e40af;border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
+        .badge-pend{background:var(--bg3);color:var(--tx3);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;}
+        .dark .badge-ok{background:#064e3b;color:#6ee7b7;}
+        .dark .badge-err{background:#7f1d1d;color:#fca5a5;}
+        .dark .badge-idx{background:#1e3a5f;color:#93c5fd;}
+        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;transition:all .25s;}
+        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .dark .toggle::after{transform:translateX(18px);}
+        .section-title{font-size:11px;font-weight:600;color:var(--tx3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;}
+        .doc-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--bd);}
+        .doc-row:last-child{border-bottom:none;}
+        .doc-icon{width:36px;height:36px;background:var(--bg3);border:1px solid var(--bd);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+        .upload-zone{border:2px dashed var(--bd);border-radius:14px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;}
+        .upload-zone:hover{border-color:var(--tx3);background:var(--bg3);}
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
-
-    <!-- Sidebar + Layout -->
-    <div class="flex min-h-screen">
-        <!-- Sidebar -->
-        <aside class="w-60 bg-slate-900 text-slate-300 flex flex-col py-6 px-4 fixed h-full z-10">
-            <div class="flex items-center gap-3 mb-10 px-2">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-                </div>
-                <span class="font-semibold text-white text-sm">MedAssist Admin</span>
+<body>
+    <!-- Header -->
+    <header class="hdr">
+        <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:30px;height:30px;background:var(--tx);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+                <svg width="14" height="14" fill="none" stroke="var(--bg)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
             </div>
-            <nav class="space-y-1">
-                <a href="/app-admin/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;">MedAssist Admin</span>
+            <span style="font-size:11px;color:var(--tx3);padding:3px 8px;border:1px solid var(--bd);border-radius:6px;">Knowledge Base</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="/chat/" style="font-size:12px;color:var(--tx2);text-decoration:none;padding:5px 10px;border:1px solid var(--bd);border-radius:7px;transition:all .15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">Chat ↗</a>
+            <div style="display:flex;align-items:center;gap:6px;">
+                <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
+                <div class="toggle" onclick="toggleTheme()"></div>
+            </div>
+        </div>
+    </header>
+
+    <div style="display:flex;flex:1;min-height:calc(100vh - 56px);">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav style="display:flex;flex-direction:column;gap:2px;">
+                <a href="/app-admin/" class="nav-item active">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     Knowledge Base
                 </a>
-                <a href="/app-admin/config/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <a href="/app-admin/config/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     LLM Config
                 </a>
-                <a href="/app-admin/audit/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <a href="/app-admin/audit/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     Audit Logs
                 </a>
-                <div class="border-t border-slate-700 my-3"></div>
-                <a href="/chat/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-800 text-sm transition-colors">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Chat Interface
+                <div style="height:1px;background:var(--bd);margin:8px 0;"></div>
+                <a href="/model-control/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Model Control
+                </a>
+                <a href="/chat/" class="nav-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    Live Chat
                 </a>
             </nav>
         </aside>
 
-        <!-- Main Content -->
-        <main class="ml-60 flex-1 p-8">
-            <div class="max-w-4xl">
-                <h2 class="text-2xl font-bold text-slate-900 mb-1">Knowledge Base Manager</h2>
-                <p class="text-slate-500 text-sm mb-8">Upload medical PDFs or guidelines to index them into the RAG vector store.</p>
+        <!-- Main -->
+        <main style="flex:1;padding:28px;overflow-y:auto;">
+            <div style="max-width:800px;margin:0 auto;">
+                <div style="margin-bottom:24px;">
+                    <h1 style="font-size:22px;font-weight:800;letter-spacing:-.03em;margin:0 0 4px;">Knowledge Base Manager</h1>
+                    <p style="font-size:13px;color:var(--tx2);margin:0;">Upload medical PDFs or clinical guidelines to index them into the RAG vector store.</p>
+                </div>
 
-                <!-- Upload Form -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
-                    <h3 class="font-semibold text-slate-800 mb-4">Upload New Document</h3>
-                    <form method="post" enctype="multipart/form-data" class="flex items-center gap-4">
+                <!-- Upload -->
+                <div class="card" style="margin-bottom:20px;">
+                    <div class="section-title">Upload New Document</div>
+                    <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <label class="flex-1 flex items-center gap-3 border-2 border-dashed border-slate-200 rounded-xl px-5 py-4 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 transition-colors">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                            <span class="text-sm text-slate-500" id="file-label">Choose a PDF or TXT file…</span>
-                            <input type="file" name="document" accept=".pdf,.txt" class="hidden" id="file-input" onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Choose a file…'">
+                        <label class="upload-zone" style="display:block;margin-bottom:16px;">
+                            <svg width="24" height="24" fill="none" stroke="var(--tx3)" viewBox="0 0 24 24" style="margin:0 auto 8px;display:block;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            <span style="font-size:13px;color:var(--tx2);" id="file-label">Click to choose a PDF or TXT file…</span>
+                            <input type="file" name="document" accept=".pdf,.txt" style="display:none;" id="file-input"
+                                onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Choose a file…'">
                         </label>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-medium text-sm transition-colors shadow-sm whitespace-nowrap">
-                            Upload & Index
-                        </button>
+                        <button type="submit" class="btn-p">Upload & Index</button>
                     </form>
                 </div>
 
-                <!-- Documents Table -->
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="px-6 py-4 border-b border-slate-100">
-                        <h3 class="font-semibold text-slate-800">Indexed Documents ({{ documents|length }})</h3>
-                    </div>
-                    <div class="divide-y divide-slate-100">
-                        {% for doc in documents %}
-                        <div class="px-6 py-4 flex items-center justify-between" id="doc-row-{{ doc.id }}">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                </div>
-                                <div>
-                                    <p class="font-medium text-slate-800 text-sm">{{ doc.title }}</p>
-                                    <p class="text-xs text-slate-400 mt-0.5">{{ doc.uploaded_at|date:"M d, Y · H:i" }}
-                                        {% if doc.chunk_count %} · {{ doc.chunk_count }} chunks{% endif %}
-                                    </p>
-                                </div>
+                <!-- Documents -->
+                <div class="card">
+                    <div class="section-title">Indexed Documents ({{ documents|length }})</div>
+                    {% for doc in documents %}
+                    <div class="doc-row" id="doc-row-{{ doc.id }}">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="doc-icon">
+                                <svg width="16" height="16" fill="none" stroke="var(--tx3)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </div>
-                            <div class="flex items-center gap-3">
-                                <span id="status-{{ doc.id }}"
-                                    class="px-3 py-1 rounded-full text-xs font-semibold
-                                    {% if doc.status == 'completed' %}bg-emerald-100 text-emerald-700
-                                    {% elif doc.status == 'indexing' %}bg-blue-100 text-blue-700 animate-pulse
-                                    {% elif doc.status == 'failed' %}bg-red-100 text-red-700
-                                    {% else %}bg-slate-100 text-slate-600{% endif %}">
-                                    {{ doc.status|capfirst }}
-                                </span>
-                                <form method="post" action="/app-admin/doc/{{ doc.id }}/delete/" onsubmit="return confirm('Delete this document?')">
-                                    {% csrf_token %}
-                                    <button type="submit" class="text-slate-400 hover:text-red-500 transition-colors p-1">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    </button>
-                                </form>
+                            <div>
+                                <div style="font-size:13px;font-weight:600;">{{ doc.title }}</div>
+                                <div style="font-size:11px;color:var(--tx3);margin-top:2px;">{{ doc.uploaded_at|date:"M d, Y · H:i" }}{% if doc.chunk_count %} · {{ doc.chunk_count }} chunks{% endif %}</div>
                             </div>
                         </div>
-                        {% empty %}
-                        <div class="px-6 py-12 text-center text-slate-400 text-sm">
-                            No documents uploaded yet. Upload a PDF to get started.
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span id="status-{{ doc.id }}" class="{% if doc.status == 'completed' %}badge-ok{% elif doc.status == 'indexing' %}badge-idx{% elif doc.status == 'failed' %}badge-err{% else %}badge-pend{% endif %}">
+                                {{ doc.status|capfirst }}
+                            </span>
+                            <form method="post" action="/app-admin/doc/{{ doc.id }}/delete/" onsubmit="return confirm('Delete this document?')" style="margin:0;">
+                                {% csrf_token %}
+                                <button type="submit" style="background:none;border:none;cursor:pointer;color:var(--tx3);padding:4px;transition:color .15s;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--tx3)'">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
                         </div>
-                        {% endfor %}
                     </div>
+                    {% empty %}
+                    <div style="text-align:center;padding:32px 0;color:var(--tx3);font-size:13px;">
+                        No documents uploaded yet. Upload a PDF to get started.
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </main>
     </div>
 
     <script>
+    const html = document.documentElement;
+    const lbl = document.getElementById('theme-lbl');
+    html.className = localStorage.getItem('theme') || 'light';
+    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    function toggleTheme() {
+        const n = html.className === 'dark' ? 'light' : 'dark';
+        html.className = n; localStorage.setItem('theme', n);
+        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    }
+
     // Poll status for documents that are pending/indexing
-    const pendingDocs = {{ documents|length }};
     document.querySelectorAll('[id^="status-"]').forEach(el => {
         const docId = el.id.replace('status-', '');
         const status = el.textContent.trim().toLowerCase();
@@ -126,17 +169,18 @@
             const resp = await fetch(`/app-admin/doc/${docId}/status/`);
             const data = await resp.json();
             statusEl.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
-
-            statusEl.className = 'px-3 py-1 rounded-full text-xs font-semibold ';
+            statusEl.className = '';
             if (data.status === 'completed') {
-                statusEl.className += 'bg-emerald-100 text-emerald-700';
+                statusEl.className = 'badge-ok';
                 clearInterval(interval);
             } else if (data.status === 'indexing') {
-                statusEl.className += 'bg-blue-100 text-blue-700 animate-pulse';
+                statusEl.className = 'badge-idx';
             } else if (data.status === 'failed') {
-                statusEl.className += 'bg-red-100 text-red-700';
+                statusEl.className = 'badge-err';
                 statusEl.title = data.error;
                 clearInterval(interval);
+            } else {
+                statusEl.className = 'badge-pend';
             }
         }, 2500);
     }

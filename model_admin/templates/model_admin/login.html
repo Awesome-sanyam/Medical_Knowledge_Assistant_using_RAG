@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Control Admin — Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg:#ffffff;--bg2:#f9f9f9;--bg3:#f2f2f2;--bd:#e4e4e7;--tx:#111827;--tx2:#6b7280;--tx3:#9ca3af;--acc:#111827;}
+        .dark{--bg:#0a0a0a;--bg2:#111111;--bg3:#1c1c1c;--bd:#272727;--tx:#f5f5f5;--tx2:#a1a1aa;--tx3:#52525b;--acc:#f5f5f5;}
+        *{font-family:'Inter',sans-serif;box-sizing:border-box;}
+        body{background:var(--bg);color:var(--tx);display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;transition:background .25s,color .25s;}
+        .card{background:var(--bg2);border:1px solid var(--bd);border-radius:20px;padding:40px;width:100%;max-width:400px;}
+        .inp{width:100%;background:var(--bg3);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:11px 14px;font-size:14px;outline:none;transition:border .2s;}
+        .inp:focus{border-color:var(--tx3);}
+        .inp::placeholder{color:var(--tx3);}
+        .btn{width:100%;background:var(--tx);color:var(--bg);border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:8px;}
+        .btn:hover{opacity:.85;}
+        .toggle{width:40px;height:22px;background:var(--bg3);border:1px solid var(--bd);border-radius:99px;position:relative;cursor:pointer;}
+        .toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--tx);transition:transform .25s;}
+        .dark .toggle::after{transform:translateX(18px);}
+        label{display:block;font-size:13px;font-weight:500;color:var(--tx2);margin-bottom:6px;}
+    </style>
+</head>
+<body>
+    <div style="position:fixed;top:20px;right:24px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--tx3);" id="theme-lbl">Light</span>
+        <div class="toggle" onclick="toggleTheme()"></div>
+    </div>
+
+    <div class="card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:32px;">
+            <div style="width:40px;height:40px;background:var(--tx);border-radius:10px;display:flex;align-items:center;justify-content:center;">
+                <svg width="20" height="20" fill="none" stroke="var(--bg)" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+            </div>
+            <div>
+                <div style="font-size:18px;font-weight:800;letter-spacing:-.02em;">Model Control</div>
+                <div style="font-size:12px;color:var(--tx3);">Standalone Admin Panel</div>
+            </div>
+        </div>
+
+        {% if error %}
+        <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:12px 14px;font-size:13px;color:#991b1b;margin-bottom:20px;">
+            ⚠️ {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom:16px;">
+                <label for="username">Username</label>
+                <input class="inp" id="username" name="username" type="text" placeholder="Enter admin username" autocomplete="username">
+            </div>
+            <div style="margin-bottom:24px;">
+                <label for="password">Password</label>
+                <input class="inp" id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password">
+            </div>
+            <button class="btn" type="submit">Sign In to Model Control →</button>
+        </form>
+
+        <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--bd);text-align:center;">
+            <a href="/chat/" style="font-size:13px;color:var(--tx3);text-decoration:none;">← Back to Chat Interface</a>
+        </div>
+    </div>
+
+    <script>
+    const html = document.documentElement;
+    const lbl = document.getElementById('theme-lbl');
+    html.className = localStorage.getItem('theme') || 'light';
+    lbl.textContent = html.className === 'dark' ? 'Dark' : 'Light';
+    function toggleTheme() {
+        const n = html.className === 'dark' ? 'light' : 'dark';
+        html.className = n; localStorage.setItem('theme', n);
+        lbl.textContent = n === 'dark' ? 'Dark' : 'Light';
+    }
+    </script>
+</body>
+</html>

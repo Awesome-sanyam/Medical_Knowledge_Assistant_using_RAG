@@ -24,6 +24,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("chat/", include("chat_app.urls")),
     path("app-admin/", include("admin_app.urls")),
+    path("model-control/", include("model_admin.urls")),
+    path("", include("chat_app.urls")),  # root redirects to chat
 ]
 
 if settings.DEBUG:

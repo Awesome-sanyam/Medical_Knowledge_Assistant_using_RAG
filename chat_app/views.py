@@ -4,7 +4,6 @@ import time
 
 from django.http import JsonResponse, StreamingHttpResponse
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from .models import Conversation, Message, UserFeedback
@@ -39,8 +38,19 @@ def chat_interface(request):
     if not request.session.session_key:
         request.session.create()
 
-    # Create a fresh conversation for this session visit
-    conversation = Conversation.objects.create()
+    # Reuse the active conversation for this session, or create one
+    session_key = "active_conversation_id"
+    conv_id = request.session.get(session_key)
+    conversation = None
+    if conv_id:
+        try:
+            conversation = Conversation.objects.get(id=conv_id)
+        except Conversation.DoesNotExist:
+            conversation = None
+    if conversation is None:
+        conversation = Conversation.objects.create()
+        request.session[session_key] = str(conversation.id)
+
     return render(
         request,
         "chat/interface.html",

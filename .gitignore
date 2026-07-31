@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Django
+*.log
+db.sqlite3
+media/
+staticfiles/
+
+# Environment Variables
+.env
+.env.local
+
+# AI Model Files (too large for git — download via Ollama)
+*.gguf
+*.bin
+*.safetensors
+Modelfile
+
+# ChromaDB vector store (auto-generated from uploaded PDFs)
+chroma_db/
+
+# Evaluation outputs (auto-generated)
+evaluation/eval_results.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Byte-compiled / optimized / DLL files
+*.so

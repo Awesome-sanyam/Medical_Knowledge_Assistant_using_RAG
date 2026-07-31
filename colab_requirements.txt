@@ -1,0 +1,5 @@
+# Unsloth requires specific installation paths, run these directly in Colab cells:
+# pip install "unsloth[colab-new] @ git+https://github.com/unslothai/unsloth.git"
+# pip install --no-deps trl peft accelerate bitsandbytes
+datasets>=2.19.0
+huggingface_hub

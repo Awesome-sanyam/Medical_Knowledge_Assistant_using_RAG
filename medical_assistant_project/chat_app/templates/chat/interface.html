@@ -393,10 +393,20 @@ textarea#inp::-webkit-scrollbar{display:none;}
             </div>
             <div class="drw-body">
                 <div class="drw-section-label">Navigation</div>
-                <a href="/chat/" class="drw-item active">
+                <a href="{% url 'chat_interface' %}" class="drw-item active">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                     Chat
                 </a>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="drw-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Admin Dashboard
+                </a>
+                <a href="{% url 'model_admin_dashboard' %}" class="drw-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Model Control
+                </a>
+                {% endif %}
                 <div class="drw-sep"></div>
                 <div class="drw-section-label">Conversations</div>
                 <div class="conv-list" id="conv-list">
@@ -414,7 +424,7 @@ textarea#inp::-webkit-scrollbar{display:none;}
             <div class="drw-user">
                 <div class="user-avatar">{{ request.user.username|first|upper }}</div>
                 <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
-                <a href="/chat/logout/" class="logout-btn" title="Sign out">
+                <a href="{% url 'user_logout' %}" class="logout-btn" title="Sign out">
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 </a>
             </div>

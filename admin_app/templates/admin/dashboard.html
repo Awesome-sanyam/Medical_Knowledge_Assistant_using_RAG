@@ -5,306 +5,386 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knowledge Base — MedAssist Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ═══════════════ SHARED DESIGN SYSTEM ═══════════════ */
+        /* ═══ AETHERIS DESIGN SYSTEM ═══ */
         :root {
-            --c-bg:#fafafa; --c-surface:#ffffff; --c-surface-2:#f5f5f5; --c-surface-3:#eeeeee;
-            --c-outline:#e0e0e0; --c-outline-2:#bdbdbd;
-            --c-on-bg:#212121; --c-on-surface:#212121; --c-on-surface-2:#616161; --c-on-surface-3:#9e9e9e;
-            --c-primary:#212121; --c-on-primary:#ffffff;
-            --c-error:#c62828; --c-error-bg:#ffebee;
-            --c-success:#1b5e20; --c-success-bg:#e8f5e9;
-            --c-warn:#e65100; --c-warn-bg:#fff3e0;
-            --c-info:#0277bd; --c-info-bg:#e1f5fe;
-            --radius-sm:8px; --radius-md:12px; --radius-lg:16px;
-            --shadow-1:0 1px 3px rgba(0,0,0,.07);
-            --shadow-2:0 2px 8px rgba(0,0,0,.09);
-            --sb-w:232px; --hdr-h:52px;
-            --t:all .18s cubic-bezier(.4,0,.2,1);
+            --primary: #4648d4; --primary-container: #6063ee;
+            --secondary: #b4136d;
+            --tertiary: #006c49;
+            --on-surface: #1b1b1c; --on-surface-variant: #464554;
+            --outline: #767586; --outline-variant: #c7c4d7;
+            --error: #ba1a1a; --error-container: #ffdad6;
+            --glass-1: rgba(255,255,255,0.70); --glass-2: rgba(255,255,255,0.85);
+            --glass-border: rgba(255,255,255,0.55);
+            --sidebar-w: 240px; --t: all .2s cubic-bezier(.4,0,.2,1);
         }
-        [data-dark] {
-            --c-bg:#121212; --c-surface:#1e1e1e; --c-surface-2:#262626; --c-surface-3:#323232;
-            --c-outline:#2e2e2e; --c-outline-2:#424242;
-            --c-on-bg:#eeeeee; --c-on-surface:#eeeeee; --c-on-surface-2:#9e9e9e; --c-on-surface-3:#616161;
-            --c-primary:#eeeeee; --c-on-primary:#121212;
-            --c-error:#ef9a9a; --c-error-bg:#311b1b;
-            --c-success:#a5d6a7; --c-success-bg:#1b2e1b;
-            --c-warn:#ffcc80; --c-warn-bg:#2e1f00;
-            --c-info:#81d4fa; --c-info-bg:#01253a;
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
+        body {
+            min-height: 100svh; display: flex; flex-direction: column;
+            background-image:
+                radial-gradient(at 40% 20%, hsla(228,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189,100%,56%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355,100%,93%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, hsla(340,100%,76%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(22,100%,77%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(242,100%,70%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, hsla(343,100%,76%,1) 0px, transparent 50%);
+            background-color: #f6f3f2; background-attachment: fixed; background-size: cover;
         }
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-        html{font-family:'Inter',system-ui,sans-serif;font-size:14px;}
-        body{background:var(--c-bg);color:var(--c-on-bg);min-height:100svh;display:flex;flex-direction:column;transition:var(--t);}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--c-outline-2);border-radius:4px;}
-        a{text-decoration:none;color:inherit;}
+        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: rgba(118,117,134,.3); border-radius: 4px; }
+        a { text-decoration: none; }
 
-        /* ═══════════════ LAYOUT ═══════════════ */
-        .hdr{height:var(--hdr-h);padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--c-on-bg);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
-        [data-dark] .hdr{background:var(--c-surface-2);border-bottom-color:var(--c-outline);}
-        .hdr-brand{display:flex;align-items:center;gap:10px;}
-        .hdr-mark{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
-        [data-dark] .hdr-mark{background:var(--c-surface-3);border:1px solid var(--c-outline);}
-        .hdr-mark svg{color:rgba(255,255,255,.9);}
-        [data-dark] .hdr-mark svg{color:var(--c-on-surface-2);}
-        .hdr-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.02em;}
-        [data-dark] .hdr-title{color:var(--c-on-surface-2);}
-        .hdr-tag{font-size:11px;color:rgba(255,255,255,.4);padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:99px;}
-        [data-dark] .hdr-tag{color:var(--c-on-surface-3);border-color:var(--c-outline);}
-        .hdr-right{display:flex;align-items:center;gap:8px;}
-        .hdr-btn{font-size:12px;color:rgba(255,255,255,.6);padding:5px 12px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);cursor:pointer;background:none;font-family:inherit;transition:var(--t);}
-        [data-dark] .hdr-btn{color:var(--c-on-surface-3);border-color:var(--c-outline);}
-        .hdr-btn:hover{background:rgba(255,255,255,.12);}
-        [data-dark] .hdr-btn:hover{background:var(--c-surface-3);}
-        .theme-btn{background:none;border:none;cursor:pointer;font-size:17px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--t);}
-        .theme-btn:hover{background:rgba(255,255,255,.15);}
-        [data-dark] .theme-btn:hover{background:var(--c-surface-3);}
+        /* Glass app shell */
+        .glass-app {
+            min-height: 100svh; display: flex; flex-direction: column;
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+        }
 
-        .layout{display:flex;flex:1;min-height:calc(100svh - var(--hdr-h));}
+        /* Header */
+        .hdr {
+            height: 56px; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(255,255,255,0.7);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .hdr-brand { display: flex; align-items: center; gap: 10px; }
+        .hdr-orb {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: conic-gradient(from 0deg, #4648d4, #b4136d, #06b6d4, #6063ee, #4648d4);
+            position: relative; animation: orbSpin 8s linear infinite;
+            box-shadow: 0 0 10px rgba(70,72,212,.35); flex-shrink: 0;
+        }
+        .hdr-orb::after { content:''; position:absolute; inset:3px; border-radius:50%; background:white; }
+        @keyframes orbSpin { to { transform:rotate(360deg); } }
+        .hdr-title {
+            font-size: 15px; font-weight: 800; letter-spacing: -0.02em;
+            background: linear-gradient(90deg, #4648d4, #b4136d);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hdr-tag {
+            font-size: 11px; font-weight: 600; color: var(--on-surface-variant);
+            background: rgba(70,72,212,0.08); border: 1px solid rgba(70,72,212,0.2);
+            border-radius: 99px; padding: 3px 10px;
+        }
+        .hdr-right { display: flex; align-items: center; gap: 8px; }
+        .hdr-pill {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.7); border: 1px solid var(--glass-border);
+            border-radius: 99px; padding: 6px 14px; font-size: 12.5px; font-weight: 600;
+            color: var(--on-surface); cursor: pointer; transition: var(--t);
+            font-family: inherit;
+        }
+        .hdr-pill:hover { background: white; box-shadow: 0 4px 16px rgba(70,72,212,.12); }
 
-        /* ═══════════════ SIDEBAR ═══════════════ */
-        .sb{width:var(--sb-w);background:var(--c-surface);border-right:1px solid var(--c-outline);padding:12px 10px;flex-shrink:0;}
-        .sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);padding:8px 8px 4px;}
-        .sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;color:var(--c-on-surface-2);transition:var(--t);margin-bottom:1px;}
-        .sb-item:hover{background:var(--c-surface-2);color:var(--c-on-surface);}
-        .sb-item.active{background:var(--c-on-bg);color:var(--c-on-primary);}
-        [data-dark] .sb-item.active{background:var(--c-surface-3);color:var(--c-on-surface);}
-        .sb-item svg{flex-shrink:0;opacity:.7;}
-        .sb-item.active svg{opacity:1;}
-        .sb-sep{height:1px;background:var(--c-outline);margin:8px 4px;}
+        /* Layout */
+        .layout { display: flex; flex: 1; }
 
-        /* ═══════════════ MAIN ═══════════════ */
-        main{flex:1;padding:28px 32px;overflow-y:auto;}
-        .inner{max-width:840px;margin:0 auto;}
-        .page-head{margin-bottom:24px;}
-        .page-head h1{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;}
-        .page-head p{font-size:13px;color:var(--c-on-surface-2);line-height:1.55;}
+        /* Sidebar */
+        .sb {
+            width: var(--sidebar-w); flex-shrink: 0;
+            background: rgba(255,255,255,0.55);
+            border-right: 1px solid var(--glass-border);
+            padding: 20px 14px;
+            backdrop-filter: blur(20px);
+        }
+        .sb-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--outline); padding: 10px 8px 4px; }
+        .sb-item {
+            display: flex; align-items: center; gap: 9px;
+            padding: 9px 12px; border-radius: 14px;
+            font-size: 13px; font-weight: 500; color: var(--on-surface-variant);
+            transition: var(--t); margin-bottom: 2px; cursor: pointer;
+        }
+        .sb-item:hover { background: rgba(255,255,255,0.7); color: var(--on-surface); }
+        .sb-item.active {
+            background: rgba(255,255,255,0.85);
+            color: var(--primary); font-weight: 600;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 2px 12px rgba(70,72,212,.08);
+        }
+        .sb-item svg { flex-shrink: 0; opacity: .7; }
+        .sb-item.active svg { opacity: 1; }
+        .sb-sep { height: 1px; background: var(--glass-border); margin: 10px 4px; }
 
-        /* Stats */
-        .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
-        .stat{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);padding:18px 20px;box-shadow:var(--shadow-1);}
-        .stat.primary{background:var(--c-on-bg);border-color:transparent;}
-        [data-dark] .stat.primary{background:var(--c-surface-2);}
-        .stat-val{font-size:28px;font-weight:800;letter-spacing:-.04em;color:var(--c-on-surface);}
-        .stat.primary .stat-val{color:var(--c-on-primary);}
-        [data-dark] .stat.primary .stat-val{color:var(--c-on-surface);}
-        .stat-lbl{font-size:12px;color:var(--c-on-surface-3);margin-top:3px;}
-        .stat.primary .stat-lbl{color:rgba(255,255,255,.5);}
-        [data-dark] .stat.primary .stat-lbl{color:var(--c-on-surface-3);}
+        /* Main */
+        main { flex: 1; padding: 32px; overflow-y: auto; }
+        .inner { max-width: 860px; margin: 0 auto; }
+        .page-head { margin-bottom: 28px; }
+        .page-head h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 6px; }
+        .page-head p { font-size: 14px; color: var(--on-surface-variant); line-height: 1.6; }
 
-        /* Cards */
-        .card{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);padding:24px;margin-bottom:18px;box-shadow:var(--shadow-1);}
-        .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);margin-bottom:18px;display:flex;align-items:center;gap:6px;}
+        /* Stat grid */
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        .stat-card {
+            background: rgba(255,255,255,0.80); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px 22px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: var(--t);
+        }
+        .stat-card:hover { box-shadow: 0 8px 30px rgba(70,72,212,0.10); transform: translateY(-2px); }
+        .stat-card.primary { background: linear-gradient(135deg, rgba(96,99,238,0.15) 0%, rgba(180,19,109,0.10) 100%); }
+        .stat-val {
+            font-size: 32px; font-weight: 800; letter-spacing: -0.04em;
+            background: linear-gradient(90deg, #4648d4, #b4136d);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        .stat-lbl { font-size: 12px; color: var(--on-surface-variant); font-weight: 500; }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(255,255,255,0.80); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 24px; margin-bottom: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em;
+            color: var(--outline); margin-bottom: 18px;
+            display: flex; align-items: center; gap: 6px;
+        }
 
         /* Upload zone */
-        .upload-zone{border:1.5px dashed var(--c-outline);border-radius:var(--radius-sm);padding:28px 24px;text-align:center;cursor:pointer;transition:var(--t);background:var(--c-surface-2);display:block;margin-bottom:14px;}
-        .upload-zone:hover,.upload-zone.drag{border-color:var(--c-outline-2);background:var(--c-surface-3);}
-        .upload-icon{width:44px;height:44px;border-radius:var(--radius-sm);background:var(--c-surface-3);border:1px solid var(--c-outline);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
-        .upload-zone:hover .upload-icon,.upload-zone.drag .upload-icon{border-color:var(--c-outline-2);}
-        .upload-text{font-size:14px;font-weight:600;margin-bottom:4px;}
-        .upload-sub{font-size:12px;color:var(--c-on-surface-3);}
-        .upload-fname{margin-top:8px;font-size:13px;font-weight:600;color:var(--c-on-surface-2);}
-        .btn-upload{background:var(--c-primary);color:var(--c-on-primary);border:none;border-radius:var(--radius-sm);padding:11px 24px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:var(--t);box-shadow:var(--shadow-1);}
-        .btn-upload:hover{opacity:.85;}
-        .btn-upload:disabled{opacity:.4;cursor:not-allowed;}
+        .upload-zone {
+            border: 1.5px dashed;
+            border-image: linear-gradient(135deg, #6063ee, #b4136d) 1;
+            border-radius: 16px;
+            padding: 32px 24px; text-align: center;
+            cursor: pointer; transition: var(--t);
+            background: rgba(70,72,212,0.02);
+            margin-bottom: 16px; display: block;
+        }
+        .upload-zone:hover, .upload-zone.drag {
+            background: rgba(70,72,212,0.06);
+            box-shadow: 0 0 0 4px rgba(70,72,212,0.08);
+        }
+        .upload-orb {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: conic-gradient(from 0deg, #4648d4, #b4136d, #06b6d4, #6063ee, #4648d4);
+            margin: 0 auto 14px; position: relative;
+            box-shadow: 0 0 20px rgba(70,72,212,0.3);
+        }
+        .upload-orb::after { content:''; position:absolute; inset:5px; border-radius:50%; background:white; }
+        .upload-orb-icon { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:2; }
+        .upload-text { font-size: 15px; font-weight: 700; margin-bottom: 5px; color: var(--on-surface); }
+        .upload-sub { font-size: 13px; color: var(--on-surface-variant); }
+        .upload-fname { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--primary); }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #6063ee 0%, #b4136d 100%);
+            color: white; border: none; border-radius: 99px;
+            padding: 13px 28px; font-size: 14px; font-weight: 700;
+            font-family: inherit; cursor: pointer; transition: var(--t);
+            box-shadow: 0 4px 20px rgba(70,72,212,0.35);
+        }
+        .btn-gradient:hover { box-shadow: 0 8px 30px rgba(70,72,212,0.45); transform: translateY(-1px); }
+        .btn-gradient:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
         /* Alerts */
-        .alert{padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:16px;}
-        .alert-ok{background:var(--c-success-bg);color:var(--c-success);border:1px solid rgba(27,94,32,.2);}
-        .alert-err{background:var(--c-error-bg);color:var(--c-error);border:1px solid rgba(198,40,40,.2);}
+        .alert { padding: 12px 16px; border-radius: 14px; font-size: 13px; margin-bottom: 16px; }
+        .alert-ok { background: rgba(0,108,73,0.1); color: var(--tertiary); border: 1px solid rgba(0,108,73,0.2); }
+        .alert-err { background: var(--error-container); color: var(--error); border: 1px solid rgba(186,26,26,.2); }
 
         /* Document row */
-        .doc-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--c-outline);}
-        .doc-row:last-child{border-bottom:none;}
-        .doc-icon{width:36px;height:36px;background:var(--c-surface-2);border:1px solid var(--c-outline);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .doc-name{font-size:13px;font-weight:600;}
-        .doc-meta{font-size:11px;color:var(--c-on-surface-3);margin-top:2px;}
-        .doc-actions{margin-left:auto;display:flex;align-items:center;gap:8px;}
+        .doc-row {
+            display: flex; align-items: center; gap: 14px;
+            padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+        .doc-row:last-child { border-bottom: none; }
+        .doc-icon {
+            width: 40px; height: 40px;
+            background: conic-gradient(from 0deg, #4648d4, #b4136d, #06b6d4, #6063ee, #4648d4);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            position: relative; flex-shrink: 0;
+        }
+        .doc-icon::after { content:''; position:absolute; inset:4px; border-radius:8px; background:white; }
+        .doc-icon svg { position: relative; z-index: 2; }
+        .doc-name { font-size: 13.5px; font-weight: 600; color: var(--on-surface); }
+        .doc-meta { font-size: 11.5px; color: var(--outline); margin-top: 2px; }
+        .doc-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 
         /* Badges */
-        .badge{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;}
-        .badge-ok{background:var(--c-success-bg);color:var(--c-success);}
-        .badge-idx{background:var(--c-info-bg);color:var(--c-info);}
-        .badge-pend{background:var(--c-surface-3);color:var(--c-on-surface-3);}
-        .badge-err{background:var(--c-error-bg);color:var(--c-error);}
+        .badge { border-radius: 99px; padding: 4px 12px; font-size: 11.5px; font-weight: 700; }
+        .badge-ok { background: rgba(0,108,73,0.12); color: var(--tertiary); }
+        .badge-idx { background: rgba(70,72,212,0.1); color: var(--primary); }
+        .badge-pend { background: rgba(118,117,134,0.1); color: var(--outline); }
+        .badge-err { background: var(--error-container); color: var(--error); }
 
-        .del-btn{background:none;border:none;cursor:pointer;color:var(--c-on-surface-3);padding:5px;border-radius:6px;display:flex;transition:var(--t);}
-        .del-btn:hover{color:var(--c-error);background:var(--c-error-bg);}
+        .del-btn { background: none; border: none; cursor: pointer; color: var(--outline); padding: 6px; border-radius: 8px; display: flex; transition: var(--t); }
+        .del-btn:hover { color: var(--error); background: var(--error-container); }
 
-        .empty{text-align:center;padding:44px;color:var(--c-on-surface-3);font-size:13px;}
-        .empty svg{margin:0 auto 12px;display:block;opacity:.25;}
+        .empty { text-align: center; padding: 52px; color: var(--outline); font-size: 13px; }
+        .empty svg { display: block; margin: 0 auto 14px; opacity: .3; }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="hdr">
-        <div class="hdr-brand">
-            <div class="hdr-mark">
-                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    <div class="glass-app">
+        <!-- Header -->
+        <header class="hdr">
+            <div class="hdr-brand">
+                <div class="hdr-orb"></div>
+                <span class="hdr-title">MedAssist AI</span>
+                <span class="hdr-tag">Knowledge Admin</span>
             </div>
-            <span class="hdr-title">MedAssist</span>
-            <span class="hdr-tag">Admin</span>
-        </div>
-        <div class="hdr-right">
-            <a href="/chat/" class="hdr-btn">Open Chat ↗</a>
-            <button class="theme-btn" onclick="toggleDark()" id="tfab">🌙</button>
-        </div>
-    </header>
+            <div class="hdr-right">
+                <a href="/chat/" class="hdr-pill">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    Open Chat ↗
+                </a>
+            </div>
+        </header>
 
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sb">
-            <div class="sb-lbl">Knowledge</div>
-            <a href="/app-admin/" class="sb-item active">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                Knowledge Base
-            </a>
-            <a href="/app-admin/config/" class="sb-item">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round"/></svg>
-                LLM Config
-            </a>
-            <a href="/app-admin/audit/" class="sb-item">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                Audit Inspector
-            </a>
-            <div class="sb-sep"></div>
-            <div class="sb-lbl">System</div>
-            <a href="/model-control/" class="sb-item">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                Model Control
-            </a>
-            <a href="/admin/" class="sb-item">
-                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                Django Admin
-            </a>
-        </aside>
+        <div class="layout">
+            <!-- Sidebar -->
+            <aside class="sb">
+                <div class="sb-lbl">Knowledge</div>
+                <a href="/app-admin/" class="sb-item active">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Knowledge Base
+                </a>
+                <a href="/app-admin/config/" class="sb-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                    LLM Config
+                </a>
+                <a href="/app-admin/audit/" class="sb-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    Audit Inspector
+                </a>
+                <div class="sb-sep"></div>
+                <div class="sb-lbl">System</div>
+                <a href="/model-control/" class="sb-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    Model Control
+                </a>
+                <a href="/admin/" class="sb-item">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Django Admin
+                </a>
+            </aside>
 
-        <main>
-            <div class="inner">
-                <div class="page-head">
-                    <h1>Knowledge Base</h1>
-                    <p>Upload medical PDFs or clinical texts to build the RAG vector index. Documents are embedded using BGE and stored in ChromaDB.</p>
-                </div>
-
-                <!-- Stats -->
-                <div class="stats">
-                    <div class="stat primary">
-                        <div class="stat-val">{{ documents|length }}</div>
-                        <div class="stat-lbl">Documents</div>
+            <main>
+                <div class="inner">
+                    <div class="page-head">
+                        <h1>Knowledge Base</h1>
+                        <p>Upload medical PDFs or clinical texts to build the RAG vector index.<br>Documents are embedded using BGE and stored in ChromaDB for retrieval.</p>
                     </div>
-                    <div class="stat">
-                        <div class="stat-val">{% with c=documents|length %}{{ c }}{% endwith %}</div>
-                        <div class="stat-lbl">Indexed Sources</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-val">BGE</div>
-                        <div class="stat-lbl">Embedding Model</div>
-                    </div>
-                </div>
 
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert {% if 'success' in message.tags %}alert-ok{% else %}alert-err{% endif %}">{{ message }}</div>
-                {% endfor %}
-                {% endif %}
-
-                <!-- Upload -->
-                <div class="card">
-                    <div class="card-title">
-                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-                        Upload Document
-                    </div>
-                    <form method="post" enctype="multipart/form-data" id="upload-form">
-                        {% csrf_token %}
-                        <label class="upload-zone" id="dz" for="fi">
-                            <div class="upload-icon">
-                                <svg width="20" height="20" fill="none" stroke="var(--c-on-surface-3)" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            </div>
-                            <div class="upload-text">Drop file here or click to browse</div>
-                            <div class="upload-sub">PDF or TXT · Max 50 MB</div>
-                            <div class="upload-fname" id="fn"></div>
-                            <input type="file" name="document" accept=".pdf,.txt" id="fi" style="display:none" onchange="fileChosen(this)">
-                        </label>
-                        <button type="submit" class="btn-upload" id="ub" disabled>Upload &amp; Index →</button>
-                    </form>
-                </div>
-
-                <!-- Documents -->
-                <div class="card">
-                    <div class="card-title">
-                        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-                        Indexed Documents ({{ documents|length }})
-                    </div>
-                    {% for doc in documents %}
-                    <div class="doc-row" id="doc-{{ doc.id }}">
-                        <div class="doc-icon">
-                            <svg width="16" height="16" fill="none" stroke="var(--c-on-surface-3)" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <!-- Stats -->
+                    <div class="stats">
+                        <div class="stat-card primary">
+                            <div class="stat-val">{{ documents|length }}</div>
+                            <div class="stat-lbl">Total Documents</div>
                         </div>
-                        <div style="flex:1;min-width:0;">
-                            <div class="doc-name">{{ doc.title }}</div>
-                            <div class="doc-meta">{{ doc.uploaded_at|date:"M d, Y · H:i" }}{% if doc.chunk_count %} · {{ doc.chunk_count }} chunks{% endif %}</div>
+                        <div class="stat-card">
+                            <div class="stat-val">BGE</div>
+                            <div class="stat-lbl">Embedding Model</div>
                         </div>
-                        <div class="doc-actions">
-                            <span id="status-{{ doc.id }}">
-                                {% if doc.status == 'completed' %}<span class="badge badge-ok">✓ Indexed</span>
-                                {% elif doc.status == 'indexing' %}<span class="badge badge-idx">⟳ Indexing</span>
-                                {% elif doc.status == 'failed' %}<span class="badge badge-err" title="{{ doc.error_message }}">✗ Failed</span>
-                                {% else %}<span class="badge badge-pend">Pending</span>{% endif %}
-                            </span>
-                            <form method="post" action="/app-admin/doc/{{ doc.id }}/delete/" onsubmit="return confirm('Delete {{ doc.title|escapejs }}?')" style="margin:0;">
-                                {% csrf_token %}
-                                <button type="submit" class="del-btn" title="Delete">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                </button>
-                            </form>
+                        <div class="stat-card">
+                            <div class="stat-val">ChromaDB</div>
+                            <div class="stat-lbl">Vector Store</div>
                         </div>
                     </div>
-                    {% empty %}
-                    <div class="empty">
-                        <svg width="36" height="36" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        No documents uploaded yet. Upload a PDF or TXT to enable RAG responses.
-                    </div>
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert {% if 'success' in message.tags %}alert-ok{% else %}alert-err{% endif %}">{{ message }}</div>
                     {% endfor %}
+                    {% endif %}
+
+                    <!-- Upload -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                            Upload Document
+                        </div>
+                        <form method="post" enctype="multipart/form-data" id="upload-form">
+                            {% csrf_token %}
+                            <label class="upload-zone" id="dz" for="fi">
+                                <div class="upload-orb">
+                                    <div class="upload-orb-icon">
+                                        <svg width="20" height="20" fill="none" stroke="#4648d4" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    </div>
+                                </div>
+                                <div class="upload-text">Drop file here or click to browse</div>
+                                <div class="upload-sub">PDF or TXT · Max 50 MB · Clinical documents only</div>
+                                <div class="upload-fname" id="fname"></div>
+                                <input type="file" name="document" accept=".pdf,.txt" id="fi" style="display:none" onchange="fileChosen(this)">
+                            </label>
+                            <button type="submit" class="btn-gradient" id="ub" disabled>Upload &amp; Index →</button>
+                        </form>
+                    </div>
+
+                    <!-- Documents -->
+                    <div class="glass-card">
+                        <div class="card-title">
+                            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            Indexed Documents ({{ documents|length }})
+                        </div>
+                        {% for doc in documents %}
+                        <div class="doc-row" id="doc-{{ doc.id }}">
+                            <div class="doc-icon">
+                                <svg width="15" height="15" fill="none" stroke="#4648d4" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <div style="flex:1;min-width:0;">
+                                <div class="doc-name">{{ doc.title }}</div>
+                                <div class="doc-meta">{{ doc.uploaded_at|date:"M d, Y · H:i" }}{% if doc.chunk_count %} · {{ doc.chunk_count }} chunks{% endif %}</div>
+                            </div>
+                            <div class="doc-actions">
+                                <span id="status-{{ doc.id }}">
+                                    {% if doc.status == 'completed' %}<span class="badge badge-ok">✓ Indexed</span>
+                                    {% elif doc.status == 'indexing' %}<span class="badge badge-idx">⟳ Indexing</span>
+                                    {% elif doc.status == 'failed' %}<span class="badge badge-err" title="{{ doc.error_message }}">✗ Failed</span>
+                                    {% else %}<span class="badge badge-pend">Pending</span>{% endif %}
+                                </span>
+                                <form method="post" action="/app-admin/doc/{{ doc.id }}/delete/" onsubmit="return confirm('Delete {{ doc.title|escapejs }}?')" style="margin:0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="del-btn" title="Delete">
+                                        <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty">
+                            <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            No documents uploaded yet. Upload a PDF or TXT to enable RAG responses.
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
     <script>
-    /* Theme */
-    const root=document.documentElement, tfab=document.getElementById('tfab');
-    if(localStorage.getItem('ma-dark')==='1'){root.setAttribute('data-dark','');tfab.textContent='☀️';}
-    function toggleDark(){
-        if(root.hasAttribute('data-dark')){root.removeAttribute('data-dark');localStorage.setItem('ma-dark','0');tfab.textContent='🌙';}
-        else{root.setAttribute('data-dark','');localStorage.setItem('ma-dark','1');tfab.textContent='☀️';}
+    function fileChosen(input) {
+        const fn = document.getElementById('fname'), ub = document.getElementById('ub');
+        if (input.files[0]) { fn.textContent = '📎 ' + input.files[0].name; ub.disabled = false; }
+        else { fn.textContent = ''; ub.disabled = true; }
     }
-    /* File input */
-    function fileChosen(input){
-        const fn=document.getElementById('fn'), ub=document.getElementById('ub');
-        if(input.files[0]){fn.textContent='📎 '+input.files[0].name; ub.disabled=false;}
-        else{fn.textContent=''; ub.disabled=true;}
-    }
-    /* Drag & Drop */
-    const dz=document.getElementById('dz'), fi=document.getElementById('fi');
-    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
-    dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
-    dz.addEventListener('drop',e=>{
-        e.preventDefault();dz.classList.remove('drag');
-        if(e.dataTransfer.files[0]){const dt=new DataTransfer();dt.items.add(e.dataTransfer.files[0]);fi.files=dt.files;fileChosen(fi);}
+    const dz = document.getElementById('dz'), fi = document.getElementById('fi');
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+    dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.classList.remove('drag');
+        if (e.dataTransfer.files[0]) { const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]); fi.files = dt.files; fileChosen(fi); }
     });
-    /* Status polling */
-    document.querySelectorAll('[id^="status-"]').forEach(el=>{
-        const id=el.id.replace('status-','');
-        if(el.textContent.includes('Indexing')||el.textContent.includes('Pending')) pollStatus(id,el);
+    document.querySelectorAll('[id^="status-"]').forEach(el => {
+        const id = el.id.replace('status-', '');
+        if (el.textContent.includes('Indexing') || el.textContent.includes('Pending')) pollStatus(id, el);
     });
-    function pollStatus(docId,el){
-        const iv=setInterval(async()=>{
-            try{const r=await fetch(`/app-admin/doc/${docId}/status/`);const d=await r.json();
-            if(d.status==='completed'){el.innerHTML='<span class="badge badge-ok">✓ Indexed</span>';clearInterval(iv);}
-            else if(d.status==='failed'){el.innerHTML=`<span class="badge badge-err" title="${d.error}">✗ Failed</span>`;clearInterval(iv);}
-            else if(d.status==='indexing'){el.innerHTML='<span class="badge badge-idx">⟳ Indexing</span>';}
-            }catch(e){}
-        },2500);
+    function pollStatus(docId, el) {
+        const iv = setInterval(async () => {
+            try {
+                const r = await fetch(`/app-admin/doc/${docId}/status/`); const d = await r.json();
+                if (d.status === 'completed') { el.innerHTML = '<span class="badge badge-ok">✓ Indexed</span>'; clearInterval(iv); }
+                else if (d.status === 'failed') { el.innerHTML = `<span class="badge badge-err">✗ Failed</span>`; clearInterval(iv); }
+            } catch(e) {}
+        }, 2500);
     }
     </script>
 </body>

@@ -5,195 +5,307 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In — MedAssist AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* ═══════════════ DESIGN SYSTEM ═══════════════ */
+        /* ═══ AETHERIS DESIGN SYSTEM ═══ */
         :root {
-            --c-bg: #fafafa; --c-surface: #ffffff; --c-surface-2: #f5f5f5;
-            --c-outline: #e0e0e0; --c-outline-2: #bdbdbd;
-            --c-on-bg: #212121; --c-on-surface: #212121;
-            --c-on-surface-2: #616161; --c-on-surface-3: #9e9e9e;
-            --c-primary: #212121; --c-on-primary: #ffffff;
-            --c-error: #c62828; --c-error-bg: #ffebee;
-            --c-success: #1b5e20; --c-success-bg: #e8f5e9;
-            --c-warning-bg: #fff8e1;
-            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
-            --shadow-1: 0 1px 2px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.1);
-            --shadow-2: 0 2px 6px rgba(0,0,0,.08),0 4px 20px rgba(0,0,0,.06);
-            --shadow-3: 0 4px 16px rgba(0,0,0,.1),0 8px 32px rgba(0,0,0,.07);
-            --sidebar-w: 232px; --header-h: 52px;
-            --transition: all .18s cubic-bezier(.4,0,.2,1);
-        }
-        [data-dark] {
-            --c-bg: #121212; --c-surface: #1e1e1e; --c-surface-2: #2a2a2a;
-            --c-outline: #333; --c-outline-2: #444;
-            --c-on-bg: #eeeeee; --c-on-surface: #eeeeee;
-            --c-on-surface-2: #aaaaaa; --c-on-surface-3: #666;
-            --c-primary: #eeeeee; --c-on-primary: #121212;
-            --c-error: #ef9a9a; --c-error-bg: #311b1b;
-            --c-success: #a5d6a7; --c-success-bg: #1b2e1b;
-            --c-warning-bg: #2e2b1b;
+            --primary: #4648d4;
+            --secondary: #b4136d;
+            --primary-container: #6063ee;
+            --on-surface: #1b1b1c;
+            --on-surface-variant: #464554;
+            --outline: #767586;
+            --outline-variant: #c7c4d7;
+            --surface: #fcf9f8;
+            --error: #ba1a1a;
+            --error-container: #ffdad6;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; -webkit-text-size-adjust: 100%; }
-        body { background: var(--c-bg); color: var(--c-on-bg); min-height: 100svh; transition: var(--transition); }
+        html { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
 
-        /* ═══════════════ AUTH LAYOUT ═══════════════ */
-        .auth-page {
-            min-height: 100svh; display: flex; align-items: center; justify-content: center;
-            padding: 24px; background: var(--c-bg);
+        /* Mesh gradient background */
+        body {
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-image:
+                radial-gradient(at 40% 20%, hsla(228,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189,100%,56%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355,100%,93%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, hsla(340,100%,76%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(22,100%,77%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(242,100%,70%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, hsla(343,100%,76%,1) 0px, transparent 50%);
+            background-color: #f6f3f2;
+            background-attachment: fixed;
+            background-size: cover;
         }
-        .auth-card {
-            width: 100%; max-width: 440px; background: var(--c-surface);
-            border: 1px solid var(--c-outline); border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-3); overflow: hidden;
-        }
-        .auth-head {
-            padding: 32px 36px 24px; border-bottom: 1px solid var(--c-outline);
-            background: var(--c-on-bg);
-        }
-        .auth-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .brand-mark {
-            width: 36px; height: 36px; border-radius: var(--radius-sm);
-            background: var(--c-on-primary); display: flex; align-items: center; justify-content: center;
-        }
-        .brand-mark svg { color: var(--c-on-bg); }
-        .brand-name { font-size: 16px; font-weight: 800; color: var(--c-on-primary); letter-spacing: -.03em; }
-        .brand-tag { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 1px; }
-        [data-dark] .brand-mark { background: var(--c-surface-2); }
-        [data-dark] .brand-mark svg { color: var(--c-on-surface); }
-        [data-dark] .brand-name { color: var(--c-on-surface); }
-        [data-dark] .auth-head { background: var(--c-surface-2); }
-        .auth-title { font-size: 22px; font-weight: 800; color: var(--c-on-primary); letter-spacing: -.04em; margin-bottom: 4px; }
-        .auth-sub { font-size: 13px; color: rgba(255,255,255,.5); }
-        [data-dark] .auth-title, [data-dark] .auth-sub { color: var(--c-on-surface-2); }
-        [data-dark] .auth-title { color: var(--c-on-surface); }
 
-        .auth-body { padding: 28px 36px 32px; }
+        /* Glass card */
+        .glass-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255,255,255,0.80);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255,255,255,0.60);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(70,72,212,0.12), 0 8px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
+            animation: cardIn .45s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes cardIn { from { opacity:0; transform:translateY(20px) scale(.97); } to { opacity:1; transform:none; } }
 
-        /* ═══════════════ FORM ELEMENTS ═══════════════ */
+        .card-header {
+            padding: 36px 36px 28px;
+            background: linear-gradient(135deg, rgba(70,72,212,0.06) 0%, rgba(180,19,109,0.04) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            text-align: center;
+        }
+
+        /* Iridescent brand orb */
+        .brand-orb {
+            width: 68px; height: 68px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #4648d4, #b4136d, #06b6d4, #6063ee, #4648d4);
+            margin: 0 auto 16px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(70,72,212,0.4), 0 0 60px rgba(180,19,109,0.2);
+            animation: orbSpin 8s linear infinite;
+        }
+        .brand-orb::after {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .brand-orb-icon {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            font-size: 20px;
+        }
+        .brand-orb-inner {
+            width: calc(100% - 12px);
+            height: calc(100% - 12px);
+            position: absolute;
+            top: 6px; left: 6px;
+            border-radius: 50%;
+            background: white;
+        }
+        @keyframes orbSpin { to { transform: rotate(360deg); } }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(90deg, #4648d4, #b4136d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        .brand-sub {
+            font-size: 13px;
+            color: var(--on-surface-variant);
+            font-weight: 500;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--on-surface);
+            margin-top: 20px;
+            letter-spacing: -0.02em;
+        }
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--on-surface-variant);
+            margin-top: 4px;
+        }
+
+        .card-body { padding: 28px 36px 36px; }
+
+        /* Field */
         .field { margin-bottom: 16px; }
         .field-label {
-            display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em;
-            text-transform: uppercase; color: var(--c-on-surface-2); margin-bottom: 7px;
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--on-surface-variant);
+            margin-bottom: 7px;
         }
         .field-input {
-            display: block; width: 100%; padding: 11px 14px;
-            background: var(--c-surface-2); border: 1px solid var(--c-outline);
-            border-radius: var(--radius-sm); color: var(--c-on-surface);
-            font-size: 14px; font-family: inherit; outline: none;
-            transition: var(--transition);
+            display: block;
+            width: 100%;
+            padding: 13px 18px;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(199,196,215,0.6);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: inherit;
+            color: var(--on-surface);
+            outline: none;
+            transition: all .2s ease;
         }
-        .field-input:focus { border-color: var(--c-on-surface-3); box-shadow: 0 0 0 3px rgba(0,0,0,.08); }
-        [data-dark] .field-input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
-        .field-input::placeholder { color: var(--c-on-surface-3); }
-
-        /* ═══════════════ BUTTONS ═══════════════ */
-        .btn-filled {
-            display: block; width: 100%; padding: 12px 20px; text-align: center;
-            background: var(--c-primary); color: var(--c-on-primary);
-            border: none; border-radius: var(--radius-sm); font-size: 14px;
-            font-weight: 700; font-family: inherit; cursor: pointer; letter-spacing: .01em;
-            transition: var(--transition); box-shadow: var(--shadow-1);
+        .field-input::placeholder { color: var(--outline); }
+        .field-input:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 0 0 3px rgba(70,72,212,0.12);
         }
-        .btn-filled:hover { opacity: .88; box-shadow: var(--shadow-2); }
-        .btn-filled:active { opacity: .75; transform: scale(.99); }
 
-        /* ═══════════════ ALERTS ═══════════════ */
-        .alert {
-            padding: 11px 14px; border-radius: var(--radius-sm);
-            font-size: 13px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 8px;
+        /* Alert */
+        .alert-error {
+            background: var(--error-container);
+            color: var(--error);
+            border: 1px solid rgba(186,26,26,0.2);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 13px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .alert-error { background: var(--c-error-bg); color: var(--c-error); border: 1px solid rgba(198,40,40,.2); }
-        .alert svg { flex-shrink: 0; margin-top: 1px; }
 
-        /* ═══════════════ MISC ═══════════════ */
-        .auth-footer-text { margin-top: 22px; text-align: center; font-size: 13px; color: var(--c-on-surface-3); }
-        .auth-footer-text a { color: var(--c-on-surface-2); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-        .divider { border: none; border-top: 1px solid var(--c-outline); margin: 22px 0; }
-        .info-box {
-            background: var(--c-surface-2); border: 1px solid var(--c-outline);
-            border-radius: var(--radius-sm); padding: 12px 14px;
-            font-size: 12px; color: var(--c-on-surface-3); line-height: 1.5; text-align: center;
+        /* Gradient button */
+        .btn-gradient {
+            display: block;
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #6063ee 0%, #b4136d 100%);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: inherit;
+            border: none;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all .25s ease;
+            box-shadow: 0 4px 20px rgba(70,72,212,0.35);
+            letter-spacing: 0.01em;
+            margin-top: 8px;
         }
-        .info-box a { color: var(--c-on-surface-2); font-weight: 600; text-decoration: none; }
-        .info-box a:hover { text-decoration: underline; }
-
-        /* Theme button */
-        .theme-fab {
-            position: fixed; top: 20px; right: 20px; z-index: 999;
-            width: 38px; height: 38px; border-radius: 50%;
-            background: var(--c-surface); border: 1px solid var(--c-outline);
-            box-shadow: var(--shadow-2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 17px; transition: var(--transition);
+        .btn-gradient:hover {
+            box-shadow: 0 8px 30px rgba(70,72,212,0.45);
+            transform: translateY(-1px);
         }
-        .theme-fab:hover { box-shadow: var(--shadow-3); }
+        .btn-gradient:active { transform: translateY(0); }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-card { animation: fadeUp .35s ease-out; }
+        /* Glass chip link */
+        .glass-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 99px;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            transition: all .2s ease;
+        }
+        .glass-chip:hover {
+            background: rgba(255,255,255,0.92);
+            box-shadow: 0 4px 16px rgba(70,72,212,0.15);
+        }
+
+        .footer-row {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .footer-text { font-size: 13px; color: var(--on-surface-variant); }
+        .divider {
+            border: none;
+            border-top: 1px solid rgba(199,196,215,0.5);
+            margin: 22px 0;
+        }
+        .info-glass {
+            background: rgba(70,72,212,0.05);
+            border: 1px solid rgba(70,72,212,0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 12.5px;
+            color: var(--on-surface-variant);
+            text-align: center;
+            line-height: 1.5;
+        }
+        .info-glass a {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .info-glass a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <button class="theme-fab" onclick="toggleDark()" id="tfab" title="Toggle dark mode">🌙</button>
-
-    <div class="auth-page">
-        <div class="auth-card">
-            <div class="auth-head">
-                <div class="auth-brand">
-                    <div class="brand-mark">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <div class="brand-name">MedAssist AI</div>
-                        <div class="brand-tag">Clinical Knowledge Assistant</div>
-                    </div>
+    <div class="glass-card">
+        <div class="card-header">
+            <div class="brand-orb">
+                <div class="brand-orb-inner"></div>
+                <div class="brand-orb-icon">
+                    <svg width="22" height="22" fill="none" stroke="#4648d4" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+                    </svg>
                 </div>
-                <div class="auth-title">Welcome back</div>
-                <div class="auth-sub">Sign in to access your medical consultations</div>
             </div>
-            <div class="auth-body">
-                {% if error %}
-                <div class="alert alert-error">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>
-                    {{ error }}
-                </div>
-                {% endif %}
+            <div class="brand-name">MedAssist AI</div>
+            <div class="brand-sub">Clinical Knowledge Assistant</div>
+            <div class="card-title">Welcome back</div>
+            <div class="card-subtitle">Sign in to your clinical workspace</div>
+        </div>
 
-                <form method="post" autocomplete="on">
-                    {% csrf_token %}
-                    <div class="field">
-                        <label class="field-label" for="id_username">Username</label>
-                        <input class="field-input" id="id_username" name="username" type="text" placeholder="Enter your username" autocomplete="username" required>
-                    </div>
-                    <div class="field" style="margin-bottom: 24px;">
-                        <label class="field-label" for="id_password">Password</label>
-                        <input class="field-input" id="id_password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
-                    </div>
-                    <button class="btn-filled" type="submit">Sign In</button>
-                </form>
+        <div class="card-body">
+            {% if error %}
+            <div class="alert-error">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>
+                {{ error }}
+            </div>
+            {% endif %}
 
-                <p class="auth-footer-text">No account? <a href="{% url 'user_register' %}">Register here</a></p>
-                <hr class="divider">
-                <div class="info-box">
-                    Model Control Admin? <a href="/model-control/login/">Sign in here →</a>
+            <form method="post" autocomplete="on">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="field-label" for="id_username">Username</label>
+                    <input class="field-input" id="id_username" name="username" type="text" placeholder="Enter your username" autocomplete="username" required>
                 </div>
+                <div class="field" style="margin-bottom:24px;">
+                    <label class="field-label" for="id_password">Password</label>
+                    <input class="field-input" id="id_password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+                </div>
+                <button class="btn-gradient" type="submit">Sign In →</button>
+            </form>
+
+            <div class="footer-row">
+                <span class="footer-text">No account?</span>
+                <a href="{% url 'user_register' %}" class="glass-chip">Register here</a>
+            </div>
+
+            <hr class="divider">
+
+            <div class="info-glass">
+                Model Control Admin? <a href="/model-control/login/">Sign in here →</a>
             </div>
         </div>
     </div>
-
-    <script>
-    const root = document.documentElement;
-    const fab = document.getElementById('tfab');
-    const D = 'data-dark';
-    const stored = localStorage.getItem('ma-dark');
-    if (stored === '1') { root.setAttribute(D, ''); fab.textContent = '☀️'; }
-    function toggleDark() {
-        if (root.hasAttribute(D)) { root.removeAttribute(D); localStorage.setItem('ma-dark', '0'); fab.textContent = '🌙'; }
-        else { root.setAttribute(D, ''); localStorage.setItem('ma-dark', '1'); fab.textContent = '☀️'; }
-    }
-    </script>
 </body>
 </html>

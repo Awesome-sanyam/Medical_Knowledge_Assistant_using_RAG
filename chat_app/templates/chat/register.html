@@ -5,135 +5,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account — MedAssist AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --c-bg: #fafafa; --c-surface: #ffffff; --c-surface-2: #f5f5f5;
-            --c-outline: #e0e0e0; --c-outline-2: #bdbdbd;
-            --c-on-bg: #212121; --c-on-surface: #212121;
-            --c-on-surface-2: #616161; --c-on-surface-3: #9e9e9e;
-            --c-primary: #212121; --c-on-primary: #ffffff;
-            --c-error: #c62828; --c-error-bg: #ffebee;
-            --c-success: #1b5e20; --c-success-bg: #e8f5e9;
-            --radius-sm: 8px; --radius-xl: 20px;
-            --shadow-2: 0 2px 6px rgba(0,0,0,.08),0 4px 20px rgba(0,0,0,.06);
-            --shadow-3: 0 4px 16px rgba(0,0,0,.1),0 8px 32px rgba(0,0,0,.07);
-            --transition: all .18s cubic-bezier(.4,0,.2,1);
-        }
-        [data-dark] {
-            --c-bg: #121212; --c-surface: #1e1e1e; --c-surface-2: #2a2a2a;
-            --c-outline: #333; --c-outline-2: #444;
-            --c-on-bg: #eeeeee; --c-on-surface: #eeeeee;
-            --c-on-surface-2: #aaaaaa; --c-on-surface-3: #666;
-            --c-primary: #eeeeee; --c-on-primary: #121212;
-            --c-error: #ef9a9a; --c-error-bg: #311b1b;
-            --c-success: #a5d6a7; --c-success-bg: #1b2e1b;
+            --primary: #4648d4;
+            --secondary: #b4136d;
+            --on-surface: #1b1b1c;
+            --on-surface-variant: #464554;
+            --outline: #767586;
+            --outline-variant: #c7c4d7;
+            --error: #ba1a1a;
+            --error-container: #ffdad6;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; }
-        body { background: var(--c-bg); color: var(--c-on-bg); min-height: 100svh; transition: var(--transition); }
-        .auth-page { min-height: 100svh; display: flex; align-items: center; justify-content: center; padding: 24px; }
-        .auth-card { width: 100%; max-width: 440px; background: var(--c-surface); border: 1px solid var(--c-outline); border-radius: var(--radius-xl); box-shadow: var(--shadow-3); overflow: hidden; animation: fadeUp .35s ease-out; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .auth-head { padding: 32px 36px 24px; border-bottom: 1px solid var(--c-outline); background: var(--c-on-bg); }
-        [data-dark] .auth-head { background: var(--c-surface-2); }
-        .auth-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-        .brand-mark { width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--c-on-primary); display: flex; align-items: center; justify-content: center; }
-        [data-dark] .brand-mark { background: var(--c-surface-2); border: 1px solid var(--c-outline); }
-        .brand-mark svg { color: var(--c-on-bg); }
-        [data-dark] .brand-mark svg { color: var(--c-on-surface); }
-        .brand-name { font-size: 16px; font-weight: 800; color: var(--c-on-primary); letter-spacing: -.03em; }
-        .brand-tag { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 1px; }
-        [data-dark] .brand-name, [data-dark] .brand-tag { color: var(--c-on-surface-2); }
-        [data-dark] .brand-name { color: var(--c-on-surface); }
-        .auth-title { font-size: 22px; font-weight: 800; color: var(--c-on-primary); letter-spacing: -.04em; margin-bottom: 4px; }
-        .auth-sub { font-size: 13px; color: rgba(255,255,255,.45); }
-        [data-dark] .auth-title { color: var(--c-on-surface); }
-        [data-dark] .auth-sub { color: var(--c-on-surface-3); }
-        .auth-body { padding: 28px 36px 32px; max-height: calc(100svh - 260px); overflow-y: auto; }
+        html { font-family: 'Hanken Grotesk', system-ui, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
+        body {
+            min-height: 100svh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-image:
+                radial-gradient(at 40% 20%, hsla(228,100%,74%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 0%, hsla(189,100%,56%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 50%, hsla(355,100%,93%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 50%, hsla(340,100%,76%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(22,100%,77%,1) 0px, transparent 50%),
+                radial-gradient(at 80% 100%, hsla(242,100%,70%,1) 0px, transparent 50%),
+                radial-gradient(at 0% 0%, hsla(343,100%,76%,1) 0px, transparent 50%);
+            background-color: #f6f3f2;
+            background-attachment: fixed;
+        }
+        .glass-card {
+            width: 100%; max-width: 440px;
+            background: rgba(255,255,255,0.80);
+            backdrop-filter: blur(32px);
+            -webkit-backdrop-filter: blur(32px);
+            border: 1px solid rgba(255,255,255,0.60);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(70,72,212,0.12), 0 8px 32px rgba(0,0,0,0.08);
+            overflow: hidden;
+            animation: cardIn .45s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes cardIn { from { opacity:0; transform:translateY(20px) scale(.97); } to { opacity:1; transform:none; } }
+        .card-header {
+            padding: 28px 36px 22px;
+            background: linear-gradient(135deg, rgba(70,72,212,0.06) 0%, rgba(180,19,109,0.04) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            display: flex; align-items: center; gap: 14px;
+        }
+        .brand-orb-sm {
+            width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+            background: conic-gradient(from 0deg, #4648d4, #b4136d, #06b6d4, #6063ee, #4648d4);
+            position: relative;
+            box-shadow: 0 0 16px rgba(70,72,212,0.4);
+            animation: orbSpin 8s linear infinite;
+        }
+        .brand-orb-sm::after { content:''; position:absolute; inset:4px; border-radius:50%; background:white; }
+        @keyframes orbSpin { to { transform:rotate(360deg); } }
+        .brand-name {
+            font-size: 19px; font-weight: 800; letter-spacing: -0.03em;
+            background: linear-gradient(90deg, #4648d4, #b4136d);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .brand-tag { font-size: 12px; color: var(--on-surface-variant); font-weight: 500; }
+        .card-body { padding: 26px 36px 32px; max-height: calc(100svh - 220px); overflow-y: auto; }
+        .page-title { font-size: 22px; font-weight: 700; color: var(--on-surface); margin-bottom: 4px; letter-spacing: -0.02em; }
+        .page-sub { font-size: 13px; color: var(--on-surface-variant); margin-bottom: 24px; }
         .field { margin-bottom: 14px; }
-        .field-label { display: block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--c-on-surface-2); margin-bottom: 6px; }
-        .field-input { display: block; width: 100%; padding: 11px 14px; background: var(--c-surface-2); border: 1px solid var(--c-outline); border-radius: var(--radius-sm); color: var(--c-on-surface); font-size: 14px; font-family: inherit; outline: none; transition: var(--transition); }
-        .field-input:focus { border-color: var(--c-on-surface-3); box-shadow: 0 0 0 3px rgba(0,0,0,.08); }
-        [data-dark] .field-input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
-        .field-input::placeholder { color: var(--c-on-surface-3); }
-        .pw-hint { font-size: 11px; margin-top: 4px; display: none; }
-        .pw-hint.ok { color: var(--c-success); } .pw-hint.err { color: var(--c-error); display: block; }
-        .btn-filled { display: block; width: 100%; padding: 12px 20px; background: var(--c-primary); color: var(--c-on-primary); border: none; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: var(--transition); margin-top: 8px; }
-        .btn-filled:hover { opacity: .88; }
-        .alert { padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13px; margin-bottom: 18px; }
-        .alert-error { background: var(--c-error-bg); color: var(--c-error); border: 1px solid rgba(198,40,40,.2); }
-        .auth-footer-text { margin-top: 20px; text-align: center; font-size: 13px; color: var(--c-on-surface-3); }
-        .auth-footer-text a { color: var(--c-on-surface-2); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
-        .theme-fab { position: fixed; top: 20px; right: 20px; z-index: 999; width: 38px; height: 38px; border-radius: 50%; background: var(--c-surface); border: 1px solid var(--c-outline); box-shadow: var(--shadow-2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 17px; transition: var(--transition); }
+        .field-label { display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--on-surface-variant); margin-bottom:6px; }
+        .field-input {
+            display:block; width:100%; padding:12px 17px;
+            background: rgba(255,255,255,0.75); backdrop-filter:blur(8px);
+            border: 1px solid rgba(199,196,215,0.6);
+            border-radius: 14px; font-size:14px; font-family:inherit;
+            color:var(--on-surface); outline:none; transition:all .2s ease;
+        }
+        .field-input::placeholder { color:var(--outline); }
+        .field-input:focus { border-color:var(--primary); background:rgba(255,255,255,0.92); box-shadow:0 0 0 3px rgba(70,72,212,0.12); }
+        /* Password strength */
+        .pw-bar { height: 3px; border-radius: 99px; background: var(--outline-variant); margin-top: 6px; overflow: hidden; }
+        .pw-bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: all .3s ease; background: linear-gradient(90deg, #ba1a1a, #e65100, #4648d4, #006c49); background-size: 400% 100%; }
+        .pw-hint { font-size: 11px; margin-top: 4px; color: var(--outline); }
+        .pw-match { font-size: 11px; margin-top: 4px; }
+        .pw-match.ok { color: #006c49; } .pw-match.err { color: var(--error); }
+        /* Error */
+        .alert-error { background:var(--error-container); color:var(--error); border:1px solid rgba(186,26,26,.2); border-radius:14px; padding:12px 16px; font-size:13px; margin-bottom:18px; }
+        .alert-error div { margin-bottom: 2px; }
+        /* Buttons */
+        .btn-gradient { display:block; width:100%; padding:14px 24px; background:linear-gradient(135deg,#6063ee 0%,#b4136d 100%); color:white; font-size:15px; font-weight:700; font-family:inherit; border:none; border-radius:99px; cursor:pointer; transition:all .25s ease; box-shadow:0 4px 20px rgba(70,72,212,.35); margin-top:8px; }
+        .btn-gradient:hover { box-shadow:0 8px 30px rgba(70,72,212,.45); transform:translateY(-1px); }
+        .footer-row { margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .footer-text { font-size:13px; color:var(--on-surface-variant); }
+        .glass-chip { display:inline-flex; align-items:center; background:rgba(255,255,255,.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,.6); border-radius:99px; padding:6px 16px; font-size:13px; font-weight:600; color:var(--primary); text-decoration:none; transition:all .2s ease; }
+        .glass-chip:hover { background:rgba(255,255,255,.92); box-shadow:0 4px 16px rgba(70,72,212,.15); }
     </style>
 </head>
 <body>
-    <button class="theme-fab" onclick="toggleDark()" id="tfab">🌙</button>
-    <div class="auth-page">
-        <div class="auth-card">
-            <div class="auth-head">
-                <div class="auth-brand">
-                    <div class="brand-mark">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                    </div>
-                    <div>
-                        <div class="brand-name">MedAssist AI</div>
-                        <div class="brand-tag">Clinical Knowledge Assistant</div>
-                    </div>
-                </div>
-                <div class="auth-title">Create account</div>
-                <div class="auth-sub">Join MedAssist and start your clinical consultations</div>
+    <div class="glass-card">
+        <div class="card-header">
+            <div class="brand-orb-sm"></div>
+            <div>
+                <div class="brand-name">MedAssist AI</div>
+                <div class="brand-tag">Clinical Knowledge Assistant</div>
             </div>
-            <div class="auth-body">
-                {% if errors %}
-                <div class="alert alert-error">
-                    {% for e in errors %}<div>• {{ e }}</div>{% endfor %}
+        </div>
+        <div class="card-body">
+            <div class="page-title">Create account</div>
+            <div class="page-sub">Join MedAssist and start your clinical consultations</div>
+
+            {% if errors %}
+            <div class="alert-error">
+                {% for e in errors %}<div>• {{ e }}</div>{% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="field-label" for="fn">Full Name</label>
+                    <input class="field-input" id="fn" name="full_name" type="text" placeholder="Dr. Jane Smith" value="{{ full_name|default:'' }}">
                 </div>
-                {% endif %}
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="field">
-                        <label class="field-label" for="fn">Full Name</label>
-                        <input class="field-input" id="fn" name="full_name" type="text" placeholder="Dr. Jane Smith" value="{{ full_name|default:'' }}">
-                    </div>
-                    <div class="field">
-                        <label class="field-label" for="em">Email</label>
-                        <input class="field-input" id="em" name="email" type="email" placeholder="jane@clinic.org" value="{{ email|default:'' }}">
-                    </div>
-                    <div class="field">
-                        <label class="field-label" for="un">Username</label>
-                        <input class="field-input" id="un" name="username" type="text" placeholder="Choose a username" value="{{ username|default:'' }}" required autocomplete="username">
-                    </div>
-                    <div class="field">
-                        <label class="field-label" for="pw">Password</label>
-                        <input class="field-input" id="pw" name="password" type="password" placeholder="Minimum 8 characters" required>
-                    </div>
-                    <div class="field" style="margin-bottom: 24px;">
-                        <label class="field-label" for="cpw">Confirm Password</label>
-                        <input class="field-input" id="cpw" name="confirm_password" type="password" placeholder="Re-enter password" required>
-                        <div class="pw-hint" id="pw-hint"></div>
-                    </div>
-                    <button class="btn-filled" type="submit">Create Account</button>
-                </form>
-                <p class="auth-footer-text">Already have an account? <a href="{% url 'user_login' %}">Sign in</a></p>
+                <div class="field">
+                    <label class="field-label" for="em">Email</label>
+                    <input class="field-input" id="em" name="email" type="email" placeholder="jane@clinic.org" value="{{ email|default:'' }}">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="un">Username</label>
+                    <input class="field-input" id="un" name="username" type="text" placeholder="Choose a username" value="{{ username|default:'' }}" required autocomplete="username">
+                </div>
+                <div class="field">
+                    <label class="field-label" for="pw">Password</label>
+                    <input class="field-input" id="pw" name="password" type="password" placeholder="Min. 8 characters" required oninput="calcPwStrength(this.value)">
+                    <div class="pw-bar"><div class="pw-bar-fill" id="pw-strength"></div></div>
+                    <div class="pw-hint" id="pw-hint-text">At least 8 characters</div>
+                </div>
+                <div class="field" style="margin-bottom:22px;">
+                    <label class="field-label" for="cpw">Confirm Password</label>
+                    <input class="field-input" id="cpw" name="confirm_password" type="password" placeholder="Re-enter password" required oninput="checkMatch()">
+                    <div class="pw-match" id="pw-match"></div>
+                </div>
+                <button class="btn-gradient" type="submit">Create Account →</button>
+            </form>
+
+            <div class="footer-row">
+                <span class="footer-text">Already have an account?</span>
+                <a href="{% url 'user_login' %}" class="glass-chip">Sign in</a>
             </div>
         </div>
     </div>
     <script>
-    const root = document.documentElement, fab = document.getElementById('tfab');
-    if (localStorage.getItem('ma-dark') === '1') { root.setAttribute('data-dark', ''); fab.textContent = '☀️'; }
-    function toggleDark() {
-        if (root.hasAttribute('data-dark')) { root.removeAttribute('data-dark'); localStorage.setItem('ma-dark', '0'); fab.textContent = '🌙'; }
-        else { root.setAttribute('data-dark', ''); localStorage.setItem('ma-dark', '1'); fab.textContent = '☀️'; }
+    function calcPwStrength(v) {
+        const bar = document.getElementById('pw-strength');
+        const hint = document.getElementById('pw-hint-text');
+        let score = 0;
+        if (v.length >= 8) score++;
+        if (/[A-Z]/.test(v)) score++;
+        if (/[0-9]/.test(v)) score++;
+        if (/[^A-Za-z0-9]/.test(v)) score++;
+        const pct = [0, 30, 55, 78, 100][score];
+        const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+        bar.style.width = pct + '%';
+        bar.style.backgroundPosition = (100 - pct) + '% 0';
+        hint.textContent = labels[score] || 'At least 8 characters';
     }
-    const pw = document.getElementById('pw'), cpw = document.getElementById('cpw'), hint = document.getElementById('pw-hint');
-    cpw.addEventListener('input', () => {
-        if (!cpw.value) { hint.style.display = 'none'; return; }
-        hint.style.display = 'block';
-        if (pw.value === cpw.value) { hint.className = 'pw-hint ok'; hint.textContent = '✓ Passwords match'; }
-        else { hint.className = 'pw-hint err'; hint.textContent = '✗ Passwords do not match'; }
-    });
+    function checkMatch() {
+        const pw = document.getElementById('pw').value;
+        const cpw = document.getElementById('cpw').value;
+        const el = document.getElementById('pw-match');
+        if (!cpw) { el.textContent = ''; return; }
+        el.className = 'pw-match ' + (pw === cpw ? 'ok' : 'err');
+        el.textContent = pw === cpw ? '✓ Passwords match' : '✗ Passwords do not match';
+    }
     </script>
 </body>
 </html>

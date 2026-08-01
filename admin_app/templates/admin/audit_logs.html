@@ -5,157 +5,187 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit Inspector — MedAssist Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        :root{--c-bg:#fafafa;--c-surface:#ffffff;--c-surface-2:#f5f5f5;--c-surface-3:#eeeeee;--c-outline:#e0e0e0;--c-outline-2:#bdbdbd;--c-on-bg:#212121;--c-on-surface:#212121;--c-on-surface-2:#616161;--c-on-surface-3:#9e9e9e;--c-primary:#212121;--c-on-primary:#ffffff;--c-error:#c62828;--c-error-bg:#ffebee;--c-success:#1b5e20;--c-success-bg:#e8f5e9;--c-warn:#e65100;--c-warn-bg:#fff3e0;--radius-sm:8px;--radius-md:12px;--shadow-1:0 1px 3px rgba(0,0,0,.07);--sb-w:232px;--hdr-h:52px;--t:all .18s cubic-bezier(.4,0,.2,1);}
-        [data-dark]{--c-bg:#121212;--c-surface:#1e1e1e;--c-surface-2:#262626;--c-surface-3:#323232;--c-outline:#2e2e2e;--c-outline-2:#424242;--c-on-bg:#eeeeee;--c-on-surface:#eeeeee;--c-on-surface-2:#9e9e9e;--c-on-surface-3:#616161;--c-primary:#eeeeee;--c-on-primary:#121212;--c-error:#ef9a9a;--c-error-bg:#311b1b;--c-success:#a5d6a7;--c-success-bg:#1b2e1b;--c-warn:#ffcc80;--c-warn-bg:#2e1f00;}
+        :root{--primary:#4648d4;--secondary:#b4136d;--tertiary:#006c49;--on-surface:#1b1b1c;--on-surface-variant:#464554;--outline:#767586;--outline-variant:#c7c4d7;--error:#ba1a1a;--glass-border:rgba(255,255,255,.55);--t:all .2s cubic-bezier(.4,0,.2,1);}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-        html{font-family:'Inter',system-ui,sans-serif;font-size:14px;}
-        body{background:var(--c-bg);color:var(--c-on-bg);min-height:100svh;display:flex;flex-direction:column;transition:var(--t);}
-        ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--c-outline-2);border-radius:4px;}
-        a{text-decoration:none;color:inherit;}
-        .hdr{height:var(--hdr-h);padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--c-on-bg);border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;}
-        [data-dark] .hdr{background:var(--c-surface-2);border-bottom-color:var(--c-outline);}
+        html{font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+        body{min-height:100svh;display:flex;flex-direction:column;background-image:radial-gradient(at 40% 20%,hsla(228,100%,74%,1) 0px,transparent 50%),radial-gradient(at 80% 0%,hsla(189,100%,56%,1) 0px,transparent 50%),radial-gradient(at 0% 50%,hsla(355,100%,93%,1) 0px,transparent 50%),radial-gradient(at 80% 50%,hsla(340,100%,76%,1) 0px,transparent 50%),radial-gradient(at 0% 100%,hsla(22,100%,77%,1) 0px,transparent 50%),radial-gradient(at 80% 100%,hsla(242,100%,70%,1) 0px,transparent 50%),radial-gradient(at 0% 0%,hsla(343,100%,76%,1) 0px,transparent 50%);background-color:#f6f3f2;background-attachment:fixed;}
+        a{text-decoration:none;} ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:rgba(118,117,134,.3);border-radius:4px;}
+        .glass-app{min-height:100svh;display:flex;flex-direction:column;background:rgba(255,255,255,.55);backdrop-filter:blur(32px);}
+        .hdr{height:56px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.7);border-bottom:1px solid var(--glass-border);position:sticky;top:0;z-index:100;}
         .hdr-brand{display:flex;align-items:center;gap:10px;}
-        .hdr-mark{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;}
-        [data-dark] .hdr-mark{background:var(--c-surface-3);}
-        .hdr-mark svg{color:rgba(255,255,255,.9);} [data-dark] .hdr-mark svg{color:var(--c-on-surface-2);}
-        .hdr-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.02em;}
-        [data-dark] .hdr-title{color:var(--c-on-surface-2);}
-        .hdr-tag{font-size:11px;color:rgba(255,255,255,.4);padding:2px 8px;border:1px solid rgba(255,255,255,.15);border-radius:99px;}
-        [data-dark] .hdr-tag{color:var(--c-on-surface-3);border-color:var(--c-outline);}
-        .hdr-right{display:flex;align-items:center;gap:8px;}
-        .hdr-btn{font-size:12px;color:rgba(255,255,255,.6);padding:5px 12px;border:1px solid rgba(255,255,255,.18);border-radius:var(--radius-sm);cursor:pointer;background:none;font-family:inherit;transition:var(--t);}
-        [data-dark] .hdr-btn{color:var(--c-on-surface-3);border-color:var(--c-outline);}
-        .hdr-btn:hover{background:rgba(255,255,255,.12);}  [data-dark] .hdr-btn:hover{background:var(--c-surface-3);}
-        .theme-btn{background:none;border:none;cursor:pointer;font-size:17px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:var(--t);}
-        .theme-btn:hover{background:rgba(255,255,255,.15);}  [data-dark] .theme-btn:hover{background:var(--c-surface-3);}
-        .layout{display:flex;flex:1;min-height:calc(100svh - var(--hdr-h));}
-        .sb{width:var(--sb-w);background:var(--c-surface);border-right:1px solid var(--c-outline);padding:12px 10px;flex-shrink:0;}
-        .sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);padding:8px 8px 4px;}
-        .sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:500;color:var(--c-on-surface-2);transition:var(--t);margin-bottom:1px;}
-        .sb-item:hover{background:var(--c-surface-2);color:var(--c-on-surface);}
-        .sb-item.active{background:var(--c-on-bg);color:var(--c-on-primary);}
-        [data-dark] .sb-item.active{background:var(--c-surface-3);color:var(--c-on-surface);}
-        .sb-item svg{flex-shrink:0;opacity:.7;} .sb-item.active svg{opacity:1;}
-        .sb-sep{height:1px;background:var(--c-outline);margin:8px 4px;}
-        main{flex:1;padding:28px 32px;overflow-y:auto;}
+        .hdr-orb{width:28px;height:28px;border-radius:50%;background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);position:relative;animation:orbSpin 8s linear infinite;box-shadow:0 0 10px rgba(70,72,212,.35);}
+        .hdr-orb::after{content:'';position:absolute;inset:3px;border-radius:50%;background:white;}
+        @keyframes orbSpin{to{transform:rotate(360deg);}}
+        .hdr-title{font-size:15px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .hdr-tag{font-size:11px;font-weight:600;color:var(--on-surface-variant);background:rgba(70,72,212,.08);border:1px solid rgba(70,72,212,.2);border-radius:99px;padding:3px 10px;}
+        .hdr-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.7);border:1px solid var(--glass-border);border-radius:99px;padding:6px 14px;font-size:12.5px;font-weight:600;color:var(--on-surface);cursor:pointer;transition:var(--t);font-family:inherit;}
+        .hdr-pill:hover{background:white;box-shadow:0 4px 16px rgba(70,72,212,.12);}
+        .layout{display:flex;flex:1;}
+        .sb{width:240px;flex-shrink:0;background:rgba(255,255,255,.55);border-right:1px solid var(--glass-border);padding:20px 14px;}
+        .sb-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--outline);padding:10px 8px 4px;}
+        .sb-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:14px;font-size:13px;font-weight:500;color:var(--on-surface-variant);transition:var(--t);margin-bottom:2px;}
+        .sb-item:hover{background:rgba(255,255,255,.7);color:var(--on-surface);}
+        .sb-item.active{background:rgba(255,255,255,.85);color:var(--primary);font-weight:600;border:1px solid rgba(255,255,255,.6);}
+        .sb-sep{height:1px;background:var(--glass-border);margin:10px 4px;}
+        main{flex:1;padding:32px;overflow-y:auto;}
         .inner{max-width:900px;margin:0 auto;}
-        .page-head{margin-bottom:22px;}
-        .page-head h1{font-size:22px;font-weight:800;letter-spacing:-.04em;margin-bottom:4px;}
-        .page-head p{font-size:13px;color:var(--c-on-surface-2);}
-        /* Filter tabs */
-        .tab-row{display:flex;gap:8px;margin-bottom:22px;}
-        .tab{padding:7px 16px;border-radius:var(--radius-sm);font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--c-outline);background:var(--c-surface);color:var(--c-on-surface-2);transition:var(--t);}
-        .tab:hover{background:var(--c-surface-2);}
-        .tab.active{background:var(--c-on-bg);color:var(--c-on-primary);border-color:transparent;}
-        [data-dark] .tab.active{background:var(--c-surface-3);color:var(--c-on-surface);}
-        /* Audit cards */
-        .audit-card{background:var(--c-surface);border:1px solid var(--c-outline);border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--shadow-1);margin-bottom:14px;}
-        .audit-head{padding:12px 20px;border-bottom:1px solid var(--c-outline);display:flex;align-items:center;justify-content:space-between;background:var(--c-surface-2);}
-        .audit-meta{display:flex;align-items:center;gap:8px;}
-        .meta-time{font-size:11px;color:var(--c-on-surface-3);}
-        .meta-lat{font-size:11px;color:var(--c-on-surface-3);}
-        .badge{border-radius:99px;padding:3px 10px;font-size:11px;font-weight:700;}
-        .badge-warn{background:var(--c-warn-bg);color:var(--c-warn);}
-        .badge-ok{background:var(--c-success-bg);color:var(--c-success);}
-        .badge-err{background:var(--c-error-bg);color:var(--c-error);}
-        /* Response section */
-        .audit-section{padding:14px 20px;border-bottom:1px solid var(--c-outline);}
-        .audit-section:last-child{border-bottom:none;}
-        .section-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--c-on-surface-3);margin-bottom:8px;}
-        .ai-text{font-size:13px;color:var(--c-on-surface);line-height:1.65;white-space:pre-wrap;}
-        /* Context chunks */
-        .ctx-chunk{background:var(--c-surface-2);border:1px solid var(--c-outline);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px;}
-        .ctx-chunk.low{border-color:var(--c-warn);}
-        .ctx-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;}
-        .ctx-src{font-size:12px;font-weight:600;color:var(--c-on-surface-2);}
-        .ctx-score{font-size:11px;font-weight:700;}
-        .ctx-score.hi{color:var(--c-success);} .ctx-score.lo{color:var(--c-warn);}
-        .ctx-text{font-size:12px;color:var(--c-on-surface-3);line-height:1.5;}
-        /* Feedback thumb */
-        .thumb{font-size:16px;}
-        .empty{text-align:center;padding:52px;color:var(--c-on-surface-3);font-size:13px;}
+        .page-head{margin-bottom:28px;}
+        .page-head h1{font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;}
+        .page-head p{font-size:14px;color:var(--on-surface-variant);}
+        /* Filter row */
+        .filter-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+        .filter-chip{background:rgba(255,255,255,.7);border:1px solid var(--glass-border);border-radius:99px;padding:7px 16px;font-size:13px;font-weight:600;color:var(--on-surface-variant);cursor:pointer;transition:var(--t);font-family:inherit;}
+        .filter-chip:hover,.filter-chip.active{background:white;color:var(--primary);border-color:rgba(70,72,212,.3);box-shadow:0 4px 16px rgba(70,72,212,.12);}
+        .filter-input{flex:1;min-width:200px;padding:9px 16px;background:rgba(255,255,255,.75);border:1px solid var(--glass-border);border-radius:99px;font-size:13px;font-family:inherit;color:var(--on-surface);outline:none;transition:var(--t);}
+        .filter-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(70,72,212,.1);}
+        /* Log card */
+        .log-card{background:rgba(255,255,255,.80);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;margin-bottom:12px;overflow:hidden;transition:var(--t);animation:fadeUp .3s cubic-bezier(.22,1,.36,1);}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+        .log-card:hover{box-shadow:0 8px 30px rgba(70,72,212,.08);}
+        .log-head{padding:16px 20px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;}
+        .log-idx-orb{width:36px;height:36px;border-radius:12px;background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;}
+        .log-idx-orb::after{content:'';position:absolute;inset:4px;border-radius:8px;background:white;}
+        .log-idx{position:relative;z-index:2;font-size:11px;font-weight:800;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+        .log-main{flex:1;min-width:0;}
+        .log-query{font-size:14px;font-weight:600;color:var(--on-surface);margin-bottom:6px;line-height:1.4;}
+        .log-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+        .meta-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.6);border:1px solid var(--glass-border);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--on-surface-variant);}
+        .meta-badge.high{color:var(--tertiary);background:rgba(0,108,73,.08);border-color:rgba(0,108,73,.2);}
+        .meta-badge.low{color:var(--error);background:rgba(186,26,26,.08);border-color:rgba(186,26,26,.2);}
+        .log-expand-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--outline);background:none;border:none;cursor:pointer;font-family:inherit;padding:2px 0;margin-top:8px;transition:var(--t);}
+        .log-expand-btn:hover{color:var(--primary);}
+        .chevron{transition:transform .25s;}
+        .log-body{max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:0 solid var(--glass-border);}
+        .log-body.open{max-height:800px;border-top-width:1px;}
+        .log-body-inner{padding:20px;}
+        .section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--outline);margin-bottom:8px;}
+        .ai-response-glass{background:rgba(255,255,255,.6);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;font-size:13.5px;line-height:1.7;color:var(--on-surface);margin-bottom:16px;font-style:italic;}
+        .chunk-card{background:rgba(255,255,255,.55);border:1px solid var(--glass-border);border-radius:14px;padding:12px 14px;margin-bottom:8px;}
+        .chunk-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+        .chunk-src{font-size:12px;font-weight:600;color:var(--on-surface-variant);}
+        .chunk-score-ok{font-size:11px;font-weight:700;color:var(--tertiary);}
+        .chunk-score-lo{font-size:11px;font-weight:700;color:var(--error);}
+        .chunk-text{font-size:12px;color:var(--outline);line-height:1.55;font-family:'JetBrains Mono',monospace;}
+        .empty{text-align:center;padding:52px;color:var(--outline);font-size:13px;}
+        .empty svg{display:block;margin:0 auto 14px;opacity:.3;}
     </style>
 </head>
 <body>
-    <header class="hdr">
-        <div class="hdr-brand">
-            <div class="hdr-mark"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg></div>
-            <span class="hdr-title">MedAssist</span>
-            <span class="hdr-tag">Admin</span>
-        </div>
-        <div class="hdr-right">
-            <a href="/chat/" class="hdr-btn">Open Chat ↗</a>
-            <button class="theme-btn" onclick="toggleDark()" id="tfab">🌙</button>
-        </div>
-    </header>
-    <div class="layout">
-        <aside class="sb">
-            <div class="sb-lbl">Knowledge</div>
-            <a href="/app-admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Knowledge Base</a>
-            <a href="/app-admin/config/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3" stroke-linecap="round"/></svg>LLM Config</a>
-            <a href="/app-admin/audit/" class="sb-item active"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Audit Inspector</a>
-            <div class="sb-sep"></div>
-            <div class="sb-lbl">System</div>
-            <a href="/model-control/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Model Control</a>
-            <a href="/admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Django Admin</a>
-        </aside>
-        <main>
-            <div class="inner">
-                <div class="page-head">
-                    <h1>Audit &amp; Hallucination Inspector</h1>
-                    <p>Review AI responses, retrieved context chunks, confidence scores, and user feedback.</p>
-                </div>
-                <div class="tab-row">
-                    <a href="?filter=all" class="tab {% if filter_type == 'all' %}active{% endif %}">All Responses</a>
-                    <a href="?filter=flagged" class="tab {% if filter_type == 'flagged' %}active{% endif %}">⚠ Flagged Only</a>
-                </div>
-                {% for msg in messages %}
-                {% with chunks=msg.retrieved_context %}
-                <div class="audit-card">
-                    <div class="audit-head">
-                        <div class="audit-meta">
-                            <span class="meta-time">{{ msg.created_at|date:"M d, Y · H:i:s" }}</span>
-                            {% if msg.latency_seconds %}<span class="meta-lat">· {{ msg.latency_seconds }}s</span>{% endif %}
-                            {% if msg.retrieved_context %}
-                                {% for c in msg.retrieved_context %}
-                                    {% if c.low_confidence %}<span class="badge badge-warn">⚠ Low Confidence</span>{% endif %}
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                        {% if msg.feedback %}<span class="thumb">{% if msg.feedback.is_positive %}👍{% else %}👎{% endif %}</span>{% endif %}
+    <div class="glass-app">
+        <header class="hdr">
+            <div class="hdr-brand">
+                <div class="hdr-orb"></div>
+                <span class="hdr-title">MedAssist AI</span>
+                <span class="hdr-tag">Knowledge Admin</span>
+            </div>
+            <div><a href="/chat/" class="hdr-pill">Open Chat ↗</a></div>
+        </header>
+        <div class="layout">
+            <aside class="sb">
+                <div class="sb-lbl">Knowledge</div>
+                <a href="/app-admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>Knowledge Base</a>
+                <a href="/app-admin/config/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>LLM Config</a>
+                <a href="/app-admin/audit/" class="sb-item active"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>Audit Inspector</a>
+                <div class="sb-sep"></div>
+                <div class="sb-lbl">System</div>
+                <a href="/model-control/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>Model Control</a>
+                <a href="/admin/" class="sb-item"><svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>Django Admin</a>
+            </aside>
+            <main>
+                <div class="inner">
+                    <div class="page-head">
+                        <h1>Audit Inspector</h1>
+                        <p>Full trace of every query — RAG retrieval, confidence scores, and model responses.</p>
                     </div>
-                    <div class="audit-section">
-                        <div class="section-lbl">AI Response</div>
-                        <p class="ai-text">{{ msg.content|truncatechars:600 }}</p>
+                    <div class="filter-row">
+                        <button class="filter-chip active" onclick="filterLogs('all',this)">All</button>
+                        <button class="filter-chip" onclick="filterLogs('high',this)">High Confidence</button>
+                        <button class="filter-chip" onclick="filterLogs('low',this)">Low Confidence</button>
+                        <input class="filter-input" type="search" placeholder="Search queries…" oninput="searchLogs(this.value)" id="search-input">
                     </div>
-                    {% if msg.retrieved_context %}
-                    <div class="audit-section">
-                        <div class="section-lbl">Retrieved Context ({{ msg.retrieved_context|length }} chunks)</div>
-                        {% for chunk in msg.retrieved_context %}
-                        <div class="ctx-chunk {% if chunk.low_confidence %}low{% endif %}">
-                            <div class="ctx-head">
-                                <span class="ctx-src">📄 {{ chunk.source|default:"Unknown" }}</span>
-                                <span class="ctx-score {% if chunk.low_confidence %}lo{% else %}hi{% endif %}">{{ chunk.score }}</span>
+
+                    <div id="logs-container">
+                        {% for log in audit_logs %}
+                        <div class="log-card" data-conf="{{ log.avg_score|default:'0' }}" data-query="{{ log.query|lower }}">
+                            <div class="log-head" onclick="toggleLog({{ forloop.counter }})">
+                                <div class="log-idx-orb"><span class="log-idx">#{{ forloop.counter }}</span></div>
+                                <div class="log-main">
+                                    <div class="log-query">{{ log.query|truncatechars:120 }}</div>
+                                    <div class="log-meta">
+                                        <span class="meta-badge">{{ log.created_at|date:"M d · H:i" }}</span>
+                                        <span class="meta-badge">{{ log.user }}</span>
+                                        {% if log.retrieved_chunks %}
+                                        <span class="meta-badge">{{ log.retrieved_chunks|length }} chunks</span>
+                                        {% endif %}
+                                        {% if log.avg_score %}
+                                        <span class="meta-badge {% if log.avg_score >= 0.7 %}high{% else %}low{% endif %}">
+                                            {% if log.avg_score >= 0.7 %}✓ High{% else %}⚠ Low{% endif %} · {{ log.avg_score }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <button class="log-expand-btn">
+                                    <svg class="chevron" id="chev-{{ forloop.counter }}" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                                    Inspect
+                                </button>
                             </div>
-                            <p class="ctx-text">{{ chunk.content|truncatechars:200 }}</p>
+                            <div class="log-body" id="lb-{{ forloop.counter }}">
+                                <div class="log-body-inner">
+                                    {% if log.response %}
+                                    <div class="section-label">Model Response</div>
+                                    <div class="ai-response-glass">"{{ log.response|truncatechars:500 }}"</div>
+                                    {% endif %}
+                                    {% if log.retrieved_chunks %}
+                                    <div class="section-label">Retrieved Context ({{ log.retrieved_chunks|length }} chunks)</div>
+                                    {% for chunk in log.retrieved_chunks %}
+                                    <div class="chunk-card">
+                                        <div class="chunk-head">
+                                            <span class="chunk-src">📄 {{ chunk.source|default:"Unknown" }}</span>
+                                            <span class="{% if chunk.score >= 0.7 %}chunk-score-ok{% else %}chunk-score-lo{% endif %}">
+                                                {% if chunk.score >= 0.7 %}✓{% else %}⚠{% endif %} {{ chunk.score }}
+                                            </span>
+                                        </div>
+                                        <div class="chunk-text">{{ chunk.content|truncatechars:300 }}</div>
+                                    </div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty">
+                            <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            No audit logs yet. Send a query in the chat to create entries.
                         </div>
                         {% endfor %}
                     </div>
-                    {% endif %}
                 </div>
-                {% endwith %}
-                {% empty %}
-                <div class="empty">No audit records found.</div>
-                {% endfor %}
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
     <script>
-    const root=document.documentElement,tfab=document.getElementById('tfab');
-    if(localStorage.getItem('ma-dark')==='1'){root.setAttribute('data-dark','');tfab.textContent='☀️';}
-    function toggleDark(){if(root.hasAttribute('data-dark')){root.removeAttribute('data-dark');localStorage.setItem('ma-dark','0');tfab.textContent='🌙';}else{root.setAttribute('data-dark','');localStorage.setItem('ma-dark','1');tfab.textContent='☀️';}}
+    function toggleLog(n) {
+        const lb = document.getElementById('lb-' + n), ch = document.getElementById('chev-' + n);
+        lb.classList.toggle('open');
+        ch.style.transform = lb.classList.contains('open') ? 'rotate(90deg)' : '';
+    }
+    function filterLogs(type, btn) {
+        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.log-card').forEach(card => {
+            const score = parseFloat(card.dataset.conf || 0);
+            if (type === 'all') card.style.display = '';
+            else if (type === 'high') card.style.display = score >= 0.7 ? '' : 'none';
+            else card.style.display = score < 0.7 ? '' : 'none';
+        });
+    }
+    function searchLogs(q) {
+        document.querySelectorAll('.log-card').forEach(card => {
+            card.style.display = card.dataset.query.includes(q.toLowerCase()) ? '' : 'none';
+        });
+    }
     </script>
 </body>
 </html>

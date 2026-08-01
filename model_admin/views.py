@@ -4,6 +4,7 @@ import logging
 import httpx
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
@@ -11,7 +12,7 @@ from django.views.decorators.http import require_POST
 from admin_app.models import SystemConfig
 from rag_engine.ollama_client import evict_model_cache, get_ollama_status
 
-from .models import ModelSession
+from .models import AdminUser, ModelSession
 
 logger = logging.getLogger(__name__)
 
@@ -24,26 +25,81 @@ OLLAMA_BASE_URL = "http://localhost:11434"
 
 
 def model_admin_login(request):
-    if request.user.is_authenticated and hasattr(request.user, "model_admin_profile"):
-        return redirect("model_admin_dashboard")
+    if request.user.is_authenticated and (request.user.is_staff or hasattr(request.user, 'model_admin_profile')):
+        return redirect('model_admin_dashboard')
 
     error = None
-    if request.method == "POST":
-        username = request.POST.get("username", "")
-        password = request.POST.get("password", "")
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
         user = authenticate(request, username=username, password=password)
-        if user is not None and (user.is_staff or hasattr(user, "model_admin_profile")):
-            login(request, user)
-            return redirect("model_admin_dashboard")
+        if user is not None:
+            if not (user.is_staff or hasattr(user, 'model_admin_profile')):
+                error = 'This account does not have Model Control access.'
+            elif not user.is_active:
+                error = 'Your account is pending approval by the Django Administrator.'
+            else:
+                login(request, user)
+                return redirect('model_admin_dashboard')
         else:
-            error = "Invalid credentials or insufficient permissions."
+            error = 'Invalid credentials. Please try again.'
 
-    return render(request, "model_admin/login.html", {"error": error})
+    return render(request, 'model_admin/login.html', {'error': error})
+
+
+def model_admin_register(request):
+    """Self-registration for Model Admins — creates pending account, Django Admin approves."""
+    if request.user.is_authenticated:
+        return redirect('model_admin_dashboard')
+
+    success = False
+    errors = []
+    if request.method == 'POST':
+        full_name = request.POST.get('full_name', '').strip()
+        email = request.POST.get('email', '').strip()
+        username = request.POST.get('username', '').strip()
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('confirm_password', '')
+        reason = request.POST.get('reason', '').strip()
+
+        if not username or not password:
+            errors.append('Username and password are required.')
+        if password != confirm:
+            errors.append('Passwords do not match.')
+        if len(password) < 8:
+            errors.append('Password must be at least 8 characters.')
+        if User.objects.filter(username=username).exists():
+            errors.append('Username is already taken.')
+        if email and User.objects.filter(email=email).exists():
+            errors.append('An account with this email already exists.')
+        if not reason:
+            errors.append('Please provide a reason for requesting admin access.')
+
+        if not errors:
+            first, _, last = full_name.partition(' ')
+            # Create user as inactive — Django Admin must activate
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password,
+                first_name=first,
+                last_name=last,
+                is_active=False,   # pending approval
+                is_staff=False,
+            )
+            AdminUser.objects.create(user=user, pin='pending')
+            logger.info("Model Admin registration pending approval: %s — %s", username, reason)
+            success = True
+
+    return render(request, 'model_admin/register.html', {
+        'success': success,
+        'errors': errors,
+    })
 
 
 def model_admin_logout(request):
     logout(request)
-    return redirect("model_admin_login")
+    return redirect('model_admin_login')
 
 
 def _model_admin_required(view_func):

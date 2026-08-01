@@ -23,11 +23,29 @@ except ImportError:
 
 
 # ---------------------------------------------------------------------------
+# Access Control — staff or model_admin_profile only
+# ---------------------------------------------------------------------------
+
+def _admin_required(view_func):
+    """Decorator: restricts view to is_staff or model_admin_profile users."""
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('/chat/login/?next=' + request.path)
+        if not (request.user.is_staff or hasattr(request.user, 'model_admin_profile')):
+            messages.error(request, 'You do not have permission to access the Admin panel. '
+                           'Please contact your system administrator.')
+            return redirect('chat_interface')
+        return view_func(request, *args, **kwargs)
+    wrapper.__name__ = view_func.__name__
+    return wrapper
+
+
+# ---------------------------------------------------------------------------
 # Dashboard — Document Manager
 # ---------------------------------------------------------------------------
 
 
-@login_required
+@_admin_required
 def admin_dashboard(request):
     if request.method == "POST":
         uploaded_file = request.FILES.get("document")
@@ -79,7 +97,7 @@ def admin_dashboard(request):
     return render(request, "admin/dashboard.html", {"documents": documents})
 
 
-@login_required
+@_admin_required
 @require_POST
 def delete_document(request, doc_id):
     """Remove a document record (does not purge from ChromaDB — see note)."""
@@ -89,7 +107,7 @@ def delete_document(request, doc_id):
     return redirect("admin_dashboard")
 
 
-@login_required
+@_admin_required
 def document_status(request, doc_id):
     """AJAX polling endpoint for live status updates."""
     doc = get_object_or_404(Document, id=doc_id)
@@ -107,7 +125,7 @@ def document_status(request, doc_id):
 # ---------------------------------------------------------------------------
 
 
-@login_required
+@_admin_required
 def prompt_config(request):
     config = SystemConfig.get_active()
 
@@ -129,7 +147,7 @@ def prompt_config(request):
 # ---------------------------------------------------------------------------
 
 
-@login_required
+@_admin_required
 def audit_logs(request):
     # Filter: flagged = messages with negative feedback OR low-confidence context
     filter_type = request.GET.get("filter", "all")

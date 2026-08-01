@@ -6,7 +6,8 @@
     <title>MedAssist AI — Clinical Consultant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <style>
 /* ═══════════════════════════════════════════════════
    MedAssist AI — Enterprise Healthcare Design System
@@ -483,15 +484,27 @@ textarea#inp::-webkit-scrollbar{display:none;}
     <div id="toast"></div>
 
     <script>
-    /* ── Marked config ── */
+    /* ── Marked + DOMPurify config ── */
     if (typeof marked !== 'undefined') {
-        marked.use({ breaks: true, gfm: true });
+        marked.use({
+            breaks: true,
+            gfm: true,
+            headerIds: false,
+            mangle: false,
+        });
     }
     function md(t) {
         if (typeof marked !== 'undefined') {
-            try { return marked.parse(t); } catch(e){}
+            try {
+                const raw = marked.parse(t);
+                // Sanitize with DOMPurify if available
+                if (typeof DOMPurify !== 'undefined') {
+                    return DOMPurify.sanitize(raw, { USE_PROFILES: { html: true } });
+                }
+                return raw;
+            } catch(e) { console.warn('Markdown parse error:', e); }
         }
-        return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+        return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
     }
     function esc(t){ return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 

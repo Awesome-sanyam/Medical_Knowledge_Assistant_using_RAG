@@ -1,12 +1,12 @@
 """
-Ollama Client with connection pooling and singleton LLM instance.
+Ollama Client — Enterprise-grade LLM integration with anti-repetition controls.
 
-Key optimizations:
-- Single LLM instance per (model, temperature) combination cached in a dict
-- num_ctx=4096 limits context window RAM usage
-- num_predict=2048 forces long-form clinical answers (critical fix)
-- num_thread=6 uses only 6 CPU threads (leaves 2 free on M4)
-- keep_alive="10m" keeps model warm but releases RAM after 10 min idle
+Key parameters:
+- repeat_penalty=1.15: Penalizes repeated tokens to prevent looping
+- top_k=40: Limits token sampling to top 40 candidates
+- top_p=0.9: Nucleus sampling for diverse but coherent output
+- num_predict=2048: Forces long-form clinical answers
+- num_ctx=4096: Context window size for RAG passages
 """
 
 import logging
@@ -25,25 +25,38 @@ DEFAULT_MODEL = "med-llama"
 OLLAMA_BASE_URL = "http://localhost:11434"
 
 # ---------------------------------------------------------------------------
-# Enterprise System Prompt — forces comprehensive, long-form clinical answers
+# Enterprise System Prompt — enforces structured markdown output
 # ---------------------------------------------------------------------------
 DEFAULT_SYSTEM_PROMPT = (
-    "You are a senior clinical AI assistant with deep expertise in medicine, "
-    "pharmacology, pathophysiology, and evidence-based clinical practice. "
-    "You MUST provide highly detailed, comprehensive, and well-structured answers. "
-    "NEVER give one-sentence or brief replies. "
-    "Always expand your response with:\n"
-    "1. A clear definition or overview of the topic\n"
-    "2. Detailed pathophysiology or mechanism when relevant\n"
-    "3. Clinical presentation, signs and symptoms\n"
-    "4. Diagnostic criteria and investigations\n"
-    "5. Management approach including pharmacological and non-pharmacological options\n"
-    "6. Important safety considerations, contraindications, or red flags\n\n"
-    "Use the provided context to ground your answer. If the retrieved context covers "
-    "the topic, integrate it thoroughly. If context is limited or absent, draw on your "
-    "extensive parametric medical training to provide an accurate, empathetic, and "
-    "clinically safe response. Use markdown formatting with headers, bullet points, "
-    "and bold text for readability."
+    "You are MedAssist AI, a senior clinical knowledge assistant with deep expertise "
+    "in medicine, pharmacology, pathophysiology, and evidence-based clinical practice.\n\n"
+    "## RESPONSE RULES (MANDATORY)\n"
+    "1. You MUST structure your response using Markdown formatting.\n"
+    "2. Use `### Headings` for each major section.\n"
+    "3. Use **bold text** for key terms and emphasis.\n"
+    "4. Use bullet points (`-`) or numbered lists for enumerations.\n"
+    "5. NEVER repeat the same phrase, sentence, or paragraph twice.\n"
+    "6. NEVER give one-sentence or brief replies. Minimum 200 words.\n"
+    "7. If the user asks a non-medical question (coding, weather, politics, math, "
+    "entertainment, etc.), you MUST politely refuse and redirect them.\n\n"
+    "## RESPONSE STRUCTURE\n"
+    "For every medical question, organize your answer into these sections:\n"
+    "### Overview\n"
+    "A clear definition and introduction to the topic.\n"
+    "### Pathophysiology\n"
+    "Underlying mechanism or disease process (when applicable).\n"
+    "### Clinical Presentation\n"
+    "Signs, symptoms, and how the condition manifests.\n"
+    "### Diagnosis\n"
+    "Diagnostic criteria, investigations, and differential diagnosis.\n"
+    "### Management\n"
+    "Pharmacological and non-pharmacological treatment approaches.\n"
+    "### Key Considerations\n"
+    "Safety warnings, contraindications, red flags, or when to refer.\n\n"
+    "## CONTEXT USAGE\n"
+    "Use the provided context passages to ground your answer with evidence. "
+    "If context is limited or absent, draw on your parametric medical training "
+    "to provide an accurate, empathetic, and clinically safe response."
 )
 
 
@@ -58,24 +71,33 @@ def _get_llm(temperature: float = 0.2, model_name: str = DEFAULT_MODEL) -> ChatO
             model=model_name,
             temperature=temperature,
             base_url=OLLAMA_BASE_URL,
-            # RAM optimization: limit context window
+            # Context window — accommodates RAG passages + prompt
             num_ctx=4096,
-            # *** CRITICAL FIX: Force long-form generation ***
-            # Without this, Ollama defaults to ~128 tokens → short replies
+            # Force long-form generation (critical fix for short replies)
             num_predict=2048,
-            # CPU optimization: use 6 of 8 M4 cores, leave 2 for system
+            # === ANTI-REPETITION CONTROLS ===
+            # Penalizes tokens that have already appeared, preventing loops
+            repeat_penalty=1.15,
+            # Limits sampling to top-40 tokens for coherence
+            top_k=40,
+            # Nucleus sampling — considers tokens within 90% cumulative probability
+            top_p=0.9,
+            # CPU optimization: use 6 of 8 M4 cores
             num_thread=6,
             # Keep model warm in memory for 10 min after last request
             keep_alive="10m",
         )
-        logger.info("Initialized LLM instance: %s (temp=%.2f, num_predict=2048)", model_name, temperature)
+        logger.info(
+            "Initialized LLM: %s (temp=%.2f, repeat_penalty=1.15, top_k=40, top_p=0.9)",
+            model_name, temperature,
+        )
     return _llm_cache[key]
 
 
 def _build_prompt(system_prompt: str) -> ChatPromptTemplate:
     return ChatPromptTemplate.from_messages(
         [
-            ("system", system_prompt + "\n\nContext:\n{context}"),
+            ("system", system_prompt + "\n\n---\n**Retrieved Context:**\n{context}"),
             ("human", "{question}"),
         ]
     )
@@ -90,7 +112,6 @@ def generate_stream(
 ):
     """
     Stream response tokens from local Ollama model via LangChain.
-    Uses cached LLM instance for efficiency.
     Yields raw string chunks — caller handles SSE formatting and disclaimer.
     """
     llm = _get_llm(temperature=temperature, model_name=model_name)
@@ -104,10 +125,7 @@ def generate_stream(
 
 
 def generate_response(question: str, context_chunks: list[str]) -> str:
-    """
-    Non-streaming response for the evaluation suite.
-    Returns the full assembled response string.
-    """
+    """Non-streaming response for the evaluation suite."""
     context = "\n".join(context_chunks)
     return "".join(generate_stream(question, context))
 

@@ -1,391 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit Inspector — MedAssist Admin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-/* ═══════════════════════════════════════════════════
-   AETHERIS — MedAssist AI Design System v2
-   Single Drawer · Consistent Glass
-   ═══════════════════════════════════════════════════ */
-:root {
-    --primary: #4648d4;
-    --primary-container: #6063ee;
-    --secondary: #b4136d;
-    --tertiary: #006c49;
-    --on-surface: #1b1b1c;
-    --on-surface-variant: #464554;
-    --outline: #767586;
-    --outline-variant: #c7c4d7;
-    --error: #ba1a1a;
-    --error-container: #ffdad6;
-    --glass-border: rgba(255,255,255,.58);
-    --glass-1: rgba(255,255,255,.72);
-    --t: all .22s cubic-bezier(.4,0,.2,1);
-    --drawer-w: 280px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%;}
-body{height:100%;overflow:hidden;display:flex;background-image:
-    radial-gradient(at 40% 20%,hsla(228,100%,74%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 0%,hsla(189,100%,56%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 50%,hsla(355,100%,93%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 50%,hsla(340,100%,76%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 100%,hsla(22,100%,77%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 100%,hsla(242,100%,70%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 0%,hsla(343,100%,76%,1) 0px,transparent 50%);
-    background-color:#f6f3f2;background-attachment:fixed;padding:12px;
-}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:rgba(118,117,134,.28);border-radius:4px;}
-a { text-decoration: none; }
+{% extends "admin/base_admin.html" %}
 
-/* ── App shell ── */
-.app-shell{
-    flex:1;height:100%;border-radius:22px;
-    background:var(--glass-1);
-    backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-    border:1px solid var(--glass-border);
-    box-shadow:0 24px 80px rgba(70,72,212,.15),0 8px 32px rgba(0,0,0,.09);
-    display:flex;flex-direction:column;overflow:hidden;
-    position:relative;
-}
+{% block title %}Audit Inspector{% endblock %}
+{% block header_badge %}Audit{% endblock %}
+{% block nav_audit %}active{% endblock %}
 
-/* ── Header ── */
-.hdr{
-    height:52px;flex-shrink:0;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 18px;
-    background:rgba(255,255,255,.70);
-    border-bottom:1px solid var(--glass-border);
-    position:relative;z-index:10;
-}
-.hdr-left{display:flex;align-items:center;gap:10px;}
-.hdr-right{display:flex;align-items:center;gap:6px;}
+{% block content %}
+<div class="page-head">
+    <h1>Audit Inspector</h1>
+    <p>Review AI-generated responses for accuracy and quality.<br>Flag low-confidence or negatively-rated responses for human review.</p>
+</div>
 
-.hbg-btn{
-    width:36px;height:36px;border-radius:12px;
-    background:none;border:1px solid transparent;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    cursor:pointer;transition:var(--t);flex-shrink:0;
-}
-.hbg-btn:hover{background:rgba(255,255,255,.7);border-color:var(--glass-border);}
-.hbg-line{width:18px;height:1.5px;background:var(--on-surface);border-radius:99px;transition:var(--t);}
-.hbg-btn.open .hbg-line:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
-.hbg-btn.open .hbg-line:nth-child(2){opacity:0;}
-.hbg-btn.open .hbg-line:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+<!-- Filter -->
+<div style="display:flex;gap:8px;margin-bottom:24px;">
+    <a href="/app-admin/audit/" class="{% if filter_type == 'all' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;">All Responses</a>
+    <a href="/app-admin/audit/?filter=flagged" class="{% if filter_type == 'flagged' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;">⚠ Flagged Only</a>
+</div>
 
-.hdr-orb{
-    width:28px;height:28px;border-radius:50%;flex-shrink:0;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    position:relative;animation:orbSpin 8s linear infinite;
-    box-shadow:0 0 12px rgba(70,72,212,.38);
-}
-.hdr-orb::after{content:'';position:absolute;inset:3px;border-radius:50%;background:white;}
-@keyframes orbSpin{to{transform:rotate(360deg);}}
-.hdr-name{
-    font-size:15px;font-weight:800;letter-spacing:-.03em;
-    background:linear-gradient(90deg,#4648d4,#b4136d);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.hdr-role-tag{
-    font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;
-    background:rgba(70,72,212,.08);border:1px solid rgba(70,72,212,.18);
-    color:var(--on-surface-variant);
-}
-
-/* ─────────────────────────────────────────
-   SINGLE SIDE DRAWER (overlay)
-   ───────────────────────────────────────── */
-.drawer-backdrop{
-    position:absolute;inset:0;z-index:50;
-    background:rgba(27,27,28,.15);backdrop-filter:blur(3px);
-    opacity:0;pointer-events:none;transition:opacity .25s ease;
-}
-.drawer-backdrop.open{opacity:1;pointer-events:auto;}
-
-.drawer{
-    position:absolute;left:0;top:0;bottom:0;width:var(--drawer-w);z-index:51;
-    background:rgba(255,255,255,.92);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-    border-right:1px solid var(--glass-border);
-    box-shadow:4px 0 40px rgba(70,72,212,.12);
-    display:flex;flex-direction:column;
-    transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-}
-.drawer.open{transform:translateX(0);}
-
-/* Drawer header */
-.drw-head{
-    height:52px;display:flex;align-items:center;gap:10px;
-    padding:0 16px;border-bottom:1px solid var(--glass-border);flex-shrink:0;
-}
-.drw-orb{
-    width:26px;height:26px;border-radius:50%;flex-shrink:0;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    position:relative;animation:orbSpin 8s linear infinite;
-}
-.drw-orb::after{content:'';position:absolute;inset:3px;border-radius:50%;background:white;}
-.drw-title{font-size:13.5px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-
-/* Drawer sections */
-.drw-body{flex:1;overflow-y:auto;padding:16px 12px;}
-.drw-section-label{
-    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
-    color:var(--outline);padding:8px 8px 4px;
-}
-.drw-item{
-    display:flex;align-items:center;gap:8px;
-    padding:9px 12px;border-radius:14px;
-    font-size:13px;font-weight:500;color:var(--on-surface-variant);
-    cursor:pointer;transition:var(--t);text-decoration:none;
-    border:1px solid transparent;margin-bottom:1px;
-}
-.drw-item:hover{background:rgba(255,255,255,.75);color:var(--on-surface);border-color:var(--glass-border);}
-.drw-item.active{background:rgba(70,72,212,.07);color:var(--primary);font-weight:600;border-color:rgba(70,72,212,.15);}
-.drw-item svg{flex-shrink:0;opacity:.65;}
-.drw-item.active svg{opacity:1;}
-.drw-sep{height:1px;background:var(--glass-border);margin:8px 4px;}
-
-.drw-user{
-    padding:14px 12px;border-top:1px solid var(--glass-border);flex-shrink:0;
-    display:flex;align-items:center;gap:10px;
-}
-.user-avatar{
-    width:32px;height:32px;border-radius:50%;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    flex-shrink:0;display:flex;align-items:center;justify-content:center;
-    color:white;font-size:12px;font-weight:800;position:relative;
-}
-.user-avatar::after{content:'';position:absolute;inset:2.5px;border-radius:50%;background:rgba(255,255,255,.15);}
-.user-name{font-size:13px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.logout-btn{
-    background:none;border:none;cursor:pointer;color:var(--outline);
-    padding:6px;border-radius:10px;display:flex;transition:var(--t);font-family:inherit;
-}
-.logout-btn:hover{color:var(--error);background:var(--error-container);}
-
-/* Main Canvas Content */
-.main-canvas{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:32px;}
-.inner{max-width:900px;margin:0 auto;width:100%;}
-.page-head{margin-bottom:28px;}
-.page-head h1{font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;}
-.page-head p{font-size:14px;color:var(--on-surface-variant);line-height:1.6;}
-
-/* Filter row */
-.filter-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
-.filter-chip{background:rgba(255,255,255,.7);border:1px solid var(--glass-border);border-radius:99px;padding:7px 16px;font-size:13px;font-weight:600;color:var(--on-surface-variant);cursor:pointer;transition:var(--t);font-family:inherit;}
-.filter-chip:hover,.filter-chip.active{background:white;color:var(--primary);border-color:rgba(70,72,212,.3);box-shadow:0 4px 16px rgba(70,72,212,.12);}
-.filter-input{flex:1;min-width:200px;padding:9px 16px;background:rgba(255,255,255,.75);border:1px solid var(--glass-border);border-radius:99px;font-size:13px;font-family:inherit;color:var(--on-surface);outline:none;transition:var(--t);}
-.filter-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(70,72,212,.1);}
-
-/* Log card */
-.log-card{background:rgba(255,255,255,.80);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;margin-bottom:12px;overflow:hidden;transition:var(--t);animation:fadeUp .3s cubic-bezier(.22,1,.36,1);}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.log-card:hover{box-shadow:0 8px 30px rgba(70,72,212,.08);}
-.log-head{padding:16px 20px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;}
-.log-idx-orb{width:36px;height:36px;border-radius:12px;background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;}
-.log-idx-orb::after{content:'';position:absolute;inset:4px;border-radius:8px;background:white;}
-.log-idx{position:relative;z-index:2;font-size:11px;font-weight:800;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.log-main{flex:1;min-width:0;}
-.log-query{font-size:14px;font-weight:600;color:var(--on-surface);margin-bottom:6px;line-height:1.4;}
-.log-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
-.meta-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.6);border:1px solid var(--glass-border);border-radius:99px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--on-surface-variant);}
-.meta-badge.high{color:var(--tertiary);background:rgba(0,108,73,.08);border-color:rgba(0,108,73,.2);}
-.meta-badge.low{color:var(--error);background:rgba(186,26,26,.08);border-color:rgba(186,26,26,.2);}
-.log-expand-btn{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--outline);background:none;border:none;cursor:pointer;font-family:inherit;padding:2px 0;margin-top:8px;transition:var(--t);}
-.log-expand-btn:hover{color:var(--primary);}
-.chevron{transition:transform .25s;}
-
-.log-body{max-height:0;overflow:hidden;transition:max-height .35s ease;border-top:0 solid var(--glass-border);}
-.log-body.open{max-height:1500px;border-top-width:1px;}
-.log-body-inner{padding:20px;}
-.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--outline);margin-bottom:8px;}
-.ai-response-glass{background:rgba(255,255,255,.6);border:1px solid var(--glass-border);border-radius:14px;padding:14px 16px;font-size:13.5px;line-height:1.7;color:var(--on-surface);margin-bottom:16px;font-style:italic;}
-.chunk-card{background:rgba(255,255,255,.55);border:1px solid var(--glass-border);border-radius:14px;padding:12px 14px;margin-bottom:8px;}
-.chunk-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
-.chunk-src{font-size:12px;font-weight:600;color:var(--on-surface-variant);}
-.chunk-score-ok{font-size:11px;font-weight:700;color:var(--tertiary);}
-.chunk-score-lo{font-size:11px;font-weight:700;color:var(--error);}
-.chunk-text{font-size:12px;color:var(--outline);line-height:1.55;font-family:'JetBrains Mono',monospace;}
-.empty{text-align:center;padding:52px;color:var(--outline);font-size:13px;}
-.empty svg{display:block;margin:0 auto 14px;opacity:.3;}
-    </style>
-</head>
-<body>
-    <div class="app-shell">
-
-        <!-- ══ HEADER ══ -->
-        <header class="hdr">
-            <div class="hdr-left">
-                <button class="hbg-btn" id="hbg" aria-label="Open navigation" onclick="toggleDrawer()">
-                    <div class="hbg-line"></div>
-                    <div class="hbg-line"></div>
-                    <div class="hbg-line"></div>
-                </button>
-                <div class="hdr-orb"></div>
-                <span class="hdr-name">MedAssist AI</span>
-                <span class="hdr-role-tag">Knowledge Admin</span>
-            </div>
-            <div class="hdr-right">
-                <!-- Optional right header content -->
-            </div>
-        </header>
-
-        <!-- ══ SLIDE DRAWER ══ -->
-        <div class="drawer-backdrop" id="drw-backdrop" onclick="closeDrawer()"></div>
-        <aside class="drawer" id="drawer">
-            <div class="drw-head">
-                <div class="drw-orb"></div>
-                <span class="drw-title">MedAssist AI</span>
-            </div>
-            <div class="drw-body">
-                <div class="drw-section-label">Model Control</div>
-                <a href="/model-control/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                    Dashboard
-                </a>
-                <div class="drw-sep"></div>
-                <div class="drw-section-label">Knowledge</div>
-                <a href="/admin-app/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-                    Knowledge Base
-                </a>
-                <a href="/admin-app/config/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-                    System Config
-                </a>
-                <a href="/admin-app/audit/" class="drw-item active">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                    Audit Inspector
-                </a>
-                <div class="drw-sep"></div>
-                <div class="drw-section-label">General</div>
-                <a href="/chat/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
-                    Live Chat
-                </a>
-            </div>
-            <div class="drw-user">
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-                <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
-                <a href="/chat/logout/" class="logout-btn" title="Sign out">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                </a>
-            </div>
-        </aside>
-
-        <!-- ══ MAIN CANVAS ══ -->
-        <main class="main-canvas">
-            <div class="inner">
-                <div class="page-head">
-                    <h1>Audit Inspector</h1>
-                    <p>Full trace of every query — RAG retrieval, confidence scores, and model responses.</p>
-                </div>
-                <div class="filter-row">
-                    <button class="filter-chip active" onclick="filterLogs('all',this)">All</button>
-                    <button class="filter-chip" onclick="filterLogs('high',this)">High Confidence</button>
-                    <button class="filter-chip" onclick="filterLogs('low',this)">Low Confidence</button>
-                    <input class="filter-input" type="search" placeholder="Search queries…" oninput="searchLogs(this.value)" id="search-input">
-                </div>
-
-                <div id="logs-container">
-                    {% for log in audit_logs %}
-                    <div class="log-card" data-conf="{{ log.avg_score|default:'0' }}" data-query="{{ log.query|lower }}">
-                        <div class="log-head" onclick="toggleLog({{ forloop.counter }})">
-                            <div class="log-idx-orb"><span class="log-idx">#{{ forloop.counter }}</span></div>
-                            <div class="log-main">
-                                <div class="log-query">{{ log.query|truncatechars:120 }}</div>
-                                <div class="log-meta">
-                                    <span class="meta-badge">{{ log.created_at|date:"M d · H:i" }}</span>
-                                    <span class="meta-badge">{{ log.user }}</span>
-                                    {% if log.retrieved_chunks %}
-                                    <span class="meta-badge">{{ log.retrieved_chunks|length }} chunks</span>
-                                    {% endif %}
-                                    {% if log.avg_score %}
-                                    <span class="meta-badge {% if log.avg_score >= 0.7 %}high{% else %}low{% endif %}">
-                                        {% if log.avg_score >= 0.7 %}✓ High{% else %}⚠ Low{% endif %} · {{ log.avg_score }}
-                                    </span>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <button class="log-expand-btn">
-                                <svg class="chevron" id="chev-{{ forloop.counter }}" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-                                Inspect
-                            </button>
-                        </div>
-                        <div class="log-body" id="lb-{{ forloop.counter }}">
-                            <div class="log-body-inner">
-                                {% if log.response %}
-                                <div class="section-label">Model Response</div>
-                                <div class="ai-response-glass">"{{ log.response|truncatechars:500 }}"</div>
-                                {% endif %}
-                                {% if log.retrieved_chunks %}
-                                <div class="section-label">Retrieved Context ({{ log.retrieved_chunks|length }} chunks)</div>
-                                {% for chunk in log.retrieved_chunks %}
-                                <div class="chunk-card">
-                                    <div class="chunk-head">
-                                        <span class="chunk-src">📄 {{ chunk.source|default:"Unknown" }}</span>
-                                        <span class="{% if chunk.score >= 0.7 %}chunk-score-ok{% else %}chunk-score-lo{% endif %}">
-                                            {% if chunk.score >= 0.7 %}✓{% else %}⚠{% endif %} {{ chunk.score }}
-                                        </span>
-                                    </div>
-                                    <div class="chunk-text">{{ chunk.content|truncatechars:300 }}</div>
-                                </div>
-                                {% endfor %}
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <div class="empty">
-                        <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                        No audit logs yet. Send a query in the chat to create entries.
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </main>
+<!-- Messages -->
+{% for msg in audit_messages %}
+<div class="audit-row">
+    <div class="audit-head">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span class="audit-meta">
+                {{ msg.created_at|date:"M d, Y H:i" }}
+                {% if msg.conversation %} · {{ msg.conversation.user.username }}{% endif %}
+            </span>
+        </div>
+        <div style="display:flex;gap:5px;">
+            {% if msg.latency_seconds %}
+            <span class="badge badge-pend">{{ msg.latency_seconds }}s</span>
+            {% endif %}
+        </div>
     </div>
-
-    <script>
-    /* ── Drawer ── */
-    function toggleDrawer() {
-        const d = document.getElementById('drawer');
-        const b = document.getElementById('drw-backdrop');
-        const hbg = document.getElementById('hbg');
-        const open = d.classList.toggle('open');
-        b.classList.toggle('open', open);
-        hbg.classList.toggle('open', open);
-    }
-    function closeDrawer() {
-        document.getElementById('drawer').classList.remove('open');
-        document.getElementById('drw-backdrop').classList.remove('open');
-        document.getElementById('hbg').classList.remove('open');
-    }
-
-    function toggleLog(n) {
-        const lb = document.getElementById('lb-' + n), ch = document.getElementById('chev-' + n);
-        lb.classList.toggle('open');
-        ch.style.transform = lb.classList.contains('open') ? 'rotate(90deg)' : '';
-    }
-    function filterLogs(type, btn) {
-        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.querySelectorAll('.log-card').forEach(card => {
-            const score = parseFloat(card.dataset.conf || 0);
-            if (type === 'all') card.style.display = '';
-            else if (type === 'high') card.style.display = score >= 0.7 ? '' : 'none';
-            else card.style.display = score < 0.7 ? '' : 'none';
-        });
-    }
-    function searchLogs(q) {
-        document.querySelectorAll('.log-card').forEach(card => {
-            card.style.display = card.dataset.query.includes(q.toLowerCase()) ? '' : 'none';
-        });
-    }
-    </script>
-</body>
-</html>
+    <div class="audit-preview">{{ msg.content|truncatewords:40 }}</div>
+    <div class="audit-tags">
+        {% if msg.retrieved_context %}
+            {% for chunk in msg.retrieved_context %}
+                {% if chunk.low_confidence %}
+                <span class="badge badge-warn">⚠ Low confidence</span>
+                {% else %}
+                <span class="badge badge-ok">✓ {{ chunk.score }}</span>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <span class="badge badge-pend">No context used</span>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="empty">
+    <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    No audit entries found. AI responses will appear here once users start chatting.
+</div>
+{% endfor %}
+{% endblock %}

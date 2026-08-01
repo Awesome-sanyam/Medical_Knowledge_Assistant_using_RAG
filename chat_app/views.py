@@ -19,6 +19,7 @@ try:
         low_context_fallback,
         post_guardrail,
         pre_guardrail,
+        topic_guardrail,
     )
     from rag_engine.ollama_client import generate_stream
     from rag_engine.retriever import get_relevant_context
@@ -146,13 +147,24 @@ def _event_generator(user_input: str, conversation: Conversation, user_msg: Mess
 
     start_time = time.time()
 
-    # --- Pre-Guardrail ---
+    # --- Pre-Guardrail: dangerous content ---
     is_blocked, block_msg = pre_guardrail(user_input)
     if is_blocked:
         safe_msg = block_msg.replace("\n", " ")
         yield f"data: {safe_msg}\n\n"
         yield "event: close\ndata: \n\n"
         _save_assistant_message(conversation, block_msg, [], time.time() - start_time)
+        return
+
+    # --- Topic Guardrail: non-medical queries ---
+    is_off_topic, refusal_msg = topic_guardrail(user_input)
+    if is_off_topic:
+        final = post_guardrail(refusal_msg)
+        for line in final.splitlines(keepends=True):
+            safe = line.replace("\n", "⏎")
+            yield f"data: {safe}\n\n"
+        yield "event: close\ndata: \n\n"
+        _save_assistant_message(conversation, final, [], time.time() - start_time)
         return
 
     # --- Load live config from admin panel ---
@@ -165,13 +177,9 @@ def _event_generator(user_input: str, conversation: Conversation, user_msg: Mess
     except Exception:
         top_k, temperature, threshold = 3, 0.2, 0.65
         system_prompt = (
-            "You are a senior clinical AI assistant with deep expertise in medicine, "
-            "pharmacology, pathophysiology, and evidence-based clinical practice. "
-            "You MUST provide highly detailed, comprehensive, and well-structured answers. "
-            "NEVER give one-sentence or brief replies. "
-            "Use the provided context to ground your answer. If context is limited, "
-            "draw on your extensive parametric medical training. "
-            "Use markdown formatting with headers, bullet points, and bold text."
+            "You are MedAssist AI, a senior clinical knowledge assistant. "
+            "Structure your response using Markdown with ### Headings, **bold**, and bullet points. "
+            "NEVER repeat yourself. Provide detailed, comprehensive clinical answers."
         )
 
     # --- Hybrid Retrieval ---

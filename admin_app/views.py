@@ -152,16 +152,16 @@ def audit_logs(request):
     # Filter: flagged = messages with negative feedback OR low-confidence context
     filter_type = request.GET.get("filter", "all")
 
-    messages = (
+    audit_messages = (
         Message.objects.select_related("conversation", "feedback")
         .filter(role="assistant")
         .order_by("-created_at")[:200]
     )
 
     if filter_type == "flagged":
-        messages = [
+        audit_messages = [
             m
-            for m in messages
+            for m in audit_messages
             if (
                 hasattr(m, "feedback") and not m.feedback.is_positive
             )
@@ -175,5 +175,5 @@ def audit_logs(request):
     return render(
         request,
         "admin/audit_logs.html",
-        {"messages": messages, "filter_type": filter_type},
+        {"audit_messages": audit_messages, "filter_type": filter_type},
     )

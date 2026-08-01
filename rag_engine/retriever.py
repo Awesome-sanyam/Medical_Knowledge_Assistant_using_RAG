@@ -116,9 +116,9 @@ def get_relevant_context(
                 "source": doc.metadata.get(
                     "source_title", doc.metadata.get("source", "Unknown")
                 ),
-                "chunk_index": doc.metadata.get("chunk_index", -1),
+                "chunk_index": int(doc.metadata.get("chunk_index", -1)),
                 "score": round(float(score), 4),
-                "low_confidence": is_low,
+                "low_confidence": bool(is_low),
             }
         )
 

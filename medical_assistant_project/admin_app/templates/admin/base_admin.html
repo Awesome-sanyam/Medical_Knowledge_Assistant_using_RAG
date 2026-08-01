@@ -595,6 +595,7 @@ a { text-decoration: none; color: inherit; }
             </div>
 
             <div class="drw-body">
+                {% if request.user.is_staff or request.user.is_superuser %}
                 <!-- ── Overview ── -->
                 <div class="drw-section-label">Overview</div>
                 <a href="{% url 'admin_dashboard' %}" class="drw-item {% block nav_dashboard %}{% endblock %}">
@@ -621,6 +622,7 @@ a { text-decoration: none; color: inherit; }
                 </a>
 
                 <div class="drw-sep"></div>
+                {% endif %}
 
                 <!-- ── Tools ── -->
                 <div class="drw-section-label">Tools</div>

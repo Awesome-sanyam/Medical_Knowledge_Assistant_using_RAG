@@ -22,6 +22,16 @@ Designed for medical professionals, the system operates entirely offline on Appl
 
 ---
 
+## 💻 Minimum Hardware Requirements
+To run this local AI stack comfortably, your system should meet the following baseline specifications:
+
+- **OS:** macOS (Apple Silicon M1/M2/M3/M4) OR Windows 10/11 / Linux
+- **RAM:** Minimum **16GB** System RAM (32GB recommended for loading multiple context documents alongside the 8B model).
+- **GPU (Windows/Linux):** NVIDIA GPU with at least **8GB VRAM** (e.g., RTX 3060 or better) to run the LLaMA 3.1 8B model smoothly via Ollama. 
+- **Storage:** **~10GB** free space on an SSD (for the GGUF model weights and ChromaDB vector store).
+
+---
+
 ## 🚀 Quick Start (Local Deployment)
 
 ### 1. Prerequisites
@@ -30,6 +40,8 @@ Designed for medical professionals, the system operates entirely offline on Appl
 
 ### 2. Install Dependencies
 Clone the repository and set up a virtual environment:
+
+**For macOS/Linux:**
 ```bash
 git clone https://github.com/Awesome-sanyam/Medical_Knowledge_Assistant_using_RAG.git
 cd Medical_Knowledge_Assistant_using_RAG/medical_assistant_project
@@ -37,6 +49,16 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r mac_requirements.txt
 ```
+
+**For Windows:**
+```powershell
+git clone https://github.com/Awesome-sanyam/Medical_Knowledge_Assistant_using_RAG.git
+cd Medical_Knowledge_Assistant_using_RAG\medical_assistant_project
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r windows_requirements.txt
+```
+*(Note: If Windows throws errors installing ChromaDB, please ensure you have the "Desktop development with C++" workload installed via Visual Studio Build Tools).*
 
 ### 3. Initialize the Local LLM
 Ensure Ollama is running. Pull the base LLaMA 3.1 model and create our specialized medical adapter version:

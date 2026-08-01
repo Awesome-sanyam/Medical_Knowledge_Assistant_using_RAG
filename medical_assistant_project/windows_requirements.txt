@@ -15,3 +15,8 @@ tiktoken>=0.7.0
 python-dotenv>=1.0.1
 httpx>=0.27.0
 psutil>=6.0.0
+
+# Note for Windows Users:
+# If you encounter errors installing `chromadb` or `hnswlib`, you must install 
+# the "Desktop development with C++" workload from Visual Studio Build Tools.
+# Link: https://visualstudio.microsoft.com/visual-cpp-build-tools/

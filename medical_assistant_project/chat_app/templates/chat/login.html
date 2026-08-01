@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — MedAssist AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+        body{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f1f5f9;}
+        .card{width:100%;max-width:400px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 25px -5px rgba(0,0,0,.06),0 4px 10px -4px rgba(0,0,0,.04);animation:cardIn .35s cubic-bezier(.22,1,.36,1);}
+        @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+        .card-head{padding:36px 32px 28px;text-align:center;}
+        .mark{width:56px;height:56px;border-radius:14px;margin:0 auto 20px;background:linear-gradient(135deg,#0d9488,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(13,148,136,.25);}
+        .mark svg{width:28px;height:28px;stroke:white;fill:none;stroke-width:1.5;}
+        .brand{font-size:22px;font-weight:800;letter-spacing:-.03em;color:#0f172a;margin-bottom:4px;}
+        .brand-sub{font-size:13px;color:#64748b;line-height:1.5;}
+        .card-body{padding:4px 32px 32px;}
+        .field{margin-bottom:16px;}
+        .field-label{display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:6px;}
+        .field-input{display:block;width:100%;padding:11px 14px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;color:#0f172a;outline:none;transition:all .2s ease;}
+        .field-input::placeholder{color:#94a3b8;}
+        .field-input:focus{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+        .alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+        .btn{display:block;width:100%;padding:12px 24px;background:#0d9488;color:white;font-size:14px;font-weight:700;font-family:inherit;border:none;border-radius:10px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(13,148,136,.25);margin-top:4px;}
+        .btn:hover{background:#0f766e;box-shadow:0 4px 14px rgba(13,148,136,.35);}
+        .links{display:flex;justify-content:space-between;margin-top:20px;}
+        .link{font-size:13px;color:#0d9488;font-weight:600;text-decoration:none;}
+        .link:hover{text-decoration:underline;}
+        .link.muted{color:#94a3b8;font-weight:500;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-head">
+            <div class="mark">
+                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+            </div>
+            <div class="brand">MedAssist AI</div>
+            <div class="brand-sub">Clinical AI for Doctors &amp; Patients<br>Sign in to continue your consultation</div>
+        </div>
+        <div class="card-body">
+            {% if error %}
+            <div class="alert-error">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" d="M12 8v4m0 4h.01"/></svg>
+                {{ error }}
+            </div>
+            {% endif %}
+            <form method="post" autocomplete="on">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="field-label" for="un">Username</label>
+                    <input class="field-input" id="un" name="username" type="text" placeholder="Enter your username" autocomplete="username" required autofocus>
+                </div>
+                <div class="field" style="margin-bottom:22px;">
+                    <label class="field-label" for="pw">Password</label>
+                    <input class="field-input" id="pw" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                </div>
+                <button class="btn" type="submit">Sign In</button>
+            </form>
+            <div class="links">
+                <a href="/chat/register/" class="link">Create account</a>
+                <a href="/model-control/login/" class="link muted">Admin sign in →</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

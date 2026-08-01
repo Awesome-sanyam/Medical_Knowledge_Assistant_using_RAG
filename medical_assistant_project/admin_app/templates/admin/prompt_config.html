@@ -1,0 +1,72 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}System Config{% endblock %}
+{% block header_badge %}LLM Config{% endblock %}
+{% block nav_config %}active{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <h1>System Configuration</h1>
+    <p>Tune the LLM system prompt, temperature, retrieval depth, and similarity threshold.<br>Changes apply immediately to new conversations.</p>
+</div>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert {% if 'success' in message.tags %}alert-ok{% else %}alert-err{% endif %}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- System Prompt -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            System Prompt
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="sp">System Prompt</label>
+            <textarea class="form-input form-textarea" id="sp" name="system_prompt" rows="10">{{ config.system_prompt }}</textarea>
+            <div class="form-help">This is prepended to every LLM request. Controls the model's behavior, tone, and output structure.</div>
+        </div>
+    </div>
+
+    <!-- Parameters -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            Model Parameters
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Temperature</label>
+            <div class="range-wrap">
+                <input type="range" class="range-slider" name="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}" oninput="document.getElementById('tv').textContent=this.value">
+                <span class="range-val" id="tv">{{ config.temperature }}</span>
+            </div>
+            <div class="form-help">Lower = more deterministic and safe. Higher = more creative. Recommended: 0.1–0.3 for clinical use.</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Top-K Retrieval Chunks</label>
+            <div class="range-wrap">
+                <input type="range" class="range-slider" name="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}" oninput="document.getElementById('kv').textContent=this.value">
+                <span class="range-val" id="kv">{{ config.top_k_retrieval }}</span>
+            </div>
+            <div class="form-help">Number of RAG chunks to retrieve. Higher = more context but slower. Recommended: 3–5.</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Similarity Threshold</label>
+            <div class="range-wrap">
+                <input type="range" class="range-slider" name="similarity_threshold" min="0.3" max="0.95" step="0.05" value="{{ config.similarity_threshold }}" oninput="document.getElementById('sv').textContent=this.value">
+                <span class="range-val" id="sv">{{ config.similarity_threshold }}</span>
+            </div>
+            <div class="form-help">Chunks below this score are flagged as low-confidence. Lower = more lenient. Recommended: 0.6–0.7.</div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-primary">Save Configuration</button>
+</form>
+{% endblock %}

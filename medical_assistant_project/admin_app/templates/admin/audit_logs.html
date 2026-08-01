@@ -1,0 +1,67 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Audit Inspector{% endblock %}
+{% block header_badge %}Audit{% endblock %}
+{% block nav_audit %}active{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <h1>Audit Inspector</h1>
+    <p>Review AI-generated responses for accuracy and quality.<br>Flag low-confidence or negatively-rated responses for human review.</p>
+</div>
+
+<!-- Filter -->
+<div style="display:flex;gap:8px;margin-bottom:24px;">
+    <a href="{% url 'audit_logs' %}" class="{% if filter_type == 'all' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;">All Responses</a>
+    <a href="{% url 'audit_logs' %}?filter=flagged" class="{% if filter_type == 'flagged' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;">⚠ Flagged Only</a>
+</div>
+
+<!-- Messages -->
+{% for msg in audit_messages %}
+<div class="audit-row">
+    <div class="audit-head">
+        <div style="display:flex;align-items:center;gap:8px;">
+            <span class="audit-meta">
+                {{ msg.created_at|date:"M d, Y H:i" }}
+                {% if msg.conversation %} · {{ msg.conversation.user.username }}{% endif %}
+            </span>
+        </div>
+        <div style="display:flex;gap:5px;">
+            {% if msg.latency_seconds %}
+            <span class="badge badge-pend">{{ msg.latency_seconds }}s</span>
+            {% endif %}
+            {% with feedback=msg.feedback %}
+                {% if feedback %}
+                    {% if feedback.is_positive %}
+                    <span class="badge badge-ok">👍 Helpful</span>
+                    {% else %}
+                    <span class="badge badge-err">👎 Flagged</span>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <div class="audit-preview">{{ msg.content|truncatewords:40 }}</div>
+    <div class="audit-tags">
+        {% if msg.retrieved_context %}
+            {% for chunk in msg.retrieved_context %}
+                {% if chunk.out_of_domain %}
+                <span class="badge badge-err">🚫 Out of domain</span>
+                {% elif chunk.low_confidence %}
+                <span class="badge badge-warn">⚠ Low confidence · {{ chunk.score }}</span>
+                {% else %}
+                <span class="badge badge-ok">✓ {{ chunk.score }}</span>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+        <span class="badge badge-pend">No context used</span>
+        {% endif %}
+    </div>
+</div>
+{% empty %}
+<div class="empty">
+    <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    No audit entries found. AI responses will appear here once users start chatting.
+</div>
+{% endfor %}
+{% endblock %}

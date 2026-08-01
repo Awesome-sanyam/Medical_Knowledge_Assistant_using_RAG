@@ -1,0 +1,459 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}RAG Ingestion{% endblock %}
+{% block header_badge %}Knowledge Base{% endblock %}
+{% block nav_rag %}active{% endblock %}
+
+{% block extra_styles %}
+/* ── RAG Upload-specific styles ── */
+.rag-hero {
+    background: linear-gradient(135deg, var(--primary-muted) 0%, var(--accent-muted) 100%);
+    border: 1px solid rgba(13,148,136,.14);
+    border-radius: var(--radius-xl);
+    padding: 28px 28px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.rag-hero-icon {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #0d9488, #6366f1);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(13,148,136,.25);
+}
+.rag-hero-icon svg { width:28px; height:28px; stroke:white; fill:none; stroke-width:1.5; }
+.rag-hero-text h2 { font-size:20px; font-weight:800; letter-spacing:-.03em; color:var(--on-surface); margin-bottom:4px; }
+.rag-hero-text p  { font-size:13px; color:var(--on-surface-3); line-height:1.6; }
+
+/* Drop zone */
+#drop-zone {
+    border: 2.5px dashed var(--outline);
+    border-radius: var(--radius-xl);
+    padding: 44px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s ease;
+    background: var(--surface-2);
+    position: relative;
+    overflow: hidden;
+}
+#drop-zone::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(13,148,136,.04), rgba(99,102,241,.03));
+    opacity: 0;
+    transition: opacity .25s;
+}
+#drop-zone:hover::before,
+#drop-zone.drag::before { opacity: 1; }
+#drop-zone:hover,
+#drop-zone.drag {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 5px rgba(13,148,136,.08), var(--shadow-md);
+    transform: translateY(-2px);
+}
+#drop-zone.drag { border-style: solid; }
+#drop-zone.drag .upload-mark { transform: scale(1.12) translateY(-4px); }
+
+.upload-mark { transition: transform .3s cubic-bezier(.34,1.56,.64,1); }
+
+/* Indexer progress card */
+.idx-card {
+    background: var(--surface);
+    border: 1px solid var(--outline-light);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: slideIn .3s ease;
+}
+@keyframes slideIn {
+    from { opacity:0; transform:translateY(-8px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+.idx-card-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px; flex-shrink: 0;
+    background: linear-gradient(135deg, #0d9488, #6366f1);
+    display: flex; align-items: center; justify-content: center;
+}
+.idx-card-icon svg { width:17px; height:17px; stroke:white; fill:none; stroke-width:1.5; }
+.idx-card-body { flex: 1; min-width: 0; }
+.idx-card-name { font-size:13.5px; font-weight:600; color:var(--on-surface); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.idx-card-meta { font-size:11.5px; color:var(--on-surface-3); margin-top:1px; }
+.idx-card-status { flex-shrink:0; }
+
+/* Spinner */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin-icon { animation: spin 1s linear infinite; display:inline-block; }
+
+/* Indexer not available banner */
+.no-indexer {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: var(--warning-bg);
+    border: 1px solid rgba(217,119,6,.18);
+    border-radius: var(--radius);
+    font-size: 13px; color: var(--warning);
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+{% endblock %}
+
+{% block content %}
+<!-- Hero banner -->
+<div class="rag-hero">
+    <div class="rag-hero-icon">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    </div>
+    <div class="rag-hero-text">
+        <h2>RAG Ingestion Portal</h2>
+        <p>Upload clinical PDFs and TXTs. Documents are embedded using BGE and stored in ChromaDB.<br>
+           Only indexed documents will be used for retrieval — keeping AI responses grounded in verified medical knowledge.</p>
+    </div>
+</div>
+
+{% if not indexer_available %}
+<div class="no-indexer">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    RAG Indexer unavailable — <code>rag_engine.indexer</code> could not be imported. Check your Python environment.
+</div>
+{% endif %}
+
+<!-- Stats row -->
+<div class="stats" style="grid-template-columns:repeat(3,1fr);">
+    <div class="stat-card primary">
+        <div class="stat-val">{{ documents|length }}</div>
+        <div class="stat-lbl">Total Documents</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val" style="color:var(--success);">{{ total_chunks|default:"0" }}</div>
+        <div class="stat-lbl">Indexed Chunks</div>
+    </div>
+    <div class="stat-card accent">
+        <div class="stat-val" style="color:var(--accent);">BGE</div>
+        <div class="stat-lbl">Embedding Model</div>
+    </div>
+</div>
+
+<!-- Active indexing queue (visible only if docs are pending/indexing) -->
+<div id="active-queue" style="margin-bottom:18px; display:none;">
+    <div class="card-title" style="margin-bottom:10px;">
+        <span class="spin-icon">⟳</span>&nbsp; Indexing Queue
+    </div>
+    <div id="queue-items"></div>
+</div>
+
+<!-- Upload zone -->
+<div class="card">
+    <div class="card-title">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        Upload New Document
+    </div>
+
+    <div id="drop-zone" role="button" tabindex="0" aria-label="Drop zone for file upload">
+        <div class="upload-mark" id="upload-mark">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="upload-text" id="upload-text">Drop a clinical PDF or TXT here</div>
+        <div class="upload-sub">Or click to browse · PDF or TXT · Max 50 MB</div>
+        <div class="upload-fname" id="upload-fname"></div>
+        <input type="file" name="document" accept=".pdf,.txt" id="file-input" style="display:none" aria-hidden="true">
+    </div>
+
+    <!-- Progress bar (hidden until upload begins) -->
+    <div id="upload-progress-wrap" style="display:none;margin-bottom:14px;">
+        <div class="prog-track">
+            <div class="prog-fill" id="upload-progress-bar"></div>
+        </div>
+        <div style="font-size:11.5px;color:var(--on-surface-3);margin-top:6px;" id="upload-progress-label">Uploading…</div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn-primary" id="upload-btn" disabled onclick="doUpload()">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload &amp; Index
+        </button>
+        <button class="btn-outline" onclick="clearFileSelection()" id="clear-btn" style="display:none;">
+            Clear
+        </button>
+        <span id="upload-error" style="font-size:12px;color:var(--error);display:none;"></span>
+    </div>
+</div>
+
+<!-- Document Library -->
+<div class="card">
+    <div class="card-title">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+        Document Library ({{ documents|length }})
+    </div>
+    <div id="doc-library">
+    {% for doc in documents %}
+    <div class="doc-row" id="doc-{{ doc.id }}">
+        <div class="doc-icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+            <div class="doc-name">{{ doc.title }}</div>
+            <div class="doc-meta">
+                {{ doc.uploaded_at|date:"M d, Y · H:i" }}
+                {% if doc.chunk_count %} · <strong>{{ doc.chunk_count }}</strong> chunks{% endif %}
+                {% if doc.error_message %} · <span style="color:var(--error);">{{ doc.error_message|truncatechars:60 }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="doc-actions">
+            <span id="status-{{ doc.id }}" data-status-url="{% url 'document_status' doc.id %}">
+                {% if doc.status == 'completed' %}<span class="badge badge-ok">✓ Indexed</span>
+                {% elif doc.status == 'indexing' %}<span class="badge badge-idx"><span class="spin-icon">⟳</span> Indexing</span>
+                {% elif doc.status == 'failed' %}<span class="badge badge-err" title="{{ doc.error_message }}">✗ Failed</span>
+                {% else %}<span class="badge badge-pend">Pending</span>{% endif %}
+            </span>
+            <form method="post" action="{% url 'delete_document' doc.id %}"
+                  onsubmit="return confirm('Permanently delete \'{{ doc.title|escapejs }}\'?')"
+                  style="margin:0;">
+                {% csrf_token %}
+                <button type="submit" class="btn-danger" title="Delete document">
+                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="empty">
+        <svg width="44" height="44" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+        No documents yet. Upload a PDF or TXT above to enable RAG-grounded responses.
+    </div>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ══════════════════════════════════════════════════════
+   RAG Ingestion Portal — client-side logic
+   ══════════════════════════════════════════════════════ */
+
+const dropZone   = document.getElementById('drop-zone');
+const fileInput  = document.getElementById('file-input');
+const uploadBtn  = document.getElementById('upload-btn');
+const clearBtn   = document.getElementById('clear-btn');
+const uploadFname= document.getElementById('upload-fname');
+const uploadText = document.getElementById('upload-text');
+const errEl      = document.getElementById('upload-error');
+const progressWrap= document.getElementById('upload-progress-wrap');
+const progressBar = document.getElementById('upload-progress-bar');
+const progressLbl = document.getElementById('upload-progress-label');
+
+let selectedFile = null;
+
+/* ── File selection ── */
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') fileInput.click(); });
+fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+});
+
+/* ── Drag & Drop ── */
+['dragenter','dragover'].forEach(evt =>
+    dropZone.addEventListener(evt, e => { e.preventDefault(); dropZone.classList.add('drag'); })
+);
+['dragleave','dragend'].forEach(evt =>
+    dropZone.addEventListener(evt, () => dropZone.classList.remove('drag'))
+);
+dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if (f) {
+        const dt = new DataTransfer();
+        dt.items.add(f);
+        fileInput.files = dt.files;
+        handleFileSelect(f);
+    }
+});
+
+function handleFileSelect(file) {
+    const name = file.name.toLowerCase();
+    const valid = name.endsWith('.pdf') || name.endsWith('.txt');
+    const tooBig = file.size > 50 * 1024 * 1024;
+
+    errEl.style.display = 'none';
+
+    if (!valid) {
+        showErr('Only PDF and TXT files are accepted.');
+        return;
+    }
+    if (tooBig) {
+        showErr('File exceeds 50 MB limit.');
+        return;
+    }
+
+    selectedFile = file;
+    uploadFname.textContent = '📎 ' + file.name + ' (' + formatSize(file.size) + ')';
+    uploadText.textContent  = 'Ready to upload';
+    uploadBtn.disabled      = false;
+    clearBtn.style.display  = 'inline-flex';
+}
+
+function clearFileSelection() {
+    selectedFile = null;
+    fileInput.value = '';
+    uploadFname.textContent = '';
+    uploadText.textContent  = 'Drop a clinical PDF or TXT here';
+    uploadBtn.disabled      = true;
+    clearBtn.style.display  = 'none';
+    errEl.style.display     = 'none';
+    progressWrap.style.display = 'none';
+}
+
+function showErr(msg) {
+    errEl.textContent    = '⚠ ' + msg;
+    errEl.style.display  = 'inline';
+    uploadBtn.disabled   = true;
+    selectedFile         = null;
+}
+
+function formatSize(bytes) {
+    if (bytes < 1024)       return bytes + ' B';
+    if (bytes < 1048576)    return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1048576).toFixed(1) + ' MB';
+}
+
+function getCsrf() {
+    const m = document.cookie.match(/csrftoken=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : '';
+}
+
+/* ── Upload via XHR (shows progress) ── */
+function doUpload() {
+    if (!selectedFile) return;
+
+    const fd = new FormData();
+    fd.append('document', selectedFile);
+    fd.append('csrfmiddlewaretoken', getCsrf());
+
+    const xhr = new XMLHttpRequest();
+
+    /* Progress */
+    xhr.upload.addEventListener('progress', e => {
+        if (!e.lengthComputable) return;
+        progressWrap.style.display = 'block';
+        const pct = Math.round(e.loaded / e.total * 100);
+        progressBar.style.width = pct + '%';
+        progressLbl.textContent = `Uploading… ${pct}%`;
+    });
+
+    /* Done */
+    xhr.addEventListener('load', () => {
+        progressWrap.style.display = 'none';
+        let resp;
+        try { resp = JSON.parse(xhr.responseText); } catch(e) { resp = {}; }
+
+        if (xhr.status === 200 && resp.status === 'ok') {
+            showToast('✓ ' + resp.message, 'ok');
+            clearFileSelection();
+            // Inject new doc row into library immediately
+            if (resp.doc_id) {
+                prependDocRow(resp.doc_id, resp.doc_title);
+                startPolling(resp.doc_id);
+            } else {
+                setTimeout(() => location.reload(), 1200);
+            }
+        } else {
+            const msg = resp.message || 'Upload failed. Please try again.';
+            showErr(msg);
+            showToast('✗ ' + msg, 'err');
+        }
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg> Upload &amp; Index';
+    });
+
+    /* Error */
+    xhr.addEventListener('error', () => {
+        progressWrap.style.display = 'none';
+        showErr('Network error. Is the server running?');
+        showToast('✗ Network error', 'err');
+        uploadBtn.disabled = false;
+    });
+
+    xhr.open('POST', '{% url "rag_upload" %}');
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<span class="spin-icon">⟳</span>&nbsp;Uploading…';
+    xhr.send(fd);
+}
+
+/* ── Prepend newly uploaded doc to the library ── */
+function prependDocRow(docId, title) {
+    const lib = document.getElementById('doc-library');
+    // Remove the empty state if present
+    const empty = lib.querySelector('.empty');
+    if (empty) empty.parentElement.remove ? empty.remove() : (empty.style.display='none');
+
+    const statusUrl = '/app-admin/doc/' + docId + '/status/';
+    const deleteUrl = '/app-admin/doc/' + docId + '/delete/';
+
+    const row = document.createElement('div');
+    row.className = 'doc-row';
+    row.id = 'doc-' + docId;
+    row.innerHTML = `
+        <div class="doc-icon">
+            <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke="white" stroke-width="1.5" fill="none"/></svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+            <div class="doc-name">${escHtml(title)}</div>
+            <div class="doc-meta">Just now</div>
+        </div>
+        <div class="doc-actions">
+            <span id="status-${docId}" data-status-url="${statusUrl}">
+                <span class="badge badge-idx"><span class="spin-icon">⟳</span> Indexing</span>
+            </span>
+        </div>`;
+    lib.prepend(row);
+}
+
+/* ── Poll status for in-progress docs ── */
+function startPolling(docId) {
+    const el = document.getElementById('status-' + docId);
+    if (!el) return;
+    const url = el.dataset.statusUrl || ('/app-admin/doc/' + docId + '/status/');
+    const iv = setInterval(async () => {
+        try {
+            const r = await fetch(url);
+            const d = await r.json();
+            if (d.status === 'completed') {
+                el.innerHTML = `<span class="badge badge-ok">✓ Indexed</span>`;
+                const metaEl = el.closest('.doc-row')?.querySelector('.doc-meta');
+                if (metaEl && d.chunk_count) metaEl.textContent += ' · ' + d.chunk_count + ' chunks';
+                clearInterval(iv);
+                showToast('✓ Document indexed — ' + d.chunk_count + ' chunks added to ChromaDB', 'ok');
+            } else if (d.status === 'failed') {
+                el.innerHTML = `<span class="badge badge-err" title="${escHtml(d.error)}">✗ Failed</span>`;
+                clearInterval(iv);
+                showToast('✗ Indexing failed: ' + (d.error || 'unknown error'), 'err');
+            }
+            // else still indexing/pending — keep polling
+        } catch(e) { /* network hiccup — keep trying */ }
+    }, 2500);
+}
+
+/* Start polling for any docs already in-progress on page load */
+document.querySelectorAll('[id^="status-"]').forEach(el => {
+    if (el.textContent.includes('Indexing') || el.textContent.includes('Pending')) {
+        const docId = el.id.replace('status-', '');
+        startPolling(docId);
+    }
+});
+
+function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+{% endblock %}

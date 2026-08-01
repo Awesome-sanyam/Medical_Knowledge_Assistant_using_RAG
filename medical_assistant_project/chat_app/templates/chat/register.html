@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account — MedAssist AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+        html{font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;}
+        body{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f1f5f9;}
+        .card{width:100%;max-width:440px;background:#fff;border:1px solid #e2e8f0;border-radius:16px;box-shadow:0 10px 25px -5px rgba(0,0,0,.06),0 4px 10px -4px rgba(0,0,0,.04);animation:cardIn .35s cubic-bezier(.22,1,.36,1);}
+        @keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+        .card-head{padding:32px 32px 24px;text-align:center;}
+        .mark{width:48px;height:48px;border-radius:12px;margin:0 auto 16px;background:linear-gradient(135deg,#0d9488,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(13,148,136,.25);}
+        .mark svg{width:24px;height:24px;stroke:white;fill:none;stroke-width:1.5;}
+        .brand{font-size:20px;font-weight:800;letter-spacing:-.03em;color:#0f172a;margin-bottom:4px;}
+        .brand-sub{font-size:12.5px;color:#64748b;line-height:1.5;}
+        .card-body{padding:4px 32px 32px;}
+        .field{margin-bottom:14px;}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+        .field-label{display:block;font-size:12px;font-weight:600;color:#334155;margin-bottom:6px;}
+        .field-input{display:block;width:100%;padding:11px 14px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;font-size:14px;font-family:inherit;color:#0f172a;outline:none;transition:all .2s ease;}
+        .field-input::placeholder{color:#94a3b8;}
+        .field-input:focus{border-color:#0d9488;box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+        .alert-error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:16px;}
+        .alert-error ul{margin:0;padding-left:16px;}
+        .btn{display:block;width:100%;padding:12px 24px;background:#0d9488;color:white;font-size:14px;font-weight:700;font-family:inherit;border:none;border-radius:10px;cursor:pointer;transition:all .2s;box-shadow:0 2px 8px rgba(13,148,136,.25);margin-top:8px;}
+        .btn:hover{background:#0f766e;box-shadow:0 4px 14px rgba(13,148,136,.35);}
+        .links{display:flex;justify-content:center;margin-top:20px;}
+        .link{font-size:13px;color:#0d9488;font-weight:600;text-decoration:none;}
+        .link:hover{text-decoration:underline;}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-head">
+            <div class="mark">
+                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </div>
+            <div class="brand">Create Account</div>
+            <div class="brand-sub">Join MedAssist AI for clinical consultations</div>
+        </div>
+        <div class="card-body">
+            {% if form.errors %}
+            <div class="alert-error">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}<li>{{ field.label }}: {{ error }}</li>{% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <form method="post" autocomplete="on">
+                {% csrf_token %}
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="fn">First Name</label>
+                        <input class="field-input" id="fn" name="first_name" type="text" placeholder="Jane" required>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="ln">Last Name</label>
+                        <input class="field-input" id="ln" name="last_name" type="text" placeholder="Smith" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="em">Email</label>
+                    <input class="field-input" id="em" name="email" type="email" placeholder="jane@example.com" required>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="un">Username</label>
+                    <input class="field-input" id="un" name="username" type="text" placeholder="Choose a username" required>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label" for="pw1">Password</label>
+                        <input class="field-input" id="pw1" name="password" type="password" placeholder="Min. 8 chars" required>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="pw2">Confirm Password</label>
+                        <input class="field-input" id="pw2" name="confirm_password" type="password" placeholder="Repeat password" required>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Create Account</button>
+            </form>
+            <div class="links">
+                <a href="/chat/login/" class="link">Already have an account? Sign in</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

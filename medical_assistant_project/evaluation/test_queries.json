@@ -1,0 +1,34 @@
+[
+  {
+    "query": "What are the common symptoms of a migraine?",
+    "expected_answer": "Migraines are characterized by a throbbing or pulsing headache, often on one side of the head. Common symptoms include nausea, vomiting, and extreme sensitivity to light (photophobia) and sound (phonophobia). Some patients experience an aura before the headache phase, which may include visual disturbances, tingling, or difficulty speaking."
+  },
+  {
+    "query": "What is the first-line treatment for type 2 diabetes?",
+    "expected_answer": "The first-line pharmacological treatment for type 2 diabetes is metformin, combined with lifestyle modifications including diet and exercise. Metformin is preferred due to its efficacy, low cost, safety profile, and potential cardiovascular benefits."
+  },
+  {
+    "query": "What are the signs and symptoms of appendicitis?",
+    "expected_answer": "Appendicitis typically presents with pain beginning around the navel and shifting to the lower right abdomen (McBurney's point), loss of appetite, nausea, vomiting, fever, and tenderness on palpation. Rebound tenderness (Blumberg sign) is a classic clinical finding."
+  },
+  {
+    "query": "How is hypertension defined and classified?",
+    "expected_answer": "Hypertension is defined as a sustained elevation of blood pressure. According to ACC/AHA guidelines: Normal is below 120/80 mmHg; Elevated is 120-129/less than 80; Stage 1 Hypertension is 130-139/80-89 mmHg; Stage 2 Hypertension is 140 or higher / 90 or higher mmHg."
+  },
+  {
+    "query": "What is the mechanism of action of beta-blockers?",
+    "expected_answer": "Beta-blockers work by competitively blocking beta-adrenergic receptors, reducing the effects of catecholamines like adrenaline. This results in decreased heart rate, reduced myocardial contractility, lowered blood pressure, and reduced cardiac output. They are used in hypertension, angina, arrhythmias, and heart failure."
+  },
+  {
+    "query": "What are the criteria for diagnosis of sepsis?",
+    "expected_answer": "Sepsis is diagnosed based on the Sepsis-3 criteria: life-threatening organ dysfunction caused by a dysregulated host response to infection. Clinically, it is identified by a SOFA score increase of 2 or more. Quick SOFA (qSOFA) screen uses: altered mentation, respiratory rate ≥22/min, systolic BP ≤100 mmHg."
+  },
+  {
+    "query": "Explain the pathophysiology of myocardial infarction.",
+    "expected_answer": "Myocardial infarction occurs when coronary artery blood flow is severely reduced or blocked, typically due to rupture of an atherosclerotic plaque followed by thrombus formation. The resulting ischemia causes cardiomyocyte death. STEMI involves full-thickness myocardial damage, while NSTEMI involves subendocardial injury."
+  },
+  {
+    "query": "What are contraindications for thrombolytic therapy in stroke?",
+    "expected_answer": "Absolute contraindications for tPA in ischemic stroke include: prior intracranial hemorrhage, uncontrolled hypertension (>185/110 mmHg), recent surgery or trauma within 14 days, active internal bleeding, current anticoagulant use with INR >1.7, blood glucose <50 or >400 mg/dL, and symptoms onset >4.5 hours."
+  }
+]

@@ -1,0 +1,215 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Model Control{% endblock %}
+{% block header_badge %}Model Admin{% endblock %}
+{% block nav_model %}active{% endblock %}
+
+{% block content %}
+<div class="page-head">
+    <h1>Model Control Dashboard</h1>
+    <p>Monitor, load, unload, and configure the local Ollama LLM in real time.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats">
+    <div class="stat-card primary">
+        <div class="stat-val" id="ollama-status">Checking…</div>
+        <div class="stat-lbl">Ollama Server</div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
+            <span class="stat-lbl">RAM</span>
+            <span style="font-size:11px;font-weight:700;color:var(--on-surface-variant)" id="ram-text">—</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="ram-bar" style="width:0%; background:linear-gradient(90deg,var(--primary),var(--secondary));"></div></div>
+    </div>
+    <div class="stat-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
+            <span class="stat-lbl">CPU</span>
+            <span style="font-size:11px;font-weight:700;color:var(--on-surface-variant)" id="cpu-text">—</span>
+        </div>
+        <div class="prog-track"><div class="prog-fill" id="cpu-bar" style="width:0%; background:linear-gradient(90deg,var(--primary),var(--secondary));"></div></div>
+    </div>
+    <div class="stat-card">
+        <div style="font-size:13px;font-weight:700;color:var(--on-surface);margin-bottom:2px;">{{ config.key|default:"Active Config" }}</div>
+        <div class="stat-lbl">T={{ config.temperature }} · K={{ config.top_k_retrieval }}</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Model Controls -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Model Controls
+        </div>
+        <div style="margin-bottom:14px;">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-variant);display:block;margin-bottom:6px;">Target Model</label>
+            <select id="model-select" class="form-input">
+                {% if ollama_status.models %}
+                    {% for m in ollama_status.models %}
+                    <option value="{{ m }}" {% if 'med-llama' in m %}selected{% endif %}>{{ m }}</option>
+                    {% endfor %}
+                {% else %}
+                    <option value="med-llama">med-llama (default)</option>
+                {% endif %}
+            </select>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="loadModel()">⚡ Warm / Load</button>
+            <button class="btn-danger" onclick="unloadModel()">Unload</button>
+        </div>
+        <p style="font-size:11px;color:var(--on-surface-variant);margin-top:12px;line-height:1.5;">"Warm" loads the model into RAM. "Unload" immediately frees memory.</p>
+    </div>
+
+    <!-- Available models -->
+    <div class="card">
+        <div class="card-title">
+            <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Available Models ({{ ollama_status.models|length }})
+        </div>
+        {% if ollama_status.online %}
+            {% for m in ollama_status.models %}
+            <div class="doc-row" style="padding:10px 0;">
+                <span style="flex:1;font-weight:500;font-size:13px;">{{ m }}</span>
+                {% if 'med-llama' in m %}<span class="badge badge-ok">✓ Active</span>
+                {% else %}<span class="badge" style="background:var(--surface-3);color:var(--on-surface-variant);">Available</span>{% endif %}
+            </div>
+            {% empty %}
+            <p style="font-size:13px;color:var(--outline);">No models found. Run <code>ollama pull med-llama</code>.</p>
+            {% endfor %}
+        {% else %}
+        <div style="text-align:center;padding:24px 0;">
+            <div style="font-size:28px;margin-bottom:10px;">⚠️</div>
+            <p style="font-size:13px;color:var(--on-surface-variant);">Ollama is offline. Run <code>ollama serve</code> in a terminal.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Parameter Configurator -->
+<div class="card" style="margin-bottom:16px;">
+    <div class="card-title">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+        LLM Parameter Configurator
+    </div>
+    <p style="font-size:12px;color:var(--on-surface-variant);margin:-8px 0 20px;">Changes apply instantly to all subsequent chat queries.</p>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-bottom:20px;">
+        <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Temperature</span><span style="font-weight:700;color:var(--primary);" id="temp-show">{{ config.temperature }}</span></div>
+            <input type="range" id="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}" oninput="document.getElementById('temp-show').textContent=parseFloat(this.value).toFixed(2)" style="width:100%;">
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--outline);margin-top:4px;"><span>Precise</span><span>Creative</span></div>
+        </div>
+        <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Top-K Chunks</span><span style="font-weight:700;color:var(--primary);" id="topk-show">{{ config.top_k_retrieval }}</span></div>
+            <input type="range" id="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}" oninput="document.getElementById('topk-show').textContent=this.value" style="width:100%;">
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--outline);margin-top:4px;"><span>Fast (1)</span><span>Rich (10)</span></div>
+        </div>
+        <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Threshold</span><span style="font-weight:700;color:var(--primary);" id="thresh-show">{{ config.similarity_threshold }}</span></div>
+            <input type="range" id="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}" oninput="document.getElementById('thresh-show').textContent=parseFloat(this.value).toFixed(2)" style="width:100%;">
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--outline);margin-top:4px;"><span>Lenient</span><span>Strict</span></div>
+        </div>
+    </div>
+    
+    <div style="margin-bottom:18px;">
+        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-variant);display:block;margin-bottom:6px;">System Prompt</label>
+        <textarea id="system_prompt" rows="4" class="form-input" style="resize:vertical;">{{ config.system_prompt }}</textarea>
+    </div>
+    <button class="btn-primary" onclick="saveConfig()">Save &amp; Apply →</button>
+</div>
+
+<!-- Session History -->
+<div class="card">
+    <div class="card-title">
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Session History
+    </div>
+    {% for session in recent_sessions %}
+    <div class="doc-row" style="padding:10px 0;">
+        <span style="font-size:11px;color:var(--outline);flex-shrink:0;width:130px;">{{ session.timestamp|date:"M d, H:i:s" }}</span>
+        <span style="font-weight:600;flex:1;">{{ session.model_name }}</span>
+        <span style="font-size:11.5px;color:var(--on-surface-variant);">{{ session.action }}</span>
+        {% if session.status == 'loaded' %}<span class="badge badge-ok">Loaded</span>
+        {% elif session.status == 'unloaded' %}<span class="badge" style="background:var(--surface-3);color:var(--on-surface-variant);">Unloaded</span>
+        {% else %}<span class="badge badge-err">Error</span>{% endif %}
+    </div>
+    {% empty %}
+    <p style="font-size:13px;color:var(--outline);">No sessions yet. Load a model to see history.</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function getCsrf() {
+        const m = document.cookie.match(/csrftoken=([^;]+)/);
+        return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    async function pollStatus(){
+        try {
+            const r = await fetch('/model-control/api/status/');
+            const d = await r.json();
+            const st = document.getElementById('ollama-status');
+            if(d.online) {
+                st.innerHTML = '<span style="color:var(--success)">● Online</span>';
+            } else {
+                st.innerHTML = '<span style="color:var(--error)">● Offline</span>';
+            }
+            if(d.system){
+                const rp = d.system.ram_percent || 0, cp = d.system.cpu_percent || 0;
+                document.getElementById('ram-bar').style.width = rp + '%';
+                document.getElementById('ram-text').textContent = `${d.system.ram_used_gb || '?'} / ${d.system.ram_total_gb || '?'} GB`;
+                document.getElementById('cpu-bar').style.width = cp + '%';
+                document.getElementById('cpu-text').textContent = cp + '%';
+            }
+        } catch(e) {}
+    }
+    
+    pollStatus(); 
+    setInterval(pollStatus, 5000);
+
+    async function loadModel(){
+        const model = document.getElementById('model-select').value;
+        showToast('⚡ Loading "'+model+'"…', 'ok');
+        const r = await fetch('/model-control/api/load/',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':getCsrf()},
+            body:new URLSearchParams({model_name:model})
+        });
+        const d = await r.json(); 
+        showToast(d.status === 'ok' ? '✓ ' + d.message : '✗ ' + d.message, d.status === 'ok' ? 'ok' : 'err');
+        setTimeout(pollStatus, 1000);
+    }
+
+    async function unloadModel(){
+        const model = document.getElementById('model-select').value;
+        if(!confirm('Unload "' + model + '" from RAM?')) return;
+        const r = await fetch('/model-control/api/unload/',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':getCsrf()},
+            body:new URLSearchParams({model_name:model})
+        });
+        const d = await r.json(); 
+        showToast(d.status === 'ok' ? '✓ ' + d.message : '✗ ' + d.message, d.status === 'ok' ? 'ok' : 'err'); 
+        setTimeout(pollStatus, 1000);
+    }
+
+    async function saveConfig(){
+        const r = await fetch('/model-control/api/config/',{
+            method:'POST',
+            headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':getCsrf()},
+            body:new URLSearchParams({
+                temperature: document.getElementById('temperature').value,
+                top_k_retrieval: document.getElementById('top_k_retrieval').value,
+                similarity_threshold: document.getElementById('similarity_threshold').value,
+                system_prompt: document.getElementById('system_prompt').value
+            })
+        });
+        const d = await r.json(); 
+        showToast(d.status === 'ok' ? '✓ Config saved' : '✗ ' + d.message, d.status === 'ok' ? 'ok' : 'err');
+    }
+</script>
+{% endblock %}

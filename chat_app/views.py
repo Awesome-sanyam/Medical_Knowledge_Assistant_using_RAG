@@ -21,7 +21,13 @@ try:
         pre_guardrail,
         topic_guardrail,
     )
-    from rag_engine.ollama_client import generate_stream
+    from rag_engine.ollama_client import (
+        CONTEXT_REFUSAL_MSG,
+        HARD_REFUSAL_MESSAGE,
+        generate_context_refusal,
+        generate_refusal,
+        generate_stream,
+    )
     from rag_engine.retriever import get_relevant_context
 
     RAG_ENABLED = True
@@ -182,14 +188,28 @@ def _event_generator(user_input: str, conversation: Conversation, user_msg: Mess
             "NEVER repeat yourself. Provide detailed, comprehensive clinical answers."
         )
 
-    # --- Hybrid Retrieval ---
+    # --- Hybrid Retrieval (with hard out-of-domain guardrail) ---
     try:
-        context_chunks, low_confidence = get_relevant_context(
+        context_chunks, low_confidence, is_out_of_domain = get_relevant_context(
             user_input, top_k=top_k, similarity_threshold=threshold
         )
     except Exception as e:
         logger.error("Retrieval failed: %s", e)
-        context_chunks, low_confidence = [], True
+        context_chunks, low_confidence, is_out_of_domain = [], True, False
+
+    # --- Hard Out-of-Domain Guardrail (retriever-level) ---
+    # If the best similarity score is below OUT_OF_DOMAIN_THRESHOLD, we never
+    # call the LLM. The refusal is returned verbatim and the query is logged.
+    if is_out_of_domain:
+        refusal = generate_refusal()
+        logger.warning(
+            "Retriever-level domain rejection for query: '%s…'", user_input[:60]
+        )
+        safe_refusal = refusal.replace("\n", "⏎")
+        yield f"data: {safe_refusal}\n\n"
+        yield "event: close\ndata: \n\n"
+        _save_assistant_message(conversation, refusal, [], time.time() - start_time)
+        return
 
     # --- Low-context fallback ---
     should_fallback, fallback_msg = low_context_fallback(low_confidence, context_chunks)

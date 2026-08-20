@@ -1,13 +1,14 @@
 {% extends "admin/base_admin.html" %}
 
-{% block title %}Knowledge Base{% endblock %}
-{% block header_badge %}Knowledge Admin{% endblock %}
-{% block nav_kb %}active{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block header_badge %}Admin{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
 
 {% block content %}
 <div class="page-head">
-    <h1>Knowledge Base</h1>
-    <p>Upload medical PDFs or clinical texts to build the RAG vector index.<br>Documents are embedded using BGE and stored in ChromaDB for retrieval.</p>
+    <h1>Admin Dashboard</h1>
+    <p>System overview for MedAssist AI. Monitor document status, indexing health, and LLM availability.<br>
+       To upload new documents, go to <a href="{% url 'rag_upload' %}" style="color:var(--primary);font-weight:600;">RAG Ingestion →</a></p>
 </div>
 
 <!-- Stats -->
@@ -17,50 +18,66 @@
         <div class="stat-lbl">Total Documents</div>
     </div>
     <div class="stat-card">
-        <div class="stat-val">BGE</div>
-        <div class="stat-lbl">Embedding Model</div>
+        <div class="stat-val" style="color:var(--success);">{{ total_chunks|default:"0" }}</div>
+        <div class="stat-lbl">Indexed Chunks</div>
     </div>
     <div class="stat-card">
-        <div class="stat-val">ChromaDB</div>
-        <div class="stat-lbl">Vector Store</div>
+        <div class="stat-val" style="font-size:22px;{% if ollama.online %}color:var(--success);{% else %}color:var(--error);{% endif %}">
+            {% if ollama.online %}● Online{% else %}● Offline{% endif %}
+        </div>
+        <div class="stat-lbl">Ollama Server</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-val" style="color:var(--warning);">{{ indexing|default:"0" }}</div>
+        <div class="stat-lbl">Indexing / Pending</div>
     </div>
 </div>
 
 {% if messages %}
 {% for message in messages %}
-<div class="alert {% if 'success' in message.tags %}alert-ok{% else %}alert-err{% endif %}">{{ message }}</div>
+<div class="alert {% if 'success' in message.tags %}alert-ok{% else %}alert-err{% endif %}">
+    {{ message }}
+</div>
 {% endfor %}
 {% endif %}
 
-<!-- Upload -->
-<div class="card">
+{% if failed > 0 %}
+<div class="alert alert-warn">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+    {{ failed }} document{{ failed|pluralize }} failed to index. Check the <a href="{% url 'rag_upload' %}" style="color:var(--warning);font-weight:700;">RAG Ingestion Portal</a> for details.
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="card" style="margin-bottom:18px;">
     <div class="card-title">
-        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
-        Upload Document
+        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Quick Actions
     </div>
-    <form method="post" enctype="multipart/form-data" id="upload-form">
-        {% csrf_token %}
-        <label class="upload-zone" id="dz" for="fi">
-            <div class="upload-mark">
-                <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-            </div>
-            <div class="upload-text">Drop file here or click to browse</div>
-            <div class="upload-sub">PDF or TXT · Max 50 MB · Clinical documents only</div>
-            <div class="upload-fname" id="fname"></div>
-            <input type="file" name="document" accept=".pdf,.txt" id="fi" style="display:none" onchange="fileChosen(this)">
-        </label>
-        <button type="submit" class="btn-primary" id="ub" disabled>Upload &amp; Index</button>
-    </form>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="{% url 'rag_upload' %}" class="btn-primary" style="text-decoration:none;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Upload Documents
+        </a>
+        <a href="{% url 'prompt_config' %}" class="btn-outline" style="text-decoration:none;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+            System Config
+        </a>
+        <a href="{% url 'audit_logs' %}" class="btn-outline" style="text-decoration:none;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            Audit Logs
+        </a>
+    </div>
 </div>
 
-<!-- Documents -->
+<!-- Recent Documents -->
 <div class="card">
     <div class="card-title">
         <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-        Indexed Documents ({{ documents|length }})
+        Recent Documents ({{ documents|length }})
     </div>
-    {% for doc in documents %}
-    <div class="doc-row" id="doc-{{ doc.id }}">
+    {% for doc in documents|slice:":10" %}
+    <div class="doc-row">
         <div class="doc-icon">
             <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
         </div>
@@ -69,55 +86,25 @@
             <div class="doc-meta">{{ doc.uploaded_at|date:"M d, Y · H:i" }}{% if doc.chunk_count %} · {{ doc.chunk_count }} chunks{% endif %}</div>
         </div>
         <div class="doc-actions">
-            <span id="status-{{ doc.id }}">
-                {% if doc.status == 'completed' %}<span class="badge badge-ok">✓ Indexed</span>
-                {% elif doc.status == 'indexing' %}<span class="badge badge-idx">⟳ Indexing</span>
-                {% elif doc.status == 'failed' %}<span class="badge badge-err" title="{{ doc.error_message }}">✗ Failed</span>
-                {% else %}<span class="badge badge-pend">Pending</span>{% endif %}
-            </span>
-            <form method="post" action="/app-admin/doc/{{ doc.id }}/delete/" onsubmit="return confirm('Delete {{ doc.title|escapejs }}?')" style="margin:0">
-                {% csrf_token %}
-                <button type="submit" class="btn-danger" title="Delete">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                </button>
-            </form>
+            {% if doc.status == 'completed' %}<span class="badge badge-ok">✓ Indexed</span>
+            {% elif doc.status == 'indexing' %}<span class="badge badge-idx">⟳ Indexing</span>
+            {% elif doc.status == 'failed' %}<span class="badge badge-err" title="{{ doc.error_message }}">✗ Failed</span>
+            {% else %}<span class="badge badge-pend">Pending</span>{% endif %}
         </div>
     </div>
     {% empty %}
     <div class="empty">
         <svg width="40" height="40" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-        No documents uploaded yet. Upload a PDF or TXT to enable RAG responses.
+        No documents yet.
+        <a href="{% url 'rag_upload' %}" style="color:var(--primary);font-weight:600;">Upload your first document →</a>
     </div>
     {% endfor %}
+    {% if documents|length > 10 %}
+    <div style="text-align:center;padding-top:14px;">
+        <a href="{% url 'rag_upload' %}" style="color:var(--primary);font-size:13px;font-weight:600;">
+            View all {{ documents|length }} documents in RAG Portal →
+        </a>
+    </div>
+    {% endif %}
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script>
-function fileChosen(input) {
-    const fn = document.getElementById('fname'), ub = document.getElementById('ub');
-    if (input.files[0]) { fn.textContent = '📎 ' + input.files[0].name; ub.disabled = false; }
-    else { fn.textContent = ''; ub.disabled = true; }
-}
-const dz = document.getElementById('dz'), fi = document.getElementById('fi');
-dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
-dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('drag');
-    if (e.dataTransfer.files[0]) { const dt = new DataTransfer(); dt.items.add(e.dataTransfer.files[0]); fi.files = dt.files; fileChosen(fi); }
-});
-document.querySelectorAll('[id^="status-"]').forEach(el => {
-    const id = el.id.replace('status-', '');
-    if (el.textContent.includes('Indexing') || el.textContent.includes('Pending')) pollStatus(id, el);
-});
-function pollStatus(docId, el) {
-    const iv = setInterval(async () => {
-        try {
-            const r = await fetch(`/app-admin/doc/${docId}/status/`); const d = await r.json();
-            if (d.status === 'completed') { el.innerHTML = '<span class="badge badge-ok">✓ Indexed</span>'; clearInterval(iv); showToast('✓ Document indexed successfully'); }
-            else if (d.status === 'failed') { el.innerHTML = '<span class="badge badge-err">✗ Failed</span>'; clearInterval(iv); showToast('✗ Indexing failed'); }
-        } catch(e) {}
-    }, 2500);
-}
-</script>
 {% endblock %}

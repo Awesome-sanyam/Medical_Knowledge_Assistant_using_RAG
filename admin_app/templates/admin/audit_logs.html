@@ -12,8 +12,8 @@
 
 <!-- Filter -->
 <div style="display:flex;gap:8px;margin-bottom:24px;">
-    <a href="/app-admin/audit/" class="{% if filter_type == 'all' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;">All Responses</a>
-    <a href="/app-admin/audit/?filter=flagged" class="{% if filter_type == 'flagged' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;">⚠ Flagged Only</a>
+    <a href="{% url 'audit_logs' %}" class="{% if filter_type == 'all' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;">All Responses</a>
+    <a href="{% url 'audit_logs' %}?filter=flagged" class="{% if filter_type == 'flagged' %}btn-primary{% else %}btn-outline{% endif %}" style="text-decoration:none;display:inline-flex;align-items:center;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:600;">⚠ Flagged Only</a>
 </div>
 
 <!-- Messages -->
@@ -30,14 +30,25 @@
             {% if msg.latency_seconds %}
             <span class="badge badge-pend">{{ msg.latency_seconds }}s</span>
             {% endif %}
+            {% with feedback=msg.feedback %}
+                {% if feedback %}
+                    {% if feedback.is_positive %}
+                    <span class="badge badge-ok">👍 Helpful</span>
+                    {% else %}
+                    <span class="badge badge-err">👎 Flagged</span>
+                    {% endif %}
+                {% endif %}
+            {% endwith %}
         </div>
     </div>
     <div class="audit-preview">{{ msg.content|truncatewords:40 }}</div>
     <div class="audit-tags">
         {% if msg.retrieved_context %}
             {% for chunk in msg.retrieved_context %}
-                {% if chunk.low_confidence %}
-                <span class="badge badge-warn">⚠ Low confidence</span>
+                {% if chunk.out_of_domain %}
+                <span class="badge badge-err">🚫 Out of domain</span>
+                {% elif chunk.low_confidence %}
+                <span class="badge badge-warn">⚠ Low confidence · {{ chunk.score }}</span>
                 {% else %}
                 <span class="badge badge-ok">✓ {{ chunk.score }}</span>
                 {% endif %}

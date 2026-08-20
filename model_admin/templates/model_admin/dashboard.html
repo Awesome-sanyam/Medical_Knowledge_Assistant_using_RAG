@@ -3,240 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Model Control Dashboard — MedAssist</title>
+    <title>Model Control — MedAssist AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
 /* ═══════════════════════════════════════════════════
-   AETHERIS — MedAssist AI Design System v2
-   Single Drawer · Consistent Glass
+   MedAssist AI — Enterprise Admin Design System
+   Token palette: Clinical Teal (#0d9488) · Indigo (#6366f1)
    ═══════════════════════════════════════════════════ */
 :root {
-    --primary: #4648d4;
-    --primary-container: #6063ee;
-    --secondary: #b4136d;
-    --tertiary: #006c49;
-    --on-surface: #1b1b1c;
-    --on-surface-variant: #464554;
-    --outline: #767586;
-    --outline-variant: #c7c4d7;
-    --error: #ba1a1a;
-    --error-container: #ffdad6;
-    --glass-border: rgba(255,255,255,.58);
-    --glass-1: rgba(255,255,255,.72);
-    --t: all .22s cubic-bezier(.4,0,.2,1);
-    --drawer-w: 280px;
+    --primary:       #0d9488;
+    --primary-dark:  #0f766e;
+    --primary-light: #ccfbf1;
+    --primary-muted: rgba(13,148,136,.08);
+    --accent:        #6366f1;
+    --accent-muted:  rgba(99,102,241,.08);
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --surface-3:     #f1f5f9;
+    --on-surface:    #0f172a;
+    --on-surface-2:  #334155;
+    --on-surface-3:  #64748b;
+    --outline:       #cbd5e1;
+    --outline-light: #e2e8f0;
+    --error:         #dc2626;
+    --error-bg:      #fef2f2;
+    --success:       #059669;
+    --success-bg:    #ecfdf5;
+    --warning:       #d97706;
+    --warning-bg:    #fffbeb;
+    --shadow-sm:     0 1px 2px rgba(0,0,0,.05);
+    --shadow-md:     0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+    --shadow-lg:     0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04);
+    --t:             all .2s cubic-bezier(.4,0,.2,1);
+    --radius:        12px;
+    --radius-lg:     16px;
+    --drawer-w:      260px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{font-family:'Hanken Grotesk',system-ui,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%;}
-body{height:100%;overflow:hidden;display:flex;background-image:
-    radial-gradient(at 40% 20%,hsla(228,100%,74%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 0%,hsla(189,100%,56%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 50%,hsla(355,100%,93%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 50%,hsla(340,100%,76%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 100%,hsla(22,100%,77%,1) 0px,transparent 50%),
-    radial-gradient(at 80% 100%,hsla(242,100%,70%,1) 0px,transparent 50%),
-    radial-gradient(at 0% 0%,hsla(343,100%,76%,1) 0px,transparent 50%);
-    background-color:#f6f3f2;background-attachment:fixed;padding:12px;
-}
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-thumb{background:rgba(118,117,134,.28);border-radius:4px;}
+html{font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%;}
+body{height:100%;overflow:hidden;display:flex;background:var(--surface-3);}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--outline);border-radius:99px;}
+::-webkit-scrollbar-track{background:transparent;}
+a{text-decoration:none;color:inherit;}
 
 /* ── App shell ── */
-.app-shell{
-    flex:1;height:100%;border-radius:22px;
-    background:var(--glass-1);
-    backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-    border:1px solid var(--glass-border);
-    box-shadow:0 24px 80px rgba(70,72,212,.15),0 8px 32px rgba(0,0,0,.09);
-    display:flex;flex-direction:column;overflow:hidden;
-    position:relative;
-}
+.app-shell{flex:1;height:100%;background:var(--surface);display:flex;flex-direction:column;overflow:hidden;position:relative;}
 
 /* ── Header ── */
-.hdr{
-    height:52px;flex-shrink:0;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 18px;
-    background:rgba(255,255,255,.70);
-    border-bottom:1px solid var(--glass-border);
-    position:relative;z-index:10;
-}
-.hdr-left{display:flex;align-items:center;gap:10px;}
-.hdr-right{display:flex;align-items:center;gap:6px;}
-
-.hbg-btn{
-    width:36px;height:36px;border-radius:12px;
-    background:none;border:1px solid transparent;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
-    cursor:pointer;transition:var(--t);flex-shrink:0;
-}
-.hbg-btn:hover{background:rgba(255,255,255,.7);border-color:var(--glass-border);}
-.hbg-line{width:18px;height:1.5px;background:var(--on-surface);border-radius:99px;transition:var(--t);}
+.hdr{height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--outline-light);position:relative;z-index:10;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hbg-btn{width:36px;height:36px;border-radius:8px;background:none;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;transition:var(--t);flex-shrink:0;}
+.hbg-btn:hover{background:var(--surface-3);border-color:var(--outline-light);}
+.hbg-line{width:18px;height:1.5px;background:var(--on-surface-2);border-radius:99px;transition:var(--t);}
 .hbg-btn.open .hbg-line:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
 .hbg-btn.open .hbg-line:nth-child(2){opacity:0;}
 .hbg-btn.open .hbg-line:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.hdr-mark{width:32px;height:32px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,#0d9488,#6366f1);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(13,148,136,.25);}
+.hdr-mark svg{width:18px;height:18px;stroke:white;fill:none;stroke-width:2;}
+.hdr-name{font-size:16px;font-weight:800;letter-spacing:-.03em;color:var(--on-surface);}
+.hdr-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:var(--accent-muted);color:var(--accent);text-transform:uppercase;letter-spacing:.04em;}
 
-.hdr-orb{
-    width:28px;height:28px;border-radius:50%;flex-shrink:0;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    position:relative;animation:orbSpin 8s linear infinite;
-    box-shadow:0 0 12px rgba(70,72,212,.38);
-}
-.hdr-orb::after{content:'';position:absolute;inset:3px;border-radius:50%;background:white;}
-@keyframes orbSpin{to{transform:rotate(360deg);}}
-.hdr-name{
-    font-size:15px;font-weight:800;letter-spacing:-.03em;
-    background:linear-gradient(90deg,#4648d4,#b4136d);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-}
-.hdr-role-tag{
-    font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px;
-    background:rgba(70,72,212,.08);border:1px solid rgba(70,72,212,.18);
-    color:var(--on-surface-variant);
-}
-
-/* ─────────────────────────────────────────
-   SINGLE SIDE DRAWER (overlay)
-   ───────────────────────────────────────── */
-.drawer-backdrop{
-    position:absolute;inset:0;z-index:50;
-    background:rgba(27,27,28,.15);backdrop-filter:blur(3px);
-    opacity:0;pointer-events:none;transition:opacity .25s ease;
-}
+/* ── Slide Drawer ── */
+.drawer-backdrop{position:absolute;inset:0;z-index:50;background:rgba(15,23,42,.2);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .25s ease;}
 .drawer-backdrop.open{opacity:1;pointer-events:auto;}
-
-.drawer{
-    position:absolute;left:0;top:0;bottom:0;width:var(--drawer-w);z-index:51;
-    background:rgba(255,255,255,.92);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-    border-right:1px solid var(--glass-border);
-    box-shadow:4px 0 40px rgba(70,72,212,.12);
-    display:flex;flex-direction:column;
-    transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
-}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:var(--drawer-w);z-index:51;background:var(--surface);border-right:1px solid var(--outline-light);box-shadow:var(--shadow-lg);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .drawer.open{transform:translateX(0);}
-
-/* Drawer header */
-.drw-head{
-    height:52px;display:flex;align-items:center;gap:10px;
-    padding:0 16px;border-bottom:1px solid var(--glass-border);flex-shrink:0;
-}
-.drw-orb{
-    width:26px;height:26px;border-radius:50%;flex-shrink:0;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    position:relative;animation:orbSpin 8s linear infinite;
-}
-.drw-orb::after{content:'';position:absolute;inset:3px;border-radius:50%;background:white;}
-.drw-title{font-size:13.5px;font-weight:800;letter-spacing:-.02em;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-
-/* Drawer sections */
-.drw-body{flex:1;overflow-y:auto;padding:16px 12px;}
-.drw-section-label{
-    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
-    color:var(--outline);padding:8px 8px 4px;
-}
-.drw-item{
-    display:flex;align-items:center;gap:8px;
-    padding:9px 12px;border-radius:14px;
-    font-size:13px;font-weight:500;color:var(--on-surface-variant);
-    cursor:pointer;transition:var(--t);text-decoration:none;
-    border:1px solid transparent;margin-bottom:1px;
-}
-.drw-item:hover{background:rgba(255,255,255,.75);color:var(--on-surface);border-color:var(--glass-border);}
-.drw-item.active{background:rgba(70,72,212,.07);color:var(--primary);font-weight:600;border-color:rgba(70,72,212,.15);}
-.drw-item svg{flex-shrink:0;opacity:.65;}
+.drw-head{height:56px;display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--outline-light);flex-shrink:0;}
+.drw-mark{width:28px;height:28px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,#0d9488,#6366f1);display:flex;align-items:center;justify-content:center;}
+.drw-mark svg{width:15px;height:15px;stroke:white;fill:none;stroke-width:2;}
+.drw-title{font-size:14px;font-weight:800;color:var(--on-surface);}
+.drw-body{flex:1;overflow-y:auto;padding:12px;}
+.drw-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-3);padding:8px 8px 4px;}
+.drw-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--on-surface-2);cursor:pointer;transition:var(--t);text-decoration:none;border:1px solid transparent;margin-bottom:1px;}
+.drw-item:hover{background:var(--surface-3);color:var(--on-surface);}
+.drw-item.active{background:var(--primary-muted);color:var(--primary-dark);font-weight:600;border-color:rgba(13,148,136,.12);}
+.drw-item svg{flex-shrink:0;opacity:.5;width:14px;height:14px;}
 .drw-item.active svg{opacity:1;}
-.drw-sep{height:1px;background:var(--glass-border);margin:8px 4px;}
+.drw-sep{height:1px;background:var(--outline-light);margin:8px 4px;}
+.drw-user{padding:14px 12px;border-top:1px solid var(--outline-light);flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#6366f1);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;}
+.user-name{font-size:13px;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--on-surface);}
+.logout-btn{background:none;border:none;cursor:pointer;color:var(--on-surface-3);padding:6px;border-radius:8px;display:flex;transition:var(--t);}
+.logout-btn:hover{color:var(--error);background:var(--error-bg);}
 
-.drw-user{
-    padding:14px 12px;border-top:1px solid var(--glass-border);flex-shrink:0;
-    display:flex;align-items:center;gap:10px;
-}
-.user-avatar{
-    width:32px;height:32px;border-radius:50%;
-    background:conic-gradient(from 0deg,#4648d4,#b4136d,#06b6d4,#6063ee,#4648d4);
-    flex-shrink:0;display:flex;align-items:center;justify-content:center;
-    color:white;font-size:12px;font-weight:800;position:relative;
-}
-.user-avatar::after{content:'';position:absolute;inset:2.5px;border-radius:50%;background:rgba(255,255,255,.15);}
-.user-name{font-size:13px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.logout-btn{
-    background:none;border:none;cursor:pointer;color:var(--outline);
-    padding:6px;border-radius:10px;display:flex;transition:var(--t);font-family:inherit;
-}
-.logout-btn:hover{color:var(--error);background:var(--error-container);}
-
-/* Main Canvas Content */
-.main-canvas{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:32px;}
-.inner{max-width:900px;margin:0 auto;width:100%;}
+/* ── Main canvas ── */
+.main-canvas{flex:1;display:flex;flex-direction:column;overflow-y:auto;padding:32px;background:var(--surface-2);}
+.inner{max-width:960px;margin:0 auto;width:100%;}
 .page-head{margin-bottom:28px;}
-.page-head h1{font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;}
-.page-head p{font-size:14px;color:var(--on-surface-variant);line-height:1.6;}
+.page-head h1{font-size:26px;font-weight:800;letter-spacing:-.04em;margin-bottom:6px;color:var(--on-surface);}
+.page-head p{font-size:14px;color:var(--on-surface-3);line-height:1.6;}
 
-/* Stats */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
-.stat-card{background:rgba(255,255,255,.80);backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:20px;padding:20px 22px;box-shadow:0 4px 20px rgba(0,0,0,.05);transition:var(--t);}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(70,72,212,.10);}
-.stat-card.primary{background:linear-gradient(135deg,rgba(96,99,238,.12) 0%,rgba(180,19,109,.08) 100%);}
-.stat-val-g{font-size:14px;font-weight:700;margin-bottom:2px;}
-.stat-val-g.online{background:linear-gradient(90deg,#006c49,#4648d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.stat-val-g.offline{color:var(--error);}
-.stat-val-num{font-size:26px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.stat-lbl{font-size:12px;color:var(--on-surface-variant);font-weight:500;}
+/* ── Stats grid ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1px solid var(--outline-light);border-radius:var(--radius-lg);padding:18px 20px;box-shadow:var(--shadow-sm);transition:var(--t);}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.stat-card.primary{background:var(--primary-muted);border-color:rgba(13,148,136,.12);}
+.stat-val{font-size:22px;font-weight:800;letter-spacing:-.03em;color:var(--primary-dark);margin-bottom:4px;}
+.stat-val.online{color:var(--success);}
+.stat-val.offline{color:var(--error);}
+.stat-lbl{font-size:12px;color:var(--on-surface-3);font-weight:500;}
+.prog-wrap{height:6px;border-radius:99px;background:var(--outline-light);overflow:hidden;margin-top:10px;}
+.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#0d9488,#6366f1);transition:width .6s ease;}
 
-/* Grid */
+/* ── 2-col grid ── */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
-/* Glass card */
-.glass-card{background:rgba(255,255,255,.80);backdrop-filter:blur(20px);border:1px solid var(--glass-border);border-radius:20px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.05);}
-.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--outline);margin-bottom:16px;display:flex;align-items:center;gap:6px;}
 
-/* Select */
-.glass-select{width:100%;padding:11px 14px;background:rgba(255,255,255,.75);border:1px solid rgba(199,196,215,.6);border-radius:14px;font-size:14px;font-family:inherit;color:var(--on-surface);outline:none;cursor:pointer;transition:var(--t);}
-.glass-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(70,72,212,.10);}
-/* Buttons */
-.btn-gradient{background:linear-gradient(135deg,#6063ee 0%,#b4136d 100%);color:white;border:none;border-radius:99px;padding:11px 22px;font-size:13.5px;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--t);box-shadow:0 4px 16px rgba(70,72,212,.35);}
-.btn-gradient:hover{box-shadow:0 8px 24px rgba(70,72,212,.45);transform:translateY(-1px);}
-.btn-glass{background:rgba(255,255,255,.7);border:1px solid var(--glass-border);border-radius:99px;padding:11px 22px;font-size:13.5px;font-weight:600;font-family:inherit;color:var(--on-surface-variant);cursor:pointer;transition:var(--t);}
-.btn-glass:hover{background:white;color:var(--on-surface);}
-.btn-danger{background:rgba(186,26,26,.08);border:1px solid rgba(186,26,26,.2);border-radius:99px;padding:11px 22px;font-size:13.5px;font-weight:700;font-family:inherit;color:var(--error);cursor:pointer;transition:var(--t);}
-.btn-danger:hover{background:var(--error-container);}
+/* ── Card ── */
+.card{background:var(--surface);border:1px solid var(--outline-light);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--on-surface-3);margin-bottom:18px;display:flex;align-items:center;gap:6px;}
+.card-title svg{flex-shrink:0;width:13px;height:13px;}
 
-/* Progress bar */
-.prog-wrap{height:8px;border-radius:99px;background:var(--outline-variant);overflow:hidden;margin-top:8px;}
-.prog-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#4648d4,#b4136d);transition:width .5s ease;}
-/* Slider */
-.slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-.slider-val{font-size:20px;font-weight:800;background:linear-gradient(90deg,#4648d4,#b4136d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-input[type=range]{width:100%;-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;background:var(--outline-variant);cursor:pointer;outline:none;margin-top:4px;}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#6063ee,#b4136d);box-shadow:0 2px 8px rgba(70,72,212,.4);cursor:pointer;transition:var(--t);}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
-.slider-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--outline);margin-top:2px;}
-/* Model row */
-.model-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.5);}
+/* ── Form elements ── */
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-3);margin-bottom:6px;}
+.form-select{width:100%;padding:10px 14px;background:var(--surface-2);border:1.5px solid var(--outline-light);border-radius:10px;font-size:13px;font-family:inherit;color:var(--on-surface);outline:none;cursor:pointer;transition:var(--t);}
+.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+.form-textarea{width:100%;padding:11px 14px;background:var(--surface-2);border:1.5px solid var(--outline-light);border-radius:10px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--on-surface);outline:none;resize:vertical;min-height:100px;line-height:1.6;transition:var(--t);}
+.form-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+
+/* ── Range slider ── */
+.slider-wrap{margin-bottom:20px;}
+.slider-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.slider-label{font-size:12px;font-weight:600;color:var(--on-surface-2);}
+.slider-val{font-size:13px;font-weight:800;color:var(--primary-dark);background:var(--primary-muted);padding:2px 8px;border-radius:6px;}
+.range-slider{width:100%;-webkit-appearance:none;height:4px;background:var(--outline-light);border-radius:4px;outline:none;}
+.range-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:0 2px 6px rgba(13,148,136,.3);}
+.slider-labels{display:flex;justify-content:space-between;font-size:10px;color:var(--on-surface-3);margin-top:4px;}
+.sliders-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-bottom:20px;}
+
+/* ── Buttons ── */
+.btn-primary{background:var(--primary);color:white;border:none;border-radius:10px;padding:11px 22px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--t);box-shadow:0 2px 8px rgba(13,148,136,.25);}
+.btn-primary:hover{background:var(--primary-dark);box-shadow:0 4px 14px rgba(13,148,136,.35);}
+.btn-outline{background:none;border:1.5px solid var(--outline);color:var(--on-surface-2);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;transition:var(--t);}
+.btn-outline:hover{border-color:var(--error);color:var(--error);background:var(--error-bg);}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ── Model rows ── */
+.model-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--outline-light);}
 .model-row:last-child{border-bottom:none;}
-/* Badges */
-.badge{border-radius:99px;padding:4px 12px;font-size:11.5px;font-weight:700;}
-.badge-ok{background:rgba(0,108,73,.12);color:var(--tertiary);}
-.badge-idle{background:rgba(118,117,134,.1);color:var(--outline);}
-.badge-err{background:var(--error-container);color:var(--error);}
-/* Session row */
-.session-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.5);font-size:13px;}
-.session-row:last-child{border-bottom:none;}
-/* Textarea */
-.glass-textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.75);border:1px solid rgba(199,196,215,.6);border-radius:14px;font-size:13.5px;font-family:inherit;color:var(--on-surface);resize:vertical;outline:none;transition:var(--t);line-height:1.6;}
-.glass-textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(70,72,212,.10);}
 
-/* Toast */
-#toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:rgba(27,27,28,.88);backdrop-filter:blur(16px);color:white;
-    border-radius:14px;padding:10px 20px;font-size:13px;font-weight:500;
-    opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);
-    white-space:nowrap;z-index:999;
-}
+/* ── Session rows ── */
+.session-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--outline-light);font-size:13px;}
+.session-row:last-child{border-bottom:none;}
+.session-time{font-size:11px;color:var(--on-surface-3);flex-shrink:0;width:130px;font-family:'JetBrains Mono',monospace;}
+
+/* ── Badges ── */
+.badge{border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;}
+.badge-ok{background:var(--success-bg);color:var(--success);}
+.badge-idle{background:var(--surface-3);color:var(--on-surface-3);}
+.badge-err{background:var(--error-bg);color:var(--error);}
+.badge-warn{background:var(--warning-bg);color:var(--warning);}
+
+/* ── Empty state ── */
+.empty-note{color:var(--on-surface-3);font-size:13px;text-align:center;padding:24px 0;}
+
+/* ── Inline status message ── */
+.status-bar{padding:10px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:16px;display:none;}
+.status-bar.show{display:block;}
+.status-bar.ok{background:var(--success-bg);color:var(--success);border:1px solid rgba(5,150,105,.15);}
+.status-bar.err{background:var(--error-bg);color:var(--error);border:1px solid #fecaca;}
+
+/* ── Toast ── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--on-surface);color:white;border-radius:10px;padding:10px 20px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.22,1,.36,1);white-space:nowrap;z-index:999;box-shadow:var(--shadow-lg);}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.empty-note{font-size:13px;color:var(--outline);}
-code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);padding:2px 7px;border-radius:7px;font-size:12px;font-family:'SF Mono','Fira Code',monospace;}
     </style>
 </head>
 <body>
@@ -250,46 +181,48 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
                     <div class="hbg-line"></div>
                     <div class="hbg-line"></div>
                 </button>
-                <div class="hdr-orb"></div>
-                <span class="hdr-name">Model Control</span>
-                <span class="hdr-role-tag">Admin</span>
+                <div class="hdr-mark">
+                    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+                </div>
+                <span class="hdr-name">MedAssist AI</span>
+                <span class="hdr-badge">Model Control</span>
             </div>
-            <div class="hdr-right">
-                <!-- Optional right header content -->
-            </div>
+            <div class="hdr-right"></div>
         </header>
 
         <!-- ══ SLIDE DRAWER ══ -->
         <div class="drawer-backdrop" id="drw-backdrop" onclick="closeDrawer()"></div>
         <aside class="drawer" id="drawer">
             <div class="drw-head">
-                <div class="drw-orb"></div>
+                <div class="drw-mark">
+                    <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/></svg>
+                </div>
                 <span class="drw-title">MedAssist AI</span>
             </div>
             <div class="drw-body">
                 <div class="drw-section-label">Model Control</div>
                 <a href="/model-control/" class="drw-item active">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                     Dashboard
                 </a>
                 <div class="drw-sep"></div>
                 <div class="drw-section-label">Knowledge</div>
                 <a href="/app-admin/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     Knowledge Base
                 </a>
                 <a href="/app-admin/config/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
                     System Config
                 </a>
                 <a href="/app-admin/audit/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                     Audit Inspector
                 </a>
                 <div class="drw-sep"></div>
                 <div class="drw-section-label">General</div>
                 <a href="/chat/" class="drw-item">
-                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                     Live Chat
                 </a>
             </div>
@@ -297,7 +230,7 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
                 <div class="user-avatar">{{ request.user.username|first|upper }}</div>
                 <span class="user-name">{{ request.user.get_full_name|default:request.user.username }}</span>
                 <a href="/model-control/logout/" class="logout-btn" title="Sign out">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                 </a>
             </div>
         </aside>
@@ -305,42 +238,52 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
         <!-- ══ MAIN CANVAS ══ -->
         <main class="main-canvas">
             <div class="inner">
+
                 <div class="page-head">
                     <h1>Model Control Dashboard</h1>
-                    <p>Monitor, load, unload, and configure the local Ollama LLM in real time.</p>
+                    <p>Monitor, load, unload, and configure the local Ollama LLM in real time.<br>Changes apply instantly to all subsequent chat queries.</p>
                 </div>
+
+                <!-- Status bar -->
+                <div class="status-bar" id="status-bar"></div>
+
+                <!-- Stats -->
                 <div class="stats">
                     <div class="stat-card primary">
-                        <div class="stat-val-g" id="ollama-status">Checking…</div>
+                        <div class="stat-val" id="ollama-status">Checking…</div>
                         <div class="stat-lbl">Ollama Server</div>
                     </div>
                     <div class="stat-card">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
-                            <span class="stat-lbl">RAM</span>
-                            <span style="font-size:11px;font-weight:700;color:var(--on-surface-variant)" id="ram-text">—</span>
+                        <div class="stat-lbl" style="margin-bottom:6px;">RAM Usage</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                            <span class="stat-val" id="ram-text" style="font-size:16px;">—</span>
                         </div>
                         <div class="prog-wrap"><div class="prog-fill" id="ram-bar" style="width:0%"></div></div>
                     </div>
                     <div class="stat-card">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px;">
-                            <span class="stat-lbl">CPU</span>
-                            <span style="font-size:11px;font-weight:700;color:var(--on-surface-variant)" id="cpu-text">—</span>
+                        <div class="stat-lbl" style="margin-bottom:6px;">CPU Usage</div>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                            <span class="stat-val" id="cpu-text" style="font-size:16px;">—</span>
                         </div>
                         <div class="prog-wrap"><div class="prog-fill" id="cpu-bar" style="width:0%"></div></div>
                     </div>
                     <div class="stat-card">
-                        <div style="font-size:13px;font-weight:700;color:var(--on-surface);margin-bottom:2px;">{{ config.key }}</div>
+                        <div class="stat-val" style="font-size:16px;">{{ config.key }}</div>
                         <div class="stat-lbl">Active Config · T={{ config.temperature }}</div>
                     </div>
                 </div>
 
+                <!-- Two column: Model Controls + Available Models -->
                 <div class="grid-2">
                     <!-- Model Controls -->
-                    <div class="glass-card">
-                        <div class="card-title"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>Model Controls</div>
-                        <div style="margin-bottom:14px;">
-                            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-variant);display:block;margin-bottom:6px;">Target Model</label>
-                            <select id="model-select" class="glass-select">
+                    <div class="card">
+                        <div class="card-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            Model Controls
+                        </div>
+                        <div style="margin-bottom:16px;">
+                            <label class="form-label" for="model-select">Target Model</label>
+                            <select id="model-select" class="form-select">
                                 {% if ollama_status.models %}
                                     {% for m in ollama_status.models %}
                                     <option value="{{ m }}" {% if 'med-llama' in m %}selected{% endif %}>{{ m }}</option>
@@ -350,71 +293,91 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
                                 {% endif %}
                             </select>
                         </div>
-                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                            <button class="btn-gradient" onclick="loadModel()">⚡ Warm / Load</button>
-                            <button class="btn-danger" onclick="unloadModel()">Unload</button>
+                        <div class="btn-row">
+                            <button class="btn-primary" onclick="loadModel()">⚡ Warm / Load</button>
+                            <button class="btn-outline" onclick="unloadModel()">Unload</button>
                         </div>
-                        <p style="font-size:11px;color:var(--on-surface-variant);margin-top:12px;line-height:1.5;">"Warm" loads the model into RAM. "Unload" immediately frees memory.</p>
+                        <p style="font-size:12px;color:var(--on-surface-3);margin-top:14px;line-height:1.6;">
+                            <strong>Warm</strong> loads the model into RAM for fast responses.<br>
+                            <strong>Unload</strong> immediately frees memory when not in use.
+                        </p>
                     </div>
 
-                    <!-- Available models -->
-                    <div class="glass-card">
-                        <div class="card-title"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>Available Models ({{ ollama_status.models|length }})</div>
+                    <!-- Available Models -->
+                    <div class="card">
+                        <div class="card-title">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            Available Models ({{ ollama_status.models|length }})
+                        </div>
                         {% if ollama_status.online %}
                             {% for m in ollama_status.models %}
                             <div class="model-row">
-                                <span style="flex:1;font-weight:500;font-size:13px;">{{ m }}</span>
+                                <span style="flex:1;font-weight:500;font-size:13px;color:var(--on-surface);">{{ m }}</span>
                                 {% if 'med-llama' in m %}<span class="badge badge-ok">✓ Active</span>
                                 {% else %}<span class="badge badge-idle">Available</span>{% endif %}
                             </div>
                             {% empty %}
-                            <p class="empty-note">No models found. Run <code>ollama pull med-llama</code>.</p>
+                            <p class="empty-note">No models found. Run <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface-3);padding:2px 6px;border-radius:4px;">ollama pull med-llama</code></p>
                             {% endfor %}
                         {% else %}
                         <div style="text-align:center;padding:24px 0;">
-                            <div style="font-size:28px;margin-bottom:10px;">⚠️</div>
-                            <p style="font-size:13px;color:var(--on-surface-variant);">Ollama is offline. Run <code>ollama serve</code> in a terminal.</p>
+                            <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+                            <p style="font-size:13px;color:var(--on-surface-3);">Ollama is offline. Run <code style="font-family:'JetBrains Mono',monospace;font-size:12px;background:var(--surface-3);padding:2px 6px;border-radius:4px;">ollama serve</code> in a terminal.</p>
                         </div>
                         {% endif %}
                     </div>
                 </div>
 
                 <!-- Parameter Configurator -->
-                <div class="glass-card" style="margin-bottom:16px;">
-                    <div class="card-title"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>LLM Parameter Configurator</div>
-                    <p style="font-size:12px;color:var(--on-surface-variant);margin:-8px 0 20px;">Changes apply instantly to all subsequent chat queries.</p>
-                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;margin-bottom:20px;">
-                        <div>
-                            <div class="slider-header"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Temperature</span><span class="slider-val" id="temp-show">{{ config.temperature }}</span></div>
-                            <input type="range" id="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}" oninput="document.getElementById('temp-show').textContent=parseFloat(this.value).toFixed(2)">
+                <div class="card">
+                    <div class="card-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                        LLM Parameter Configurator
+                    </div>
+                    <div class="sliders-grid">
+                        <div class="slider-wrap">
+                            <div class="slider-header">
+                                <span class="slider-label">Temperature</span>
+                                <span class="slider-val" id="temp-show">{{ config.temperature }}</span>
+                            </div>
+                            <input type="range" class="range-slider" id="temperature" min="0" max="1" step="0.05" value="{{ config.temperature }}" oninput="document.getElementById('temp-show').textContent=parseFloat(this.value).toFixed(2)">
                             <div class="slider-labels"><span>Precise</span><span>Creative</span></div>
                         </div>
-                        <div>
-                            <div class="slider-header"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Top-K Chunks</span><span class="slider-val" id="topk-show">{{ config.top_k_retrieval }}</span></div>
-                            <input type="range" id="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}" oninput="document.getElementById('topk-show').textContent=this.value">
+                        <div class="slider-wrap">
+                            <div class="slider-header">
+                                <span class="slider-label">Top-K Chunks</span>
+                                <span class="slider-val" id="topk-show">{{ config.top_k_retrieval }}</span>
+                            </div>
+                            <input type="range" class="range-slider" id="top_k_retrieval" min="1" max="10" step="1" value="{{ config.top_k_retrieval }}" oninput="document.getElementById('topk-show').textContent=this.value">
                             <div class="slider-labels"><span>Fast (1)</span><span>Rich (10)</span></div>
                         </div>
-                        <div>
-                            <div class="slider-header"><span style="font-size:12px;font-weight:600;color:var(--on-surface-variant);">Threshold</span><span class="slider-val" id="thresh-show">{{ config.similarity_threshold }}</span></div>
-                            <input type="range" id="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}" oninput="document.getElementById('thresh-show').textContent=parseFloat(this.value).toFixed(2)">
+                        <div class="slider-wrap">
+                            <div class="slider-header">
+                                <span class="slider-label">Threshold</span>
+                                <span class="slider-val" id="thresh-show">{{ config.similarity_threshold }}</span>
+                            </div>
+                            <input type="range" class="range-slider" id="similarity_threshold" min="0" max="1" step="0.05" value="{{ config.similarity_threshold }}" oninput="document.getElementById('thresh-show').textContent=parseFloat(this.value).toFixed(2)">
                             <div class="slider-labels"><span>Lenient</span><span>Strict</span></div>
                         </div>
                     </div>
                     <div style="margin-bottom:18px;">
-                        <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--on-surface-variant);display:block;margin-bottom:6px;">System Prompt</label>
-                        <textarea id="system_prompt" rows="4" class="glass-textarea">{{ config.system_prompt }}</textarea>
+                        <label class="form-label" for="system_prompt">System Prompt</label>
+                        <textarea id="system_prompt" class="form-textarea" rows="5">{{ config.system_prompt }}</textarea>
                     </div>
-                    <button class="btn-gradient" onclick="saveConfig()">Save &amp; Apply →</button>
+                    <button class="btn-primary" onclick="saveConfig()">Save &amp; Apply</button>
                 </div>
 
                 <!-- Session History -->
-                <div class="glass-card">
-                    <div class="card-title"><svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Session History</div>
+                <div class="card">
+                    <div class="card-title">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Session History
+                    </div>
                     {% for session in recent_sessions %}
                     <div class="session-row">
-                        <span style="font-size:11px;color:var(--outline);flex-shrink:0;width:130px;">{{ session.timestamp|date:"M d, H:i:s" }}</span>
-                        <span style="font-weight:600;flex:1;">{{ session.model_name }}</span>
-                        <span style="font-size:11.5px;color:var(--on-surface-variant);">{{ session.action }}</span>
+                        <span class="session-time">{{ session.timestamp|date:"M d, H:i:s" }}</span>
+                        <span style="font-weight:600;flex:1;color:var(--on-surface);">{{ session.model_name }}</span>
+                        <span style="color:var(--on-surface-3);">{{ session.action }}</span>
                         {% if session.status == 'loaded' %}<span class="badge badge-ok">Loaded</span>
                         {% elif session.status == 'unloaded' %}<span class="badge badge-idle">Unloaded</span>
                         {% else %}<span class="badge badge-err">Error</span>{% endif %}
@@ -423,6 +386,7 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
                     <p class="empty-note">No sessions yet. Load a model to see history.</p>
                     {% endfor %}
                 </div>
+
             </div>
         </main>
     </div>
@@ -445,50 +409,93 @@ code{background:rgba(255,255,255,.7);border:1px solid var(--outline-variant);pad
         document.getElementById('hbg').classList.remove('open');
     }
 
-    /* ── Utilities ── */
-    function toast(msg) {
+    /* ── Toast ── */
+    function toast(msg, type = 'info') {
         const t = document.getElementById('toast');
-        t.textContent = msg; t.classList.add('show');
+        t.textContent = msg;
+        t.classList.add('show');
         setTimeout(() => t.classList.remove('show'), 3500);
     }
+
+    /* ── CSRF ── */
     function csrf() {
         const m = document.cookie.match(/csrftoken=([^;]+)/);
         return m ? decodeURIComponent(m[1]) : '';
     }
 
-    /* ── API Calls ── */
-    async function pollStatus(){
-        try{const r=await fetch('/model-control/api/status/');const d=await r.json();
-        const st=document.getElementById('ollama-status');
-        if(d.online){st.innerHTML='<span style="color:var(--tertiary)">● Online</span>';st.className='stat-val-g online';}
-        else{st.innerHTML='<span>● Offline</span>';st.className='stat-val-g offline';}
-        if(d.system){
-            const rp=d.system.ram_percent||0,cp=d.system.cpu_percent||0;
-            document.getElementById('ram-bar').style.width=rp+'%';
-            document.getElementById('ram-text').textContent=`${d.system.ram_used_gb||'?'} / ${d.system.ram_total_gb||'?'} GB`;
-            document.getElementById('cpu-bar').style.width=cp+'%';
-            document.getElementById('cpu-text').textContent=cp+'%';
-        }}catch(e){}
+    /* ── Live status polling ── */
+    async function pollStatus() {
+        try {
+            const r = await fetch('/model-control/api/status/');
+            const d = await r.json();
+            const st = document.getElementById('ollama-status');
+            if (d.online) {
+                st.textContent = '● Online';
+                st.className = 'stat-val online';
+            } else {
+                st.textContent = '● Offline';
+                st.className = 'stat-val offline';
+            }
+            if (d.system) {
+                const rp = d.system.ram_percent || 0, cp = d.system.cpu_percent || 0;
+                document.getElementById('ram-bar').style.width = rp + '%';
+                document.getElementById('ram-text').textContent = `${d.system.ram_used_gb || '?'} / ${d.system.ram_total_gb || '?'} GB`;
+                document.getElementById('cpu-bar').style.width = cp + '%';
+                document.getElementById('cpu-text').textContent = cp + '%';
+            }
+        } catch(e) {}
     }
-    pollStatus(); setInterval(pollStatus,5000);
+    pollStatus();
+    setInterval(pollStatus, 5000);
 
-    async function loadModel(){
-        const model=document.getElementById('model-select').value;
-        toast('⚡ Loading "'+model+'"…');
-        const r=await fetch('/model-control/api/load/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({model_name:model})});
-        const d=await r.json(); toast(d.status==='ok'?'✓ '+d.message:'✗ '+d.message); setTimeout(pollStatus,1000);
+    /* ── Load Model ── */
+    async function loadModel() {
+        const model = document.getElementById('model-select').value;
+        toast('⚡ Loading "' + model + '"…');
+        try {
+            const r = await fetch('/model-control/api/load/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf() },
+                body: new URLSearchParams({ model_name: model })
+            });
+            const d = await r.json();
+            toast(d.status === 'ok' ? '✓ ' + d.message : '✗ ' + d.message);
+            setTimeout(pollStatus, 1000);
+        } catch(e) { toast('✗ Request failed'); }
     }
 
-    async function unloadModel(){
-        const model=document.getElementById('model-select').value;
-        if(!confirm('Unload "'+model+'" from RAM?')) return;
-        const r=await fetch('/model-control/api/unload/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({model_name:model})});
-        const d=await r.json(); toast(d.status==='ok'?'✓ '+d.message:'✗ '+d.message); setTimeout(pollStatus,1000);
+    /* ── Unload Model ── */
+    async function unloadModel() {
+        const model = document.getElementById('model-select').value;
+        if (!confirm('Unload "' + model + '" from RAM?')) return;
+        try {
+            const r = await fetch('/model-control/api/unload/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf() },
+                body: new URLSearchParams({ model_name: model })
+            });
+            const d = await r.json();
+            toast(d.status === 'ok' ? '✓ ' + d.message : '✗ ' + d.message);
+            setTimeout(pollStatus, 1000);
+        } catch(e) { toast('✗ Request failed'); }
     }
 
-    async function saveConfig(){
-        const r=await fetch('/model-control/api/config/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded','X-CSRFToken':csrf()},body:new URLSearchParams({temperature:document.getElementById('temperature').value,top_k_retrieval:document.getElementById('top_k_retrieval').value,similarity_threshold:document.getElementById('similarity_threshold').value,system_prompt:document.getElementById('system_prompt').value})});
-        const d=await r.json(); toast(d.status==='ok'?'✓ Config saved':'✗ '+d.message);
+    /* ── Save Config ── */
+    async function saveConfig() {
+        try {
+            const r = await fetch('/model-control/api/config/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-CSRFToken': csrf() },
+                body: new URLSearchParams({
+                    temperature: document.getElementById('temperature').value,
+                    top_k_retrieval: document.getElementById('top_k_retrieval').value,
+                    similarity_threshold: document.getElementById('similarity_threshold').value,
+                    system_prompt: document.getElementById('system_prompt').value
+                })
+            });
+            const d = await r.json();
+            toast(d.status === 'ok' ? '✓ Config saved & LLM cache cleared' : '✗ ' + d.message);
+        } catch(e) { toast('✗ Request failed'); }
     }
     </script>
 </body>

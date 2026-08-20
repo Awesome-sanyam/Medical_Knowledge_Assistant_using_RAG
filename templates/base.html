@@ -1,184 +1,87 @@
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedAssist AI – Clinical Knowledge Assistant</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: { DEFAULT: '#111827', light: '#374151', ink: '#000000' },
-                    },
-                    animation: {
-                        'fade-in': 'fadeIn 0.3s ease-out',
-                        'slide-up': 'slideUp 0.4s ease-out',
-                        'pulse-dot': 'pulseDot 1.4s infinite ease-in-out',
-                    },
-                    keyframes: {
-                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
-                        slideUp: { '0%': { transform: 'translateY(12px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
-                        pulseDot: { '0%,80%,100%': { transform: 'scale(0.6)', opacity: '0.4' }, '40%': { transform: 'scale(1.1)', opacity: '1' } },
-                    }
-                }
-            }
-        }
-    </script>
+    <title>{% block title %}MedAssist AI{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
-        /* ---- Base tokens ---- */
-        :root {
-            --bg: #ffffff;
-            --bg-2: #f8f8f8;
-            --bg-3: #f0f0f0;
-            --border: #e4e4e7;
-            --text: #111827;
-            --text-2: #6b7280;
-            --text-3: #9ca3af;
-            --accent: #111827;
-            --accent-hover: #374151;
-            --user-bubble: #111827;
-            --ai-bubble: #f8f8f8;
-            --ai-bubble-border: #e4e4e7;
-        }
-        .dark {
-            --bg: #0a0a0a;
-            --bg-2: #111111;
-            --bg-3: #1a1a1a;
-            --border: #2a2a2a;
-            --text: #f5f5f5;
-            --text-2: #a1a1aa;
-            --text-3: #71717a;
-            --accent: #f5f5f5;
-            --accent-hover: #d4d4d8;
-            --user-bubble: #f5f5f5;
-            --ai-bubble: #111111;
-            --ai-bubble-border: #2a2a2a;
-        }
-        * { font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: var(--text); transition: background 0.25s, color 0.25s; }
+/* ═══════════════════════════════════════════════════
+   MedAssist AI — Enterprise Design System v3
+   Token palette: Clinical Teal (#0d9488) · Indigo (#6366f1)
+   ═══════════════════════════════════════════════════ */
+:root {
+    --primary:       #0d9488;
+    --primary-dark:  #0f766e;
+    --primary-light: #ccfbf1;
+    --primary-muted: rgba(13,148,136,.08);
+    --accent:        #6366f1;
+    --accent-muted:  rgba(99,102,241,.08);
+    --surface:       #ffffff;
+    --surface-2:     #f8fafc;
+    --surface-3:     #f1f5f9;
+    --on-surface:    #0f172a;
+    --on-surface-2:  #334155;
+    --on-surface-3:  #64748b;
+    --outline:       #cbd5e1;
+    --outline-light: #e2e8f0;
+    --error:         #dc2626;
+    --error-bg:      #fef2f2;
+    --success:       #059669;
+    --success-bg:    #ecfdf5;
+    --warning:       #d97706;
+    --warning-bg:    #fffbeb;
+    --shadow-sm:     0 1px 2px rgba(0,0,0,.05);
+    --shadow-md:     0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+    --shadow-lg:     0 10px 15px -3px rgba(0,0,0,.08),0 4px 6px -4px rgba(0,0,0,.04);
+    --t:             all .2s cubic-bezier(.4,0,.2,1);
+    --radius:        12px;
+    --radius-lg:     16px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-size: 14px; -webkit-font-smoothing: antialiased; }
+body { background: var(--surface-3); color: var(--on-surface); }
 
-        /* ---- Scrollbar ---- */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--outline); border-radius: 99px; }
+::-webkit-scrollbar-track { background: transparent; }
+a { text-decoration: none; color: inherit; }
 
-        /* ---- Components ---- */
-        .card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; }
-        .card-sm { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; }
-        .btn-primary {
-            background: var(--accent); color: var(--bg);
-            border-radius: 10px; padding: 10px 20px; font-weight: 600; font-size: 14px;
-            cursor: pointer; transition: opacity 0.2s, transform 0.1s;
-            border: none; outline: none;
-        }
-        .btn-primary:hover { opacity: 0.85; }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-        .btn-ghost {
-            background: transparent; color: var(--text-2); border: 1px solid var(--border);
-            border-radius: 10px; padding: 8px 16px; font-weight: 500; font-size: 13px;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .btn-ghost:hover { background: var(--bg-3); color: var(--text); }
-        .input-base {
-            background: var(--bg-3); border: 1px solid var(--border); color: var(--text);
-            border-radius: 10px; padding: 10px 14px; font-size: 14px; outline: none;
-            transition: border-color 0.2s;
-            width: 100%;
-        }
-        .input-base:focus { border-color: var(--text-3); }
-        .input-base::placeholder { color: var(--text-3); }
+.card { background: var(--surface); border: 1px solid var(--outline-light); border-radius: var(--radius-lg); }
+.btn-primary { background: var(--primary); color: white; border: none; border-radius: 10px; padding: 11px 22px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: var(--t); box-shadow: 0 2px 8px rgba(13,148,136,.25); }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+.input-base { display: block; width: 100%; padding: 11px 14px; background: var(--surface); border: 1.5px solid var(--outline-light); border-radius: 10px; font-size: 14px; font-family: inherit; color: var(--on-surface); outline: none; transition: var(--t); }
+.input-base:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,.1); }
+.input-base::placeholder { color: var(--on-surface-3); }
 
-        /* ---- Dark mode toggle ---- */
-        .theme-toggle {
-            width: 44px; height: 24px; background: var(--bg-3); border: 1px solid var(--border);
-            border-radius: 99px; position: relative; cursor: pointer; transition: background 0.25s;
-        }
-        .theme-toggle::after {
-            content: ''; position: absolute; top: 3px; left: 3px;
-            width: 16px; height: 16px; border-radius: 50%;
-            background: var(--text); transition: transform 0.25s, background 0.25s;
-        }
-        .dark .theme-toggle::after { transform: translateX(20px); }
-        .dark .theme-toggle { background: #2a2a2a; }
+.badge-green  { background: var(--success-bg); color: var(--success); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+.badge-red    { background: var(--error-bg); color: var(--error); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+.badge-yellow { background: var(--warning-bg); color: var(--warning); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
+.badge-blue   { background: var(--accent-muted); color: var(--accent); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 700; }
 
-        /* ---- Sidebar ---- */
-        .sidebar { background: var(--bg-2); border-right: 1px solid var(--border); }
-        .nav-item {
-            display: flex; align-items: center; gap: 10px; padding: 9px 14px;
-            border-radius: 10px; font-size: 13px; font-weight: 500;
-            color: var(--text-2); cursor: pointer; transition: all 0.15s; text-decoration: none;
-        }
-        .nav-item:hover { background: var(--bg-3); color: var(--text); }
-        .nav-item.active { background: var(--text); color: var(--bg); }
+/* Toast */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--on-surface); color: white; border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 500; opacity: 0; pointer-events: none; transition: all .3s cubic-bezier(.22,1,.36,1); white-space: nowrap; z-index: 9999; box-shadow: var(--shadow-lg); }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* ---- Status badges ---- */
-        .badge-green { background: #d1fae5; color: #065f46; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
-        .badge-red { background: #fee2e2; color: #991b1b; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
-        .badge-yellow { background: #fef3c7; color: #92400e; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
-        .badge-blue { background: #dbeafe; color: #1e40af; border-radius: 99px; padding: 3px 10px; font-size: 11px; font-weight: 600; }
-        .dark .badge-green { background: #064e3b; color: #6ee7b7; }
-        .dark .badge-red { background: #7f1d1d; color: #fca5a5; }
-        .dark .badge-yellow { background: #78350f; color: #fde68a; }
-        .dark .badge-blue { background: #1e3a5f; color: #93c5fd; }
-
-        /* ---- Typing dots ---- */
-        .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); animation: pulseDot 1.4s infinite; }
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes pulseDot { 0%,80%,100%{transform:scale(0.6);opacity:0.4} 40%{transform:scale(1.1);opacity:1} }
-
-        /* ---- Source drawer ---- */
-        .source-drawer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
-        .source-drawer.open { max-height: 600px; }
-
-        /* ---- Range slider ---- */
-        input[type=range] { accent-color: var(--text); }
-
-        /* ---- Toast notifications ---- */
-        #toast {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            transform: translateX(120%); transition: transform 0.3s ease;
-        }
-        #toast.show { transform: translateX(0); }
+{% block extra_styles %}{% endblock %}
     </style>
 </head>
 <body>
-    <!-- Toast -->
-    <div id="toast" class="card-sm px-4 py-3 text-sm font-medium shadow-xl max-w-xs"></div>
-
+    <div id="toast"></div>
+    {% block content %}{% endblock %}
     <script>
-    // ---- Theme Management ----
-    const html = document.documentElement;
-    const stored = localStorage.getItem('theme') || 'light';
-    html.className = stored;
-
-    function toggleTheme() {
-        const next = html.className === 'dark' ? 'light' : 'dark';
-        html.className = next;
-        localStorage.setItem('theme', next);
-    }
-
-    // ---- Toast helper ----
-    function showToast(msg, type = 'info') {
+    function showToast(msg) {
         const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.style.background = type === 'error' ? '#fee2e2' : type === 'success' ? '#d1fae5' : 'var(--bg-2)';
-        t.style.color = type === 'error' ? '#991b1b' : type === 'success' ? '#065f46' : 'var(--text)';
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 3500);
+        t.textContent = msg; t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
     }
-
-    // ---- CSRF helper ----
     function getCsrf() {
         const m = document.cookie.match(/csrftoken=([^;]+)/);
-        return m ? m[1] : '';
+        return m ? decodeURIComponent(m[1]) : '';
     }
     </script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
